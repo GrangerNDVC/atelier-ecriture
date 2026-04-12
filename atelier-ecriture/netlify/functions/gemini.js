@@ -19,65 +19,74 @@ exports.handler = async (event) => {
     return { statusCode: 413, body: 'Requête trop grande' }
   }
 
-  // Trousseau de clés — on essaie dans l'ordre, on passe à la suivante si erreur
   const keys = [
     process.env.GEMINI_KEY_1,
     process.env.GEMINI_KEY_2,
     process.env.GEMINI_KEY_3,
-  ].filter(Boolean) // ignore les clés non définies
+  ].filter(Boolean)
 
   if (keys.length === 0) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Aucune clé API configurée.' }),
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: 'Aucune clé API configurée dans Netlify.' }),
     }
   }
+
+  const models = [
+    'gemini-2.0-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash',
+  ]
 
   const body = JSON.parse(event.body)
   let lastError = null
 
   for (const key of keys) {
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
+    for (const model of models) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          }
+        )
+
+        const data = await response.json()
+
+        if (response.status === 429 || response.status === 403) {
+          lastError = { status: response.status, model, detail: data }
+          break
         }
-      )
 
-      const data = await response.json()
+        if (response.status === 404) {
+          lastError = { status: 404, model, detail: data }
+          continue
+        }
 
-      // Si la clé est épuisée ou invalide (429 = quota, 400/403 = clé invalide)
-      // on passe automatiquement à la clé suivante
-      if (response.status === 429 || response.status === 403) {
-        lastError = data
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify(data),
+        }
+
+      } catch (err) {
+        lastError = { error: err.message, model }
         continue
       }
-
-      // Succès — on renvoie la réponse
-      return {
-        statusCode: response.status,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(data),
-      }
-
-    } catch (err) {
-      lastError = { error: err.message }
-      continue // essaie la clé suivante
     }
   }
 
-  // Toutes les clés ont échoué
   return {
     statusCode: 503,
     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     body: JSON.stringify({
-      error: 'Toutes les clés API sont temporairement indisponibles. Réessayez dans quelques minutes.',
+      error: 'Toutes les clés API ont échoué.',
       detail: lastError,
     }),
   }
