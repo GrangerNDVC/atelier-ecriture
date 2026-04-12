@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Atelier d'Écriture — Mme Granger</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Nunito',sans-serif;background:#fdf8f0;color:#2d2416;min-height:100vh}
+
+:root{
+  --green:#1a7a58;--green-light:#e6f7f0;--green-mid:#9fd8c0;--green-dark:#0f5a3e;
+  --amber:#c77d1a;--amber-light:#fef3e2;
+  --red:#c0392b;--red-light:#fdecea;
+  --blue-light:#e8f3fd;
+  --surface:#fff;--border:#e8dece;--border2:#d5c9b8;
+  --text:#2d2416;--text2:#6b5b47;--text3:#9e8c78;
+  --radius:14px;--shadow:0 2px 20px rgba(0,0,0,.07)
+}
+
+/* ─── SCREENS ─────────────────────────────────────────── */
+.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:1.5rem;animation:fadeIn .3s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── CARD ─────────────────────────────────────────────── */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2.25rem 2rem;box-shadow:var(--shadow);width:100%}
+
+/* ─── TYPOGRAPHY ───────────────────────────────────────── */
+h1{font-family:'Caveat',cursive;font-size:2.1rem;color:var(--green);margin-bottom:.2rem;line-height:1.2}
+h2{font-family:'Caveat',cursive;font-size:1.8rem;color:var(--text);margin-bottom:.4rem;line-height:1.2}
+.subtitle{color:var(--text2);font-size:.9rem;line-height:1.55}
+
+/* ─── FORM ELEMENTS ────────────────────────────────────── */
+label.lbl{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em}
+input[type=text],textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-family:'Nunito',sans-serif;font-size:1rem;color:var(--text);background:var(--surface);outline:none;transition:border-color .2s,box-shadow .2s}
+input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,122,88,.1)}
+textarea{resize:none;line-height:1.7}
+
+/* ─── BUTTONS ──────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.72rem 1.5rem;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:all .18s;line-height:1}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:#155f44;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,122,88,.3)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{background:#aacfbf;cursor:default;transform:none;box-shadow:none}
+.btn-secondary{background:transparent;color:var(--text2);border:1.5px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);background:var(--green-light)}
+.btn-full{width:100%}
+.btn-sm{padding:.45rem 1rem;font-size:.83rem}
+
+.error-msg{color:var(--red);font-size:.83rem;margin-top:.5rem;min-height:1.2rem}
+
+/* ─── THEME GRID ───────────────────────────────────────── */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;width:100%}
+@media(max-width:480px){.theme-grid{grid-template-columns:repeat(2,1fr)}}
+.theme-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem .9rem;text-align:center;cursor:pointer;transition:all .2s}
+.theme-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 6px 20px rgba(26,122,88,.15)}
+.theme-card:hover .theme-icon{transform:scale(1.15)}
+.theme-icon{font-size:2.2rem;display:block;margin-bottom:.5rem;transition:transform .2s}
+.theme-label{font-weight:800;font-size:.95rem;margin-bottom:.25rem;color:var(--text)}
+.theme-desc{font-size:.75rem;color:var(--text3);line-height:1.4}
+
+/* ─── WRITING SCREEN ───────────────────────────────────── */
+#writing-screen{display:none;flex-direction:column;min-height:100vh;background:#fdf8f0}
+#writing-screen.active{display:flex}
+
+.topbar{
+  display:flex;align-items:center;gap:1rem;padding:.85rem 1.25rem;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:20;flex-wrap:wrap;box-shadow:0 1px 8px rgba(0,0,0,.05)
+}
+.topbar-title{font-family:'Caveat',cursive;font-size:1.2rem;color:var(--green);font-weight:700;flex:1;min-width:100px}
+.progress-wrap{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--text2);font-weight:700}
+.prog-bg{width:90px;height:7px;background:#e8dece;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.timer{font-size:1.1rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:52px;text-align:right;transition:color .5s}
+
+.writing-body{display:flex;flex-direction:column;gap:.9rem;padding:1rem 1.25rem;max-width:780px;width:100%;margin:0 auto;flex:1}
+
+/* ─── STORY BOX ────────────────────────────────────────── */
+.story-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.box-label{font-size:.72rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.7rem}
+.story-text{line-height:2.1;font-size:.97rem;color:var(--text)}
+.story-text span{border-bottom:1px dotted #d5c9b8}
+
+/* ─── INPUT BOX ────────────────────────────────────────── */
+.input-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.input-hint{font-size:.9rem;color:var(--text2);margin-bottom:.75rem;line-height:1.55}
+.input-hint strong{color:var(--green)}
+.input-actions{display:flex;gap:.6rem;margin-top:.75rem;justify-content:flex-end;flex-wrap:wrap}
+
+/* ─── FEEDBACK BOX ─────────────────────────────────────── */
+.feedback-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);animation:fadeIn .3s ease}
+.feedback-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;border:2px solid var(--green-mid)}
+.feedback-sender{font-weight:800;font-size:.88rem;color:var(--green)}
+.feedback-role{font-size:.75rem;color:var(--text3);margin-top:1px}
+
+.corrected-wrap{margin-bottom:.85rem}
+.corrected-phrase{background:#f0fdf6;border-radius:10px;padding:.8rem 1rem;border-left:3px solid var(--green);font-size:.95rem;line-height:1.65;color:#134d39;font-style:italic;margin-top:.3rem}
+.correction-note{background:var(--amber-light);border-radius:10px;padding:.65rem .9rem;font-size:.83rem;color:#7a4f0a;line-height:1.55;margin-bottom:.75rem;border-left:3px solid var(--amber)}
+.encouragement-box{background:var(--green-light);border-radius:10px;padding:.85rem 1rem;font-size:.92rem;line-height:1.65;color:var(--green-dark);margin-bottom:.75rem;border-left:3px solid var(--green-mid)}
+.piste-box{font-size:.84rem;color:var(--text3);font-style:italic;margin-bottom:1rem;line-height:1.55;padding:.5rem .75rem;background:#faf6ef;border-radius:8px}
+.feedback-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+
+/* ─── MILESTONE ────────────────────────────────────────── */
+.milestone{background:var(--green-light);border:1px solid var(--green-mid);border-radius:var(--radius);padding:.9rem 1.25rem;text-align:center;font-size:.93rem;color:var(--green-dark);font-weight:700;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.95);opacity:0}70%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
+
+/* ─── BROUILLON ────────────────────────────────────────── */
+.brouillon-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+
+/* ─── SPINNER ──────────────────────────────────────────── */
+.spinner{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── FINISHED ─────────────────────────────────────────── */
+.trophy{font-size:3rem;display:block;text-align:center;margin-bottom:.75rem;animation:bounce .9s infinite alternate}
+@keyframes bounce{to{transform:translateY(-8px)}}
+.final-text{background:#faf6ef;border-radius:12px;padding:1.25rem;line-height:2;font-size:.95rem;margin:1.25rem 0;max-height:300px;overflow-y:auto;border:1px solid var(--border)}
+
+/* ─── LINES PAPER EFFECT ────────────────────────────────── */
+.story-text{
+  background-image:repeating-linear-gradient(transparent,transparent 31px,#f0e8dc 31px,#f0e8dc 32px);
+  background-size:100% 32px;
+  padding:4px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     ÉCRAN 1 — PRÉNOM
+════════════════════════════════════════════════════════ -->
+<div class="screen active" id="s-name" style="background:#fdf8f0">
+  <div class="card" style="max-width:460px;text-align:center">
+
+    <div style="font-size:3rem;margin-bottom:1rem">✏️</div>
+    <h1>Mon Atelier<br>d'Écriture</h1>
+    <p class="subtitle" style="margin-bottom:1.75rem">
+      Envoyé par <strong>Mme Granger</strong> pour t'aider<br>
+      à écrire de belles histoires !
+    </p>
+
+    <label class="lbl" for="name-input">Comment tu t'appelles ?</label>
+    <input type="text" id="name-input" placeholder="Ton prénom..." maxlength="30"
+      style="text-align:center;font-size:1.1rem"
+      onkeydown="if(event.key==='Enter') goToTheme()"/>
+
+    <button class="btn btn-primary btn-full" style="margin-top:1.1rem" onclick="goToTheme()">
+      C'est parti ! 🎉
+    </button>
+    <div class="error-msg" id="name-error"></div>
+
+    <p style="font-size:.78rem;color:var(--text3);margin-top:1.5rem;line-height:1.6">
+      🔒 Tes données restent sur ton appareil.<br>Rien n'est enregistré.
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     ÉCRAN 2 — CHOIX DU THÈME
+════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-theme" style="background:#fdf8f0;flex-direction:column;align-items:center">
+  <div style="max-width:620px;width:100%">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <h2 id="theme-heading">Choisis ton thème !</h2>
+      <p class="subtitle">Sur quel sujet tu veux écrire ton histoire ?</p>
+    </div>
+    <div class="theme-grid">
+      <div class="theme-card" onclick="selectTheme('aventure','Aventure','⚔️')">
+        <span class="theme-icon">⚔️</span>
+        <div class="theme-label">Aventure</div>
+        <div class="theme-desc">Un héros part en quête d'un trésor...</div>
+      </div>
+      <div class="theme-card" onclick="selectTheme('animaux','Animaux','🦊')">
+        <span class="theme-icon">🦊</span>
+        <div class="theme-label">Animaux</div>
+        <div class="theme-desc">Un animal vit une grande aventure...</div>
+      </div>
+      <div class="theme-card" onclick="selectTheme('magie','Magie','🌟')">
+        <span class="theme-icon">🌟</span>
+        <div class="theme-label">Magie</div>
+        <div class="theme-desc">Dans un monde enchanté...</div>
+      </div>
+      <div class="theme-card" onclick="selectTheme('sport','Sport','⚽')">
+        <span class="theme-icon">⚽</span>
+        <div class="theme-label">Sport</div>
+        <div class="theme-desc">Une grande compétition commence...</div>
+      </div>
+      <div class="theme-card" onclick="selectTheme('espace','Espace','🚀')">
+        <span class="theme-icon">🚀</span>
+        <div class="theme-label">Espace</div>
+        <div class="theme-desc">Un voyage dans les étoiles...</div>
+      </div>
+      <div class="theme-card" onclick="selectTheme('mystere','Mystère','🔍')">
+        <span class="theme-icon">🔍</span>
+        <div class="theme-label">Mystère</div>
+        <div class="theme-desc">Une énigme à résoudre...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     ÉCRAN 3 — SESSION D'ÉCRITURE
+════════════════════════════════════════════════════════ -->
+<div id="writing-screen">
+
+  <!-- Barre du haut -->
+  <div class="topbar">
+    <div class="topbar-title" id="ws-title">✏️ Atelier</div>
+
+    <div class="progress-wrap">
+      <span id="ws-count">0 / 30</span>
+      <div class="prog-bg"><div class="prog-fill" id="ws-prog" style="width:0%"></div></div>
+    </div>
+
+    <div class="timer" id="ws-timer">45:00</div>
+
+    <button class="btn btn-secondary btn-sm" onclick="toggleBrouillon()">📝 Brouillon</button>
+    <button class="btn btn-secondary btn-sm" onclick="confirmRestart()">↩ Nouveau</button>
+  </div>
+
+  <!-- Corps -->
+  <div class="writing-body" id="writing-body"></div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     ÉCRAN 4 — FIN DE SESSION
+════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-finished" style="background:#fdf8f0">
+  <div class="card" style="max-width:600px;text-align:center">
+    <span class="trophy">🏆</span>
+    <h2 id="finish-title">Bravo !</h2>
+    <p id="finish-sub" class="subtitle" style="margin-top:.4rem"></p>
+    <div class="final-text" id="final-story"></div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-primary" onclick="restartFull()">✨ Nouvelle histoire</button>
+      <button class="btn btn-secondary" onclick="printStory()">🖨️ Imprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+/* ── État global ─────────────────────────────── */
+const S = {
+  name: '',
+  theme: '',
+  themeLabel: '',
+  themeIcon: '',
+  sentences: [],
+  currentInput: '',
+  feedback: null,
+  timeLeft: 45 * 60,
+  timerInterval: null,
+  timerStarted: false,
+  showBrouillon: false,
+  brouillon: '',
+  loading: false,
+  milestones: new Set(),
+}
+const TARGET = 30
+
+/* ── Navigation ─────────────────────────────── */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  document.getElementById('writing-screen').classList.remove('active')
+  const el = document.getElementById(id)
+  if (id === 's-writing') {
+    document.getElementById('writing-screen').classList.add('active')
+  } else {
+    el.classList.add('active')
+  }
+}
+
+function goToTheme() {
+  const v = document.getElementById('name-input').value.trim()
+  if (!v) { document.getElementById('name-error').textContent = 'Écris ton prénom s\'il te plaît !'; return }
+  S.name = v
+  document.getElementById('name-error').textContent = ''
+  document.getElementById('theme-heading').textContent = `Choisis ton thème, ${S.name} ! 🌟`
+  show('s-theme')
+}
+document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter') goToTheme() })
+
+function selectTheme(id, label, icon) {
+  S.theme = id; S.themeLabel = label; S.themeIcon = icon
+  S.sentences = []; S.currentInput = ''; S.feedback = null
+  S.timeLeft = 45 * 60; S.timerStarted = false; S.milestones = new Set()
+  S.showBrouillon = false; S.brouillon = ''
+  if (S.timerInterval) clearInterval(S.timerInterval)
+  document.getElementById('ws-title').textContent = `${icon} ${S.name} — ${label}`
+  updateTopbar()
+  show('s-writing')
+  renderBody()
+}
+
+function confirmRestart() {
+  if (S.sentences.length > 0 && !confirm('Tu vas perdre ton histoire en cours. Continuer ?')) return
+  if (S.timerInterval) clearInterval(S.timerInterval)
+  show('s-theme')
+}
+
+function restartFull() {
+  if (S.timerInterval) clearInterval(S.timerInterval)
+  show('s-theme')
+}
+
+/* ── Timer ───────────────────────────────────── */
+function startTimer() {
+  if (S.timerStarted) return
+  S.timerStarted = true
+  S.timerInterval = setInterval(() => {
+    S.timeLeft--
+    updateTopbar()
+    if (S.timeLeft <= 0) { clearInterval(S.timerInterval); finishSession() }
+  }, 1000)
+}
+
+function updateTopbar() {
+  const n = S.sentences.length
+  document.getElementById('ws-count').textContent = `${n} / ${TARGET}`
+  document.getElementById('ws-prog').style.width = Math.min(n / TARGET * 100, 100) + '%'
+  const m = Math.floor(S.timeLeft / 60), s = S.timeLeft % 60
+  const el = document.getElementById('ws-timer')
+  el.textContent = `${m}:${s.toString().padStart(2, '0')}`
+  el.style.color = S.timeLeft < 300 ? '#c0392b' : S.timeLeft < 600 ? '#c77d1a' : '#1a7a58'
+}
+
+/* ── Render ──────────────────────────────────── */
+function renderBody() {
+  const body = document.getElementById('writing-body')
+  let html = ''
+  const n = S.sentences.length
+
+  /* Brouillon */
+  if (S.showBrouillon) {
+    html += `<div class="brouillon-panel">
+      <div class="box-label">📝 Mon brouillon — idées, mots difficiles...</div>
+      <textarea id="brouillon-ta" rows="4" placeholder="Écris ici tes idées ou les mots dont tu as besoin...">${esc(S.brouillon)}</textarea>
+    </div>`
+  }
+
+  /* Milestone */
+  const ml = {
+    5:`🌟 5 phrases ! Excellent début ${S.name} — continue, tu es lancé(e) !`,
+    10:`🔥 10 phrases ! Tu es au tiers de l'objectif ${S.name} — Mme Granger sera fière !`,
+    15:`⭐ 15 phrases ! La moitié du chemin ${S.name} — tu es vraiment capable !`,
+    20:`🚀 20 phrases ! Plus que 10 ${S.name} — tu es un(e) vrai(e) écrivain(e) !`,
+    25:`💫 25 phrases ! Encore 5 petites phrases ${S.name} et tu as gagné !`,
+  }
+  if (ml[n] && !S.milestones.has(n)) {
+    S.milestones.add(n)
+    html += `<div class="milestone">${ml[n]}</div>`
+  }
+
+  /* Histoire jusqu'ici */
+  if (n > 0) {
+    const storyHtml = S.sentences.map(s => `<span>${esc(s)} </span>`).join('')
+    html += `<div class="story-box">
+      <div class="box-label">📖 Ton histoire (${n} phrase${n > 1 ? 's' : ''})</div>
+      <div class="story-text">${storyHtml}</div>
+    </div>`
+  }
+
+  /* Feedback OU zone de saisie */
+  if (S.feedback) {
+    html += buildFeedbackHtml()
+  } else {
+    const hint = n === 0
+      ? `${S.name}, écris la <strong>première phrase</strong> de ton histoire sur le thème « ${S.themeLabel} » ✍️`
+      : `Continue l'histoire — écris ta <strong>phrase suivante</strong> :`
+    html += `<div class="input-box">
+      <div class="input-hint">${hint}</div>
+      <textarea id="sentence-input" rows="3"
+        placeholder="Écris ta phrase ici... Appuie sur Entrée pour valider."
+        onkeydown="handleEnter(event)"
+        oninput="S.currentInput=this.value">${esc(S.currentInput)}</textarea>
+      <div class="input-actions">
+        <button class="btn btn-primary" id="submit-btn" onclick="submitSentence()" ${S.loading ? 'disabled' : ''}>
+          ${S.loading ? '<span class="spinner"></span>Analyse en cours...' : 'Valider ma phrase ✓'}
+        </button>
+      </div>
+      <div class="error-msg" id="writing-error"></div>
+    </div>`
+  }
+
+  body.innerHTML = html
+
+  /* Events post-render */
+  if (S.showBrouillon) {
+    const ta = document.getElementById('brouillon-ta')
+    if (ta) ta.addEventListener('input', e => S.brouillon = e.target.value)
+  }
+  if (!S.feedback) {
+    const inp = document.getElementById('sentence-input')
+    if (inp) { inp.focus(); inp.selectionStart = inp.selectionEnd = inp.value.length }
+  }
+
+  /* Scroll vers le bas */
+  setTimeout(() => body.scrollTop = body.scrollHeight, 50)
+}
+
+function buildFeedbackHtml() {
+  const f = S.feedback
+  const corrected = f.phraseCorrigee && f.phraseCorrigee !== f.original
+  return `<div class="feedback-box">
+    <div class="feedback-header">
+      <div class="avatar">👩‍🏫</div>
+      <div>
+        <div class="feedback-sender">L'assistante de Mme Granger</div>
+        <div class="feedback-role">Voici mes commentaires pour toi</div>
+      </div>
+    </div>
+
+    ${corrected ? `
+    <div class="corrected-wrap">
+      <div class="box-label">Phrase améliorée :</div>
+      <div class="corrected-phrase">"${esc(f.phraseCorrigee)}"</div>
+    </div>` : `<div style="font-size:.9rem;font-weight:700;color:var(--green);margin-bottom:.75rem">✅ Ta phrase est bien construite !</div>`}
+
+    ${f.corrections ? `<div class="correction-note">✏️ ${esc(f.corrections)}</div>` : ''}
+
+    <div class="encouragement-box">${esc(f.encouragement)}</div>
+
+    ${f.prochainePiste ? `<div class="piste-box">💡 Pour ta prochaine phrase : ${esc(f.prochainePiste)}</div>` : ''}
+
+    <div class="feedback-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="acceptSentence()">
+        ✓ Ajouter à mon histoire
+      </button>
+      <button class="btn btn-secondary" onclick="rewrite()">✎ Réécrire</button>
+    </div>
+  </div>`
+}
+
+function esc(s) {
+  if (!s) return ''
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+/* ── Saisie ──────────────────────────────────── */
+function handleEnter(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault()
+    if (!S.loading) submitSentence()
+  }
+}
+
+function toggleBrouillon() {
+  S.showBrouillon = !S.showBrouillon
+  renderBody()
+}
+
+/* ── Appel API (via proxy Netlify) ───────────── */
+async function submitSentence() {
+  const phrase = S.currentInput.trim()
+  if (!phrase || phrase.length < 2) return
+  S.loading = true
+  renderBody()
+
+  try {
+    const histoire = S.sentences.join(' ')
+    const prompt = buildPrompt(phrase, histoire)
+
+    /* ✅ APPEL SÉCURISÉ : on appelle notre proxy, jamais Gemini directement */
+    const res = await fetch('/.netlify/functions/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
+      }),
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error?.message || `Erreur ${res.status}`)
+
+    const rawText = data.candidates[0].content.parts[0].text
+    const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+
+    let result
+    try { result = JSON.parse(cleaned) }
+    catch {
+      const m = cleaned.match(/\{[\s\S]*\}/)
+      if (m) result = JSON.parse(m[0])
+      else throw new Error('Réponse inattendue')
+    }
+
+    result.original = phrase
+    S.feedback = result
+    S.loading = false
+    startTimer()
+    renderBody()
+
+  } catch (err) {
+    S.loading = false
+    renderBody()
+    const errEl = document.getElementById('writing-error')
+    if (errEl) errEl.textContent = `Oups ! ${err.message} — vérifie ta connexion.`
+  }
+}
+
+function buildPrompt(phrase, histoire) {
+  return `Tu es l'assistant d'écriture bienveillant envoyé par Mme Granger, professeure de français au collège. Tu aides ${S.name}, un(e) élève en grande difficulté d'écriture, à construire une histoire cohérente phrase par phrase.
+
+Contexte :
+- Thème : ${S.themeLabel}
+- Histoire écrite jusqu'ici (${S.sentences.length} phrase(s)) : "${histoire}"
+- Nouvelle phrase soumise par ${S.name} : "${phrase}"
+- Nombre de phrases validées : ${S.sentences.length}
+
+Consignes STRICTES :
+1. Corrige les fautes d'orthographe et de grammaire. Sois très bref (1 ligne max). Ne t'attarde pas dessus.
+2. Corrige la syntaxe, les temps verbaux, et assure la cohérence avec le texte précédent.
+3. Si la phrase est trop courte (moins de 5 mots), trop vague ou incompréhensible : corrige en proposant une version enrichie.
+4. Sois CHALEUREUX, POSITIF, ENCOURAGEANT. Utilise le prénom "${S.name}". Ces élèves ont besoin de confiance.
+5. La version corrigée doit rester simple, dans le niveau d'un élève de collège.
+6. Propose une piste courte et concrète pour la phrase suivante.
+
+Réponds UNIQUEMENT avec un objet JSON valide (sans balises markdown, sans texte avant ou après) :
+{
+  "phraseCorrigee": "la phrase corrigée et complète",
+  "corrections": "les corrections en 1 ligne très courte, ou chaine vide si rien à corriger",
+  "encouragement": "message chaleureux et motivant de 2-3 phrases pour ${S.name}",
+  "prochainePiste": "1 suggestion simple et concrète pour la prochaine phrase",
+  "acceptee": true
+}`
+}
+
+/* ── Accepter / Réécrire ─────────────────────── */
+function acceptSentence() {
+  if (!S.feedback) return
+  S.sentences.push(S.feedback.phraseCorrigee)
+  S.currentInput = ''
+  S.feedback = null
+  if (S.sentences.length >= TARGET) { finishSession(); return }
+  renderBody()
+}
+
+function rewrite() {
+  S.currentInput = S.feedback?.original || ''
+  S.feedback = null
+  renderBody()
+}
+
+/* ── Fin de session ──────────────────────────── */
+function finishSession() {
+  if (S.timerInterval) clearInterval(S.timerInterval)
+  const n = S.sentences.length
+  document.getElementById('finish-title').textContent = `Bravo ${S.name} ! 🎉`
+  let sub = `Tu as écrit ${n} phrase${n > 1 ? 's' : ''} ! `
+  if (n >= 30) sub += `Tu as atteint l'objectif des 30 phrases — Mme Granger va être très fière de toi !`
+  else if (n >= 20) sub += `C'est une excellente performance, continue à t'entraîner !`
+  else if (n >= 10) sub += `Tu as bien travaillé aujourd'hui !`
+  else sub += `C'est un bon début — la prochaine fois tu iras encore plus loin !`
+  document.getElementById('finish-sub').textContent = sub
+  document.getElementById('final-story').innerHTML = S.sentences.map(s => `<span>${esc(s)} </span>`).join('')
+  show('s-finished')
+}
+
+function printStory() {
+  const w = window.open('', '_blank')
+  w.document.write(`<html><head><title>Histoire de ${S.name}</title>
+  <style>body{font-family:Georgia,serif;max-width:600px;margin:2rem auto;line-height:2;font-size:1.1rem}
+  h2{margin-bottom:1.5rem;font-size:1.5rem}p{margin-bottom:.5rem}</style></head>
+  <body><h2>Histoire de ${S.name} — thème : ${S.themeLabel}</h2>
+  <p>${S.sentences.join(' ')}</p></body></html>`)
+  w.document.close()
+  w.print()
+}
+</script>
+</body>
+</html>
