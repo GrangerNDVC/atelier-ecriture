@@ -1,22 +1,49 @@
-exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
+const https = require('https')
+
+function httpsPost(url, data) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(data)
+    const urlObj = new URL(url)
+    const options = {
+      hostname: urlObj.hostname,
+      path: urlObj.pathname + urlObj.search,
+      method: 'POST',
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
       },
-      body: '',
     }
+    const req = https.request(options, (res) => {
+      let raw = ''
+      res.on('data', (chunk) => raw += chunk)
+      res.on('end', () => {
+        try {
+          resolve({ status: res.statusCode, data: JSON.parse(raw) })
+        } catch (e) {
+          resolve({ status: res.statusCode, data: raw })
+        }
+      })
+    })
+    req.on('error', reject)
+    req.write(body)
+    req.end()
+  })
+}
+
+exports.handler = async (event) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  }
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' }
   }
 
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' }
-  }
-
-  if (!event.body || event.body.length > 20000) {
-    return { statusCode: 413, body: 'Requête trop grande' }
+    return { statusCode: 405, headers, body: 'Method Not Allowed' }
   }
 
   const keys = [
@@ -28,53 +55,35 @@ exports.handler = async (event) => {
   if (keys.length === 0) {
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'Aucune clé API configurée dans Netlify.' }),
+      headers,
+      body: JSON.stringify({ error: 'Aucune clé API trouvée dans les variables Netlify.' }),
     }
   }
 
-  const models = [
-    'gemini-2.0-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-flash',
-  ]
-
+  const models = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash']
   const body = JSON.parse(event.body)
   let lastError = null
 
   for (const key of keys) {
     for (const model of models) {
       try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          }
-        )
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`
+        const result = await httpsPost(url, body)
 
-        const data = await response.json()
-
-        if (response.status === 429 || response.status === 403) {
-          lastError = { status: response.status, model, detail: data }
+        if (result.status === 429 || result.status === 403) {
+          lastError = { status: result.status, model }
           break
         }
-
-        if (response.status === 404) {
-          lastError = { status: 404, model, detail: data }
+        if (result.status === 404) {
+          lastError = { status: 404, model }
           continue
         }
 
         return {
           statusCode: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify(data),
+          headers,
+          body: JSON.stringify(result.data),
         }
-
       } catch (err) {
         lastError = { error: err.message, model }
         continue
@@ -84,10 +93,11 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 503,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    headers,
     body: JSON.stringify({
-      error: 'Toutes les clés API ont échoué.',
+      error: 'Échec de toutes les clés.',
       detail: lastError,
+      keysFound: keys.length,
     }),
   }
 }
