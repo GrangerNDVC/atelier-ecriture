@@ -1,31 +1,40 @@
 const https = require('https')
 
-function httpsPost(url, data) {
+function httpsPost(hostname, path, data) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify(data)
-    const urlObj = new URL(url)
     const options = {
-      hostname: urlObj.hostname,
-      path: urlObj.pathname + urlObj.search,
+      hostname,
+      path,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${data._key}`,
         'Content-Length': Buffer.byteLength(body),
       },
     }
-    const req = https.request(options, (res) => {
+    // On retire la clé du body avant d'envoyer
+    const cleanBody = JSON.stringify({ ...data, _key: undefined })
+    const options2 = {
+      hostname,
+      path,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${data._key}`,
+        'Content-Length': Buffer.byteLength(cleanBody),
+      },
+    }
+    const req = https.request(options2, (res) => {
       let raw = ''
       res.on('data', (chunk) => raw += chunk)
       res.on('end', () => {
-        try {
-          resolve({ status: res.statusCode, data: JSON.parse(raw) })
-        } catch (e) {
-          resolve({ status: res.statusCode, data: raw })
-        }
+        try { resolve({ status: res.statusCode, data: JSON.parse(raw) }) }
+        catch (e) { resolve({ status: res.statusCode, data: raw }) }
       })
     })
     req.on('error', reject)
-    req.write(body)
+    req.write(cleanBody)
     req.end()
   })
 }
@@ -38,66 +47,67 @@ exports.handler = async (event) => {
     'Access-Control-Allow-Headers': 'Content-Type',
   }
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' }
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: 'Method Not Allowed' }
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: 'Method Not Allowed' }
 
   const keys = [
-    process.env.GEMINI_KEY_1,
-    process.env.GEMINI_KEY_2,
-    process.env.GEMINI_KEY_3,
+    process.env.MISTRAL_KEY_1,
+    process.env.MISTRAL_KEY_2,
+    process.env.MISTRAL_KEY_3,
   ].filter(Boolean)
 
   if (keys.length === 0) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Aucune clé API trouvée dans les variables Netlify.' }),
+      body: JSON.stringify({ error: 'Aucune clé Mistral configurée dans Netlify.' }),
     }
   }
 
-  const models = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash']
-  const body = JSON.parse(event.body)
+  const { prompt } = JSON.parse(event.body)
   let lastError = null
 
   for (const key of keys) {
-    for (const model of models) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`
-        const result = await httpsPost(url, body)
+    try {
+      const payload = {
+        _key: key,
+        model: 'mistral-small-latest',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 600,
+      }
 
-        if (result.status === 429 || result.status === 403) {
-          lastError = { status: result.status, model }
-          break
-        }
-        if (result.status === 404) {
-          lastError = { status: 404, model }
-          continue
-        }
+      const result = await httpsPost(
+        'api.mistral.ai',
+        '/v1/chat/completions',
+        payload
+      )
 
+      if (result.status === 429 || result.status === 401) {
+        lastError = { status: result.status }
+        continue
+      }
+
+      if (result.status === 200) {
+        const text = result.data.choices[0].message.content
         return {
           statusCode: 200,
           headers,
-          body: JSON.stringify(result.data),
+          body: JSON.stringify({ text }),
         }
-      } catch (err) {
-        lastError = { error: err.message, model }
-        continue
       }
+
+      lastError = { status: result.status, detail: result.data }
+
+    } catch (err) {
+      lastError = { error: err.message }
+      continue
     }
   }
 
   return {
     statusCode: 503,
     headers,
-    body: JSON.stringify({
-      error: 'Échec de toutes les clés.',
-      detail: lastError,
-      keysFound: keys.length,
-    }),
+    body: JSON.stringify({ error: 'Toutes les clés ont échoué.', detail: lastError }),
   }
 }
