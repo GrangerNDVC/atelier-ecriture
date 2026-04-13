@@ -459,7 +459,7 @@ function toggleBrouillon() {
   renderBody()
 }
 
-/* ── Appel API (via proxy Netlify) ───────────── */
+/* ── Appel API Mistral (via proxy Netlify) ───── */
 async function submitSentence() {
   const phrase = S.currentInput.trim()
   if (!phrase || phrase.length < 2) return
@@ -470,20 +470,17 @@ async function submitSentence() {
     const histoire = S.sentences.join(' ')
     const prompt = buildPrompt(phrase, histoire)
 
-    /* ✅ APPEL SÉCURISÉ : on appelle notre proxy, jamais Gemini directement */
+    /* ✅ APPEL SÉCURISÉ : proxy Netlify → Mistral AI */
     const res = await fetch('/.netlify/functions/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
-      }),
+      body: JSON.stringify({ prompt }),
     })
 
     const data = await res.json()
-    if (!res.ok) throw new Error(data.error?.message || `Erreur ${res.status}`)
+    if (!res.ok) throw new Error(data.error || `Erreur ${res.status}`)
 
-    const rawText = data.candidates[0].content.parts[0].text
+    const rawText = data.text
     const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
 
     let result
@@ -491,7 +488,7 @@ async function submitSentence() {
     catch {
       const m = cleaned.match(/\{[\s\S]*\}/)
       if (m) result = JSON.parse(m[0])
-      else throw new Error('Réponse inattendue')
+      else throw new Error("Réponse inattendue de l'IA")
     }
 
     result.original = phrase
