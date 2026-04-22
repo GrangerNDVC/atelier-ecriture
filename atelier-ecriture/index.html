@@ -1,193 +1,135 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Mon Professeur d'Écriture — Mme Granger</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Atelier d'Écriture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* === STYLE DE BASE === */
-        *{box-sizing:border-box;margin:0;padding:0}
-        html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#f8f5ef;color:#2d2416;overflow-x:hidden}
-        :root{--g:#1a7a58;--gl:#e6f7f0;--gm:#9fd8c0;--gd:#0f5a3e;--a:#c77d1a;--al:#fef3e2;--r:#c0392b;--rl:#fdecea;--b:#1a5c9e;--bl:#e8f0fb;--s:#fff;--bd:#e8dece;--bd2:#d0c4b4;--t2:#6b5b47;--t3:#9e8c78;--rad:14px;--sh:0 2px 16px rgba(0,0,0,.07)}
-        
-        .screen{display:none;max-width:600px;margin:0 auto;padding:20px;animation:fadeIn 0.4s ease-out}
-        .screen.active{display:block}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-        /* === DESIGN DES CARTES === */
-        .card{background:var(--s);border-radius:var(--rad);padding:24px;box-shadow:var(--sh);border:1px solid var(--bd);margin-bottom:20px}
-        h1{font-family:'Caveat',cursive;font-size:2.5rem;color:var(--g);text-align:center;margin-bottom:10px}
-        p.intro{text-align:center;color:var(--t2);margin-bottom:30px}
-
-        /* === FORMULAIRE === */
-        label{display:block;margin-bottom:8px;font-weight:700;color:var(--t2)}
-        input, select, textarea{width:100%;padding:12px;border-radius:10px;border:2px solid var(--bd);font-family:inherit;font-size:1rem;margin-bottom:20px;transition:border-color 0.2s}
-        input:focus, select:focus{border-color:var(--gm);outline:none}
-
-        /* === BOUTONS === */
-        .btn{display:block;width:100%;padding:15px;border-radius:12px;border:none;background:var(--g);color:white;font-size:1.1rem;font-weight:800;cursor:pointer;transition:transform 0.1s, background 0.2s}
-        .btn:hover{background:var(--gd)}
-        .btn:active{transform:scale(0.98)}
-
-        /* === CHAT === */
-        #chat-box{height:300px;overflow-y:auto;border:1px solid var(--bd);border-radius:10px;padding:15px;background:#fcfaf7;margin-bottom:15px}
-        .msg{margin-bottom:15px;max-width:85%;padding:12px;border-radius:15px;line-height:1.4}
-        .msg.pro{background:var(--gl);color:var(--gd);align-self:flex-start;border-bottom-left-radius:2px}
-        .msg.user{background:var(--bl);color:var(--b);margin-left:auto;border-bottom-right-radius:2px}
-
-        /* === ALERTE === */
-        #alert-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000}
-        #alert-overlay.active{display:flex}
-        .alert-box{background:white;padding:30px;border-radius:20px;max-width:400px;text-align:center}
+        :root { --main: #2c3e50; --accent: #3498db; --bg: #f4f7f6; --white: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--main); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: var(--main); border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        label { display: block; margin: 15px 0 5px; font-weight: 600; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+        .btn { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 20px; width: 100%; }
+        #chat { height: 400px; overflow-y: auto; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; background: #fafafa; }
+        .msg { margin-bottom: 15px; padding: 10px 15px; border-radius: 10px; line-height: 1.5; }
+        .msg.ia { background: #e8f4fd; border-left: 4px solid var(--accent); }
+        .msg.user { background: #f0f0f0; text-align: right; }
+        .dys-badge { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div id="screen-welcome" class="screen active">
-        <h1>Bonjour !</h1>
-        <p class="intro">Bienvenue dans l'atelier d'écriture de Mme Granger.</p>
-        <div class="card">
-            <label>Comment t'appelles-tu ?</label>
-            <input type="text" id="input-name" placeholder="Ton prénom...">
-            
-            <label>Ton niveau :</label>
-            <select id="select-level">
-                <option value="CE1">CE1</option>
-                <option value="CE2">CE2</option>
-                <option value="CM1">CM1</option>
-                <option value="CM2">CM2</option>
-            </select>
+<div class="container">
+    <div id="screen-setup" class="screen active">
+        <h1>Mon Atelier d'Écriture</h1>
+        <label>Choisis un pseudo (correct et respectueux) :</label>
+        <input type="text" id="username" placeholder="Ex: EcrivainDu33">
+        
+        <label>Niveau scolaire :</label>
+        <select id="level">
+            <option value="6eme">6ème (Le monstre, aux limites de l'humain)</option>
+            <option value="5eme">5ème (Le voyage et l'aventure)</option>
+            <option value="4eme">4ème (Dire l'amour / La fiction pour interroger le réel)</option>
+            <option value="3eme">3ème (Se raconter, se représenter / Dénoncer les travers de la société)</option>
+        </select>
 
-            <button class="btn" onclick="startApp()">Commencer l'atelier</button>
-        </div>
+        <label>Profil spécifique :</label>
+        <select id="dys">
+            <option value="non">Pas de profil particulier</option>
+            <option value="oui">Profil DYS (Dyslexie / Dysorthographie)</option>
+        </select>
+
+        <button class="btn" onclick="initSession()">Entrer dans l'atelier</button>
     </div>
 
-    <div id="screen-app" class="screen">
-        <h1 id="user-title">Atelier d'écriture</h1>
-        <div class="card">
-            <div id="chat-box">
-                <div class="msg pro">Bonjour ! Je suis Mme Granger. Écris une phrase ou un petit texte, et je vais t'aider à l'améliorer.</div>
-            </div>
-            <textarea id="input-text" rows="3" placeholder="Écris ici..."></textarea>
-            <button class="btn" id="btn-send" onclick="sendMessage()">Demander de l'aide</button>
-            <button class="btn" style="background:#9e8c78; margin-top:10px;" onclick="resetApp()">Changer d'élève</button>
-        </div>
+    <div id="screen-atelier" class="screen">
+        <h1 id="title-atelier">Mon Atelier d'Écriture</h1>
+        <div id="chat"></div>
+        <textarea id="user-input" placeholder="Écris ton texte ici..."></textarea>
+        <button class="btn" id="send-btn" onclick="sendToIA()">Envoyer mon travail</button>
+        <button class="btn" style="background:#95a5a6;" onclick="reset()">Changer de session</button>
     </div>
+</div>
 
-    <div id="alert-overlay">
-        <div class="alert-box">
-            <p id="alert-msg">Une erreur est survenue.</p>
-            <button class="btn" style="margin-top:20px" onclick="closeAlert()">D'accord</button>
-        </div>
-    </div>
+<script>
+let state = { username: "", level: "", dys: false, history: [] };
 
-    <script>
-        // --- ÉTAT DE L'APPLICATION ---
-        let S = {
-            name: "",
-            level: "CE1",
-            loading: false
-        };
+function initSession() {
+    const user = document.getElementById('username').value.trim();
+    // Filtrage basique des pseudos tendancieux
+    const forbidden = ["sex", "pdp", "insulte", "con"]; 
+    if(!user || forbidden.some(word => user.toLowerCase().includes(word))) {
+        alert("Merci de choisir un pseudo correct."); return;
+    }
 
-        // --- FONCTIONS DE NAVIGATION ---
-        function startApp() {
-            const name = document.getElementById('input-name').value.trim();
-            if(!name) return alert("N'oublie pas d'entrer ton prénom !");
-            
-            S.name = name;
-            S.level = document.getElementById('select-level').value;
-            
-            document.getElementById('user-title').textContent = "Atelier de " + S.name;
-            showScreen('screen-app');
-            saveState();
-        }
+    state.username = user;
+    state.level = document.getElementById('level').value;
+    state.dys = document.getElementById('dys').value === "oui";
+    
+    document.getElementById('screen-setup').classList.remove('active');
+    document.getElementById('screen-atelier').classList.add('active');
+    
+    const intro = `Bonjour ${state.username}. Je suis ton assistant d'écriture. Je vais t'aider à progresser en français en fonction de ton niveau (${state.level}). ${state.dys ? '<span class="dys-badge">Profil DYS activé</span>' : ''}<br><br>Pour commencer, je vais évaluer tes besoins. Choisis un exercice :<br>1. **Description** (un paysage, un personnage)<br>2. **Récit** (une action courte)<br>3. **Dialogue** (deux personnes discutent)`;
+    addMsg(intro, 'ia');
+}
 
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+async function sendToIA() {
+    const input = document.getElementById('user-input').value.trim();
+    if(!input) return;
 
-        function resetApp() {
-            localStorage.clear();
-            location.reload();
-        }
+    addMsg(input, 'user');
+    document.getElementById('user-input').value = "";
+    document.getElementById('send-btn').disabled = true;
 
-        // --- GESTION DES MESSAGES ---
-        async function sendMessage() {
-            const text = document.getElementById('input-text').value.trim();
-            if(!text || S.loading) return;
+    // Construction du prompt avec les consignes officielles
+    const systemPrompt = `Tu es un assistant pédagogique expert en français (niveau collège). 
+    L'élève s'appelle ${state.username}, est en classe de ${state.level}. 
+    Profil DYS : ${state.dys ? 'OUI (sois très tolérant sur l\'orthographe et la syntaxe, privilégie le fond et la structure)' : 'NON'}.
+    Objectif : Évaluer la syntaxe, le vocabulaire et la ponctuation. 
+    Après l'évaluation initiale, oriente l'élève vers un récit lié au programme de ${state.level}.
+    Adapte tes exigences : un élève de 6ème n'a pas les mêmes attendus qu'un élève de 3ème.
+    Sois encourageant, précis et utilise le jargon pédagogique approprié (connecteurs logiques, champs lexicaux, etc.).`;
 
-            addMessage(text, 'user');
-            document.getElementById('input-text').value = "";
-            S.loading = true;
-            document.getElementById('btn-send').textContent = "Mme Granger réfléchit...";
+    try {
+        const response = await fetch('/.netlify/functions/gemini', {
+            method: 'POST',
+            body: JSON.stringify({
+                _messages: [
+                    { role: "system", content: systemPrompt },
+                    ...state.history,
+                    { role: "user", content: input }
+                ]
+            })
+        });
 
-            try {
-                const response = await fetch('/.netlify/functions/gemini', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        prompt: `Tu es Mme Granger, une maîtresse bienveillante. Aide l'élève nommé ${S.name} (niveau ${S.level}) à améliorer ce texte : "${text}". Donne un conseil court et encourageant.`
-                    })
-                });
+        const data = await response.json();
+        const reply = data.answer || "Désolé, j'ai une petite erreur technique.";
+        addMsg(reply, 'ia');
+        state.history.push({ role: "user", content: input }, { role: "assistant", content: reply });
+        localStorage.setItem('atelier_' + state.username, JSON.stringify(state));
+    } catch (e) {
+        addMsg("Erreur de connexion aux clés API.", 'ia');
+    } finally {
+        document.getElementById('send-btn').disabled = false;
+    }
+}
 
-                const data = await response.json();
-                if(data.answer) {
-                    addMessage(data.answer, 'pro');
-                } else {
-                    addMessage("Oh, j'ai eu un petit souci. Peux-tu répéter ?", 'pro');
-                }
-            } catch (err) {
-                addMessage("Je n'arrive pas à te répondre pour l'instant. Vérifie ta connexion.", 'pro');
-            } finally {
-                S.loading = false;
-                document.getElementById('btn-send').textContent = "Demander de l'aide";
-            }
-        }
+function addMsg(txt, side) {
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className = `msg ${side}`;
+    div.innerHTML = txt;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
 
-        function addMessage(txt, side) {
-            const box = document.getElementById('chat-box');
-            const div = document.createElement('div');
-            div.className = `msg ${side}`;
-            div.textContent = txt;
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-        }
+function reset() { localStorage.clear(); location.reload(); }
+</script>
 
-        // --- SAUVEGARDE ET RESTAURATION ---
-        function saveState() {
-            localStorage.setItem('mme_granger_state', JSON.stringify(S));
-        }
-
-        function restoreState() {
-            try {
-                const saved = localStorage.getItem('mme_granger_state');
-                if(saved) {
-                    S = JSON.parse(saved);
-                    if(S.name) {
-                        document.getElementById('user-title').textContent = "Atelier de " + S.name;
-                        showScreen('screen-app');
-                    }
-                }
-            } catch(e) {
-                console.error("Erreur de restauration");
-                localStorage.clear();
-            }
-        }
-
-        function closeAlert() {
-            document.getElementById('alert-overlay').classList.remove('active');
-        }
-
-        // --- LANCEMENT ---
-        window.onload = () => {
-            // Si on demande un nettoyage via l'URL
-            if(window.location.search.includes('clear=true')) {
-                localStorage.clear();
-                window.history.replaceState({}, document.title, "/");
-            }
-            restoreState();
-        };
-    </script>
 </body>
 </html>
