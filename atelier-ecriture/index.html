@@ -1,802 +1,193 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mon Professeur d'Écriture — Mme Granger</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet"/>
-<style>
-/* === Gardez votre CSS existant === */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#f8f5ef;color:#2d2416}
-:root{--g:#1a7a58;--gl:#e6f7f0;--gm:#9fd8c0;--gd:#0f5a3e;--a:#c77d1a;--al:#fef3e2;--r:#c0392b;--rl:#fdecea;--b:#1a5c9e;--bl:#e8f0fb;--s:#fff;--bd:#e8dece;--bd2:#d0c4b4;--t2:#6b5b47;--t3:#9e8c78;--rad:14px;--sh:0 2px 16px rgba(0,0,0,.07)}
-.screen{display:none;min-height:100vh;justify-content:center;align-items:flex-start;padding:2rem 1.25rem;animation:fi .3s ease}
-.screen.active{display:flex}
-.screen.centered{align-items:center}
-@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.card{background:var(--s);border-radius:var(--rad);border:1px solid var(--bd);padding:2rem;box-shadow:var(--sh);width:100%}
-h1{font-family:'Caveat',cursive;font-size:2.2rem;color:var(--g);line-height:1.2;margin-bottom:.25rem}
-h2{font-family:'Caveat',cursive;font-size:1.9rem;color:#2d2416;margin-bottom:.4rem;line-height:1.2}
-h3{font-size:1rem;font-weight:800;color:#2d2416;margin-bottom:.5rem}
-p{line-height:1.6}
-.sub{color:var(--t2);font-size:.9rem;line-height:1.55}
-label.lbl{display:block;font-size:.75rem;font-weight:800;color:var(--t2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em}
-input[type=text],textarea{width:100%;border:1.5px solid var(--bd);border-radius:10px;padding:.7rem 1rem;font-family:'Nunito',sans-serif;font-size:1rem;color:#2d2416;outline:none;transition:border-color .2s,box-shadow .2s;background:var(--s)}
-input[type=text]:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(26,122,88,.1)}
-textarea{resize:none;line-height:1.7}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.72rem 1.5rem;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:all .18s;line-height:1}
-.bp{background:var(--g);color:#fff}.bp:hover{background:#155f44;transform:translateY(-1px)}.bp:disabled{background:#aacfbf;cursor:default;transform:none}
-.bs{background:transparent;color:var(--t2);border:1.5px solid var(--bd2)}.bs:hover{border-color:var(--g);color:var(--g);background:var(--gl)}
-.bfull{width:100%;margin-top:.85rem}
-.bsm{padding:.42rem .9rem;font-size:.82rem}
-.err{color:var(--r);font-size:.82rem;margin-top:.5rem;min-height:1.1rem}
-.level-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%}
-.level-card{background:var(--s);border:2px solid var(--bd);border-radius:var(--rad);padding:1.5rem 1.25rem;text-align:center;cursor:pointer;transition:all .2s}
-.level-card:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:0 6px 20px rgba(26,122,88,.15)}
-.level-icon{font-size:2.5rem;display:block;margin-bottom:.5rem}
-.level-label{font-weight:800;font-size:1.1rem;margin-bottom:.25rem}
-.level-sub{font-size:.78rem;color:var(--t3);line-height:1.4}
-.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;width:100%}
-.theme-card{background:var(--s);border:1.5px solid var(--bd);border-radius:var(--rad);padding:1.1rem .9rem;text-align:center;cursor:pointer;transition:all .2s}
-.theme-card:hover{border-color:var(--g);transform:translateY(-2px);box-shadow:0 4px 16px rgba(26,122,88,.12)}
-.ti{font-size:2rem;display:block;margin-bottom:.4rem}
-.tl{font-weight:800;font-size:.92rem;margin-bottom:.2rem}
-.td{font-size:.74rem;color:var(--t3);line-height:1.35}
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.1rem 0}
-.pcard{border-radius:10px;padding:.85rem 1rem}
-.pcard.green{background:var(--gl);border:1px solid var(--gm)}
-.pcard.amber{background:var(--al);border:1px solid #f5d08a}
-.pcard h4{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
-.pcard.green h4{color:var(--gd)}
-.pcard.amber h4{color:#7a4f0a}
-.pcard ul{list-style:none;padding:0}
-.pcard li{font-size:.85rem;line-height:1.5;margin-bottom:.3rem;padding-left:1.1rem;position:relative}
-.pcard.green li::before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:800}
-.pcard.amber li::before{content:"→";position:absolute;left:0;color:var(--a)}
-.obj-box{background:var(--bl);border:1px solid #b5d4f4;border-radius:10px;padding:.85rem 1rem;margin-bottom:1.1rem}
-.obj-box .obj-label{font-size:.75rem;font-weight:800;color:#0c447c;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
-.obj-box p{font-size:.92rem;color:#0c447c}
-#learn-screen{display:none;flex-direction:column;min-height:100vh;background:#f8f5ef}
-#learn-screen.active{display:flex}
-.topbar{display:flex;align-items:center;gap:.85rem;padding:.8rem 1.25rem;background:var(--s);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:20;flex-wrap:wrap;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.tb-title{font-family:'Caveat',cursive;font-size:1.15rem;color:var(--g);font-weight:700;flex:1;min-width:100px}
-.progress-pill{background:var(--gl);border:1px solid var(--gm);border-radius:20px;padding:.25rem .75rem;font-size:.78rem;font-weight:700;color:var(--gd)}
-.learn-body{display:flex;flex-direction:column;gap:.9rem;padding:1rem 1.25rem;max-width:760px;width:100%;margin:0 auto;flex:1}
-.teacher-bubble{background:var(--s);border:1px solid var(--bd);border-radius:var(--rad);padding:1.1rem 1.25rem;box-shadow:var(--sh)}
-.teacher-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.85rem;padding-bottom:.65rem;border-bottom:1px solid var(--bd)}
-.avatar{width:36px;height:36px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;border:2px solid var(--gm)}
-.teacher-name{font-weight:800;font-size:.85rem;color:var(--g)}
-.teacher-role{font-size:.73rem;color:var(--t3);margin-top:1px}
-.msg-lesson{background:#f0fdf6;border-left:3px solid var(--g);border-radius:8px;padding:.8rem 1rem;margin-bottom:.75rem;font-size:.92rem;line-height:1.65;color:var(--gd)}
-.msg-example{background:#faf6ef;border-left:3px solid var(--a);border-radius:8px;padding:.7rem .9rem;margin-bottom:.75rem;font-size:.85rem;line-height:1.55;color:#5a3e00}
-.msg-consigne{font-size:.92rem;font-weight:700;color:#2d2416;margin-bottom:0;padding:.5rem 0}
-.msg-question{background:var(--bl);border-left:3px solid var(--b);border-radius:8px;padding:.7rem .9rem;margin-top:.65rem;font-size:.88rem;color:#0c447c;line-height:1.55}
-.history-item{margin-bottom:.75rem}
-.history-teacher{background:var(--gl);border-radius:10px 10px 10px 2px;padding:.65rem .9rem;font-size:.88rem;color:var(--gd);line-height:1.55;display:inline-block;max-width:92%}
-.history-student{background:#ede8de;border-radius:10px 10px 2px 10px;padding:.65rem .9rem;font-size:.88rem;color:#2d2416;line-height:1.55;display:block;text-align:right;max-width:92%;margin-left:auto}
-.write-box{background:var(--s);border:1px solid var(--bd);border-radius:var(--rad);padding:1.1rem 1.25rem;box-shadow:var(--sh)}
-.write-label{font-size:.73rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem}
-.write-actions{display:flex;gap:.6rem;margin-top:.65rem;justify-content:flex-end;flex-wrap:wrap}
-.story-built{background:var(--s);border:1px solid var(--bd);border-radius:var(--rad);padding:1rem 1.25rem;box-shadow:var(--sh)}
-.story-text{line-height:2.1;font-size:.93rem;color:#2d2416;background-image:repeating-linear-gradient(transparent,transparent 31px,#ede8de 31px,#ede8de 32px);background-size:100% 32px;padding:4px 0 4px}
-.prog-map{background:var(--s);border:1px solid var(--bd);border-radius:var(--rad);padding:1rem 1.25rem;box-shadow:var(--sh)}
-.prog-map-title{font-size:.73rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
-.mod-row{display:flex;align-items:center;gap:.4rem;margin-bottom:.5rem;flex-wrap:wrap}
-.mod-label{font-size:.78rem;font-weight:700;color:var(--t2);min-width:90px}
-.step-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0;transition:all .3s}
-.step-dot.done{background:var(--g);color:#fff}
-.step-dot.current{background:var(--a);color:#fff;box-shadow:0 0 0 3px rgba(199,125,26,.25)}
-.step-dot.todo{background:#ede8de;color:var(--t3)}
-.brouillon-panel{background:var(--s);border:1px solid var(--bd);border-radius:var(--rad);padding:1rem 1.25rem;box-shadow:var(--sh)}
-.milestone{background:var(--gl);border:1px solid var(--gm);border-radius:var(--rad);padding:.85rem 1.25rem;text-align:center;font-size:.92rem;color:var(--gd);font-weight:700;animation:pop .5s ease}
-@keyframes pop{0%{transform:scale(.95);opacity:0}70%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
-.spinner{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
-@keyframes spin{to{transform:rotate(360deg)}}
-#alert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;padding:1.5rem}
-#alert-overlay.active{display:flex}
-.alert-card{background:var(--s);border-radius:var(--rad);padding:2rem;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
-.alert-icon{font-size:2.5rem;text-align:center;display:block;margin-bottom:1rem}
-.alert-card h3{color:#c0392b;margin-bottom:.75rem;font-size:1.2rem}
-.hotline{background:#fdecea;border-radius:10px;padding:.75rem 1rem;margin:.75rem 0;font-size:.88rem;line-height:1.7}
-.hotline strong{color:#c0392b;display:block;margin-bottom:.25rem}
-.analyzing-wrap{text-align:center;padding:2rem}
-.analyzing-spinner{width:48px;height:48px;border:4px solid var(--gm);border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.25rem}
-.step-complete{text-align:center;padding:1rem}
-.sc-icon{font-size:2.5rem;display:block;margin-bottom:.5rem;animation:bounce .8s infinite alternate}
-@keyframes bounce{to{transform:translateY(-6px)}}
-.production-box{background:#faf6ef;border:1px solid var(--bd);border-radius:10px;padding:1rem;margin:1rem 0;font-size:.93rem;line-height:1.8;font-style:italic;color:#2d2416;text-align:left}
-@media(max-width:480px){.level-grid,.theme-grid,.profile-grid{grid-template-columns:1fr}}
-</style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mon Professeur d'Écriture — Mme Granger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet"/>
+    <style>
+        /* === STYLE DE BASE === */
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{min-height:100vh;font-family:'Nunito',sans-serif;background:#f8f5ef;color:#2d2416;overflow-x:hidden}
+        :root{--g:#1a7a58;--gl:#e6f7f0;--gm:#9fd8c0;--gd:#0f5a3e;--a:#c77d1a;--al:#fef3e2;--r:#c0392b;--rl:#fdecea;--b:#1a5c9e;--bl:#e8f0fb;--s:#fff;--bd:#e8dece;--bd2:#d0c4b4;--t2:#6b5b47;--t3:#9e8c78;--rad:14px;--sh:0 2px 16px rgba(0,0,0,.07)}
+        
+        .screen{display:none;max-width:600px;margin:0 auto;padding:20px;animation:fadeIn 0.4s ease-out}
+        .screen.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+        /* === DESIGN DES CARTES === */
+        .card{background:var(--s);border-radius:var(--rad);padding:24px;box-shadow:var(--sh);border:1px solid var(--bd);margin-bottom:20px}
+        h1{font-family:'Caveat',cursive;font-size:2.5rem;color:var(--g);text-align:center;margin-bottom:10px}
+        p.intro{text-align:center;color:var(--t2);margin-bottom:30px}
+
+        /* === FORMULAIRE === */
+        label{display:block;margin-bottom:8px;font-weight:700;color:var(--t2)}
+        input, select, textarea{width:100%;padding:12px;border-radius:10px;border:2px solid var(--bd);font-family:inherit;font-size:1rem;margin-bottom:20px;transition:border-color 0.2s}
+        input:focus, select:focus{border-color:var(--gm);outline:none}
+
+        /* === BOUTONS === */
+        .btn{display:block;width:100%;padding:15px;border-radius:12px;border:none;background:var(--g);color:white;font-size:1.1rem;font-weight:800;cursor:pointer;transition:transform 0.1s, background 0.2s}
+        .btn:hover{background:var(--gd)}
+        .btn:active{transform:scale(0.98)}
+
+        /* === CHAT === */
+        #chat-box{height:300px;overflow-y:auto;border:1px solid var(--bd);border-radius:10px;padding:15px;background:#fcfaf7;margin-bottom:15px}
+        .msg{margin-bottom:15px;max-width:85%;padding:12px;border-radius:15px;line-height:1.4}
+        .msg.pro{background:var(--gl);color:var(--gd);align-self:flex-start;border-bottom-left-radius:2px}
+        .msg.user{background:var(--bl);color:var(--b);margin-left:auto;border-bottom-right-radius:2px}
+
+        /* === ALERTE === */
+        #alert-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000}
+        #alert-overlay.active{display:flex}
+        .alert-box{background:white;padding:30px;border-radius:20px;max-width:400px;text-align:center}
+    </style>
 </head>
 <body>
 
-<!-- ═══ SCREEN 1 : NOM + CLASSE ═══════════════════════════════════ -->
-<div class="screen centered" id="s-welcome" style="background:#f8f5ef">
-  <div class="card" style="max-width:460px;text-align:center">
-    <div style="font-size:3rem;margin-bottom:1rem">✏️</div>
-    <h1>Mon Professeur<br>d'Écriture</h1>
-    <p class="sub" style="margin-bottom:1.75rem">Envoyé par <strong>Mme Granger</strong> pour t'apprendre à écrire. Pas à ta place — avec toi !</p>
-    <label class="lbl" for="name-input">Comment tu t'appelles ?</label>
-    <input type="text" id="name-input" placeholder="Ton prénom..." maxlength="30" style="text-align:center;font-size:1.05rem" onkeydown="if(event.key==='Enter')goToLevel()"/>
-    <button class="btn bp bfull" onclick="goToLevel()">Suivant →</button>
-    <div class="err" id="name-err"></div>
-    <button class="btn bs bsm" onclick="resetAndClear()" style="margin-top:1rem">⟳ Nouvel élève</button>
-  </div>
-</div>
+    <div id="screen-welcome" class="screen active">
+        <h1>Bonjour !</h1>
+        <p class="intro">Bienvenue dans l'atelier d'écriture de Mme Granger.</p>
+        <div class="card">
+            <label>Comment t'appelles-tu ?</label>
+            <input type="text" id="input-name" placeholder="Ton prénom...">
+            
+            <label>Ton niveau :</label>
+            <select id="select-level">
+                <option value="CE1">CE1</option>
+                <option value="CE2">CE2</option>
+                <option value="CM1">CM1</option>
+                <option value="CM2">CM2</option>
+            </select>
 
-<!-- ═══ SCREEN 2 : NIVEAU ═══════════════════════════════════════ -->
-<div class="screen centered" id="s-level" style="background:#f8f5ef">
-  <div style="max-width:460px;width:100%">
-    <div style="text-align:center;margin-bottom:1.5rem">
-      <h2 id="level-heading">Quelle est ta classe ?</h2>
-      <p class="sub">Pour adapter les exercices à ton programme</p>
+            <button class="btn" onclick="startApp()">Commencer l'atelier</button>
+        </div>
     </div>
-    <div class="level-grid">
-      <div class="level-card" onclick="selectLevel('6eme','6ème')">
-        <span class="level-icon">🏫</span>
-        <div class="level-label">6ème</div>
-        <div class="level-sub">Monstres, aventures, contes et récits imaginaires</div>
-      </div>
-      <div class="level-card" onclick="selectLevel('5eme','5ème')">
-        <span class="level-icon">⚔️</span>
-        <div class="level-label">5ème</div>
-        <div class="level-sub">Quêtes, héros, chevalerie et mondes inventés</div>
-      </div>
+
+    <div id="screen-app" class="screen">
+        <h1 id="user-title">Atelier d'écriture</h1>
+        <div class="card">
+            <div id="chat-box">
+                <div class="msg pro">Bonjour ! Je suis Mme Granger. Écris une phrase ou un petit texte, et je vais t'aider à l'améliorer.</div>
+            </div>
+            <textarea id="input-text" rows="3" placeholder="Écris ici..."></textarea>
+            <button class="btn" id="btn-send" onclick="sendMessage()">Demander de l'aide</button>
+            <button class="btn" style="background:#9e8c78; margin-top:10px;" onclick="resetApp()">Changer d'élève</button>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══ SCREEN 3 : DIAGNOSTIC ════════════════════════════════ -->
-<div class="screen" id="s-diagnostic" style="background:#f8f5ef">
-  <div class="card" style="max-width:620px">
-    <div class="teacher-header" style="margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--bd)">
-      <div class="avatar">👩‍🏫</div>
-      <div><div class="teacher-name">Mme Granger</div><div class="teacher-role">Test de départ — 5 minutes</div></div>
+    <div id="alert-overlay">
+        <div class="alert-box">
+            <p id="alert-msg">Une erreur est survenue.</p>
+            <button class="btn" style="margin-top:20px" onclick="closeAlert()">D'accord</button>
+        </div>
     </div>
-    <div class="msg-lesson" id="diag-intro"></div>
-    <label class="lbl" style="margin-top:.75rem">Ton texte :</label>
-    <textarea id="diag-input" rows="6" placeholder="Écris ici..."></textarea>
-    <div style="display:flex;justify-content:flex-end;margin-top:.75rem">
-      <button class="btn bp" id="diag-btn" onclick="submitDiagnostic()">Envoyer ✓</button>
-    </div>
-    <div class="err" id="diag-err"></div>
-    <p style="font-size:.78rem;color:var(--t3);margin-top:.75rem">Ce n'est pas un test noté. C'est pour mieux t'aider !</p>
-  </div>
-</div>
 
-<!-- ═══ SCREEN 4 : ANALYSE EN COURS ══════════════════════════ -->
-<div class="screen centered" id="s-analyzing" style="background:#f8f5ef">
-  <div class="analyzing-wrap">
-    <div class="analyzing-spinner"></div>
-    <p style="font-weight:700;color:var(--g)">Mme Granger lit ton texte...</p>
-    <p class="sub" style="margin-top:.3rem">Elle prépare ton profil personnalisé</p>
-  </div>
-</div>
+    <script>
+        // --- ÉTAT DE L'APPLICATION ---
+        let S = {
+            name: "",
+            level: "CE1",
+            loading: false
+        };
 
-<!-- ═══ SCREEN 5 : PROFIL ════════════════════════════════════ -->
-<div class="screen" id="s-profile" style="background:#f8f5ef">
-  <div class="card" style="max-width:580px">
-    <div class="teacher-header" style="margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--bd)">
-      <div class="avatar">👩‍🏫</div>
-      <div><div class="teacher-name">Mme Granger</div><div class="teacher-role">Voici ce que j'ai vu</div></div>
-    </div>
-    <div class="msg-lesson" id="profile-msg"></div>
-    <div class="profile-grid">
-      <div class="pcard green">
-        <h4>✨ Tes forces</h4>
-        <ul id="profile-forces"></ul>
-      </div>
-      <div class="pcard amber">
-        <h4>🎯 On va travailler</h4>
-        <ul id="profile-points"></ul>
-      </div>
-    </div>
-    <div class="obj-box">
-      <div class="obj-label">Notre premier objectif</div>
-      <p id="profile-obj"></p>
-    </div>
-    <p style="font-size:.84rem;color:var(--t2);margin-bottom:1rem">Maintenant, choisis le thème de tes exercices d'écriture !</p>
-    <button class="btn bp bfull" onclick="goToThemes()">Choisir mon thème →</button>
-  </div>
-</div>
-
-<!-- ═══ SCREEN 6 : THÈME ══════════════════════════════════════ -->
-<div class="screen" id="s-theme" style="background:#f8f5ef;flex-direction:column;align-items:center">
-  <div style="max-width:560px;width:100%">
-    <div style="text-align:center;margin-bottom:1.5rem">
-      <h2 id="theme-heading">Choisis ton thème !</h2>
-      <p class="sub">Sur quel sujet tu veux écrire tes exercices ?</p>
-    </div>
-    <div class="theme-grid" id="theme-grid"></div>
-  </div>
-</div>
-
-<!-- ═══ SCREEN 7 : SESSION D'APPRENTISSAGE ═══════════════════ -->
-<div id="learn-screen">
-  <div class="topbar">
-    <div class="tb-title" id="tb-title">✏️ Atelier</div>
-    <div class="progress-pill" id="tb-progress">Module 1 — Étape 1</div>
-    <button class="btn bs bsm" onclick="toggleBrouillon()">📝 Brouillon</button>
-  </div>
-  <div class="learn-body" id="learn-body"></div>
-</div>
-
-<!-- ═══ SCREEN 8 : ÉTAPE VALIDÉE ═════════════════════════════ -->
-<div class="screen centered" id="s-stepok" style="background:#f8f5ef">
-  <div class="card" style="max-width:520px">
-    <div class="step-complete">
-      <span class="sc-icon">🌟</span>
-      <h2 id="stepok-title">Bravo !</h2>
-      <p class="sub" id="stepok-msg" style="margin:.5rem 0 1rem"></p>
-      <div class="production-box" id="stepok-prod"></div>
-      <div style="font-size:.84rem;color:var(--t2);margin-bottom:1rem" id="stepok-learned"></div>
-      <button class="btn bp bfull" id="stepok-btn" onclick="nextStep()">Étape suivante →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ ALERTE ═════════════════════════════════════════════════ -->
-<div id="alert-overlay">
-  <div class="alert-card">
-    <span class="alert-icon">💙</span>
-    <h3>Quelque chose d'important</h3>
-    <p id="alert-msg" style="font-size:.9rem;line-height:1.65;margin-bottom:.75rem"></p>
-    <div class="hotline">
-      <strong>Si tu as besoin d'aide :</strong>
-      📞 <strong>119</strong> — Allô Enfance en Danger (gratuit, 24h/24)<br>
-      📞 <strong>3114</strong> — Si tu te sens très mal (gratuit, 24h/24)<br>
-      📞 <strong>3020</strong> — Harcèlement scolaire
-    </div>
-    <p style="font-size:.84rem;color:var(--t2);margin-bottom:1rem">Parles-en à un adulte en qui tu as confiance : un parent, ton professeur, l'infirmière scolaire. Tu n'es pas seul(e).</p>
-    <button class="btn bp bfull" onclick="closeAlert()">J'ai compris — Continuer</button>
-  </div>
-</div>
-
-<script>
-/* ═══════════════════════════════════════════════════════════
-   CURRICULUM — Programmes EN 2025 (6e cycle 3, 5e cycle 4)
-═══════════════════════════════════════════════════════════ */
-const THEMES = {
-  '6eme': [
-    { id:'monstre', label:'Un monstre extraordinaire', icon:'👾', desc:'Invente une créature terrifiante ou attachante...' },
-    { id:'aventure', label:'Une aventure incroyable', icon:'🗺️', desc:'Un héros part explorer l\'inconnu...' },
-    { id:'ruse', label:'Un héros très rusé', icon:'🦊', desc:'Un personnage qui se sort de tout avec l\'intelligence...' },
-    { id:'creation', label:'Une invention magique', icon:'✨', desc:'Un objet ou une découverte qui change tout...' },
-  ],
-  '5eme': [
-    { id:'chevalier', label:'Un chevalier en quête', icon:'⚔️', desc:'Un guerrier noble part en mission périlleuse...' },
-    { id:'voyage', label:'Un voyage vers l\'inconnu', icon:'🚀', desc:'Partir loin, très loin, vers un monde mystérieux...' },
-    { id:'heros', label:'Un héros ordinaire', icon:'🦸', desc:'Quelqu\'un comme toi qui devient courageux...' },
-    { id:'monde', label:'Un monde imaginaire', icon:'🌍', desc:'Invente un univers avec ses propres règles...' },
-  ]
-}
-
-const MODULES = [
-  {
-    id:1, title:'La phrase',
-    steps:[
-      { id:1, title:'La phrase simple', short:'Qui fait quoi ?',
-        objective:'Écrire une phrase qui répond à la question : qui fait quoi ? (sujet + verbe)',
-        lecon:'Une phrase, c\'est quelqu\'un (ou quelque chose) qui FAIT une action. On appelle ça le sujet et le verbe. Sans sujet et sans verbe, ce n\'est pas une phrase.' },
-      { id:2, title:'La phrase enrichie', short:'Ajouter des détails',
-        objective:'Enrichir sa phrase en ajoutant où, quand ou comment',
-        lecon:'Une bonne phrase ne dit pas seulement QUI fait QUOI. Elle dit aussi OÙ, QUAND ou COMMENT. Ces détails rendent la phrase vivante et précise.' },
-      { id:3, title:'La ponctuation', short:'Majuscule et point',
-        objective:'Commencer sa phrase par une majuscule et la terminer par un point',
-        lecon:'Chaque phrase commence par une MAJUSCULE et se termine par un POINT. Ce sont des signaux pour le lecteur : "Une nouvelle idée commence" et "Cette idée est finie".' },
-      { id:4, title:'Enchaîner les phrases', short:'Mots de liaison',
-        objective:'Relier deux phrases avec un mot de liaison (et, puis, mais, donc, car...)',
-        lecon:'Pour raconter une histoire, on enchaîne les phrases. On utilise des mots-charnières : ET (on ajoute), PUIS (ensuite), MAIS (contraire), DONC (conséquence), CAR (cause).' },
-    ]
-  },
-  {
-    id:2, title:'Le paragraphe',
-    steps:[
-      { id:1, title:'Organiser ses idées', short:'Le brouillon',
-        objective:'Préparer son texte au brouillon en notant : qui, où, quand, quoi',
-        lecon:'Avant d\'écrire, les écrivains préparent leurs idées au brouillon. Ils notent : QUI sont les personnages ? OÙ se passe l\'action ? QUAND ? QUOI va-t-il se passer ?' },
-      { id:2, title:'Le récit', short:'Raconter dans l\'ordre',
-        objective:'Raconter des événements dans l\'ordre chronologique',
-        lecon:'Dans un récit, les événements se suivent dans l\'ordre. On dit QUAND : "Un matin...", "Soudain...", "Ensuite...". Le lecteur doit comprendre ce qui se passe d\'abord, puis après.' },
-      { id:3, title:'La description statique', short:'Comme une photo',
-        objective:'Décrire un personnage ou un lieu comme si c\'était une photo',
-        lecon:'Décrire, c\'est faire voir. On décrit ce qu\'on voit : la forme, la couleur, la taille, les détails. Comme si on prenait une photo et qu\'on l\'expliquait avec des mots.' },
-      { id:4, title:'Le dialogue', short:'Les personnages parlent',
-        objective:'Écrire les paroles d\'un personnage avec les guillemets et tirets',
-        lecon:'Quand un personnage parle, on utilise des guillemets (« ») ou des tirets (—) pour montrer ses paroles. On ajoute qui parle : "dit-il", "répondit-elle".' },
-      { id:5, title:'La description en mouvement', short:'Décrire l\'action',
-        objective:'Décrire un personnage ou lieu en mouvement, avec des verbes d\'action',
-        lecon:'La description peut aussi montrer du mouvement : les cheveux qui volent, les yeux qui cherchent, les pieds qui courent. Des verbes d\'action rendent la description vivante.' },
-      { id:6, title:'La scène d\'action', short:'Tension et rapidité',
-        objective:'Écrire une scène d\'action avec des phrases courtes qui donnent du rythme',
-        lecon:'Dans une scène d\'action, les phrases sont COURTES. On va vite. On ne décrit pas trop. Le lecteur doit sentir la rapidité, la tension, le danger. Chaque phrase = une action.' },
-      { id:7, title:'Lier les paragraphes', short:'Connecteurs logiques',
-        objective:'Enchaîner deux paragraphes avec une phrase de transition',
-        lecon:'Quand on passe à une nouvelle idée, on utilise une phrase de transition. Elle montre que quelque chose change : le temps, l\'endroit, le personnage ou l\'ambiance.' },
-    ]
-  },
-  {
-    id:3, title:'Écrits scolaires',
-    steps:[
-      { id:1, title:'Répondre à une question', short:'Réponse complète',
-        objective:'Formuler une réponse complète qui reprend les termes de la question',
-        lecon:'Pour répondre à une question, on ne dit pas juste "oui" ou "non". On fait une PHRASE COMPLÈTE qui reprend les mots de la question. Ex : "Pourquoi ?" → "Parce que..."' },
-      { id:2, title:'Le paragraphe argumenté', short:'Idée + argument + exemple',
-        objective:'Écrire un paragraphe avec une idée, un argument et un exemple',
-        lecon:'Un bon paragraphe argumenté a 3 parties : 1) Mon IDÉE (ce que je pense), 2) Mon ARGUMENT (pourquoi), 3) Mon EXEMPLE (la preuve). C\'est la structure de base du collège.' },
-    ]
-  }
-]
-
-/* ═══════════════════════════════════════════════════════════
-   ÉTAT GLOBAL & PERSISTANCE
-═══════════════════════════════════════════════════════════ */
-const S = {
-  name:'', niveau:'', niveauLabel:'',
-  theme:'', themeLabel:'',
-  profile:null,
-  currentModule:1, currentStep:1,
-  conversation:[], // {role,content}
-  loading:false, currentInput:'',
-  showBrouillon:false, brouillon:'',
-  stepsValidated:[], // ["1-1","1-2",...]
-  productions:[], // validated text per step
-  lastValidatedText:'',
-  lastValidationMsg:''
-}
-
-// Sauvegarde automatique dans localStorage
-function saveState() {
-  const toSave = {
-    name: S.name, niveau: S.niveau, niveauLabel: S.niveauLabel,
-    theme: S.theme, themeLabel: S.themeLabel,
-    profile: S.profile,
-    currentModule: S.currentModule, currentStep: S.currentStep,
-    stepsValidated: S.stepsValidated, productions: S.productions,
-    brouillon: S.brouillon, showBrouillon: S.showBrouillon
-  };
-  localStorage.setItem('ecritureState', JSON.stringify(toSave));
-}
-
-function restoreState() {
-  const saved = localStorage.getItem('ecritureState');
-  if(!saved) return false;
-  try {
-    const data = JSON.parse(saved);
-    if(data.name && data.niveau && data.theme && data.profile) {
-      S.name = data.name; S.niveau = data.niveau; S.niveauLabel = data.niveauLabel;
-      S.theme = data.theme; S.themeLabel = data.themeLabel;
-      S.profile = data.profile;
-      S.currentModule = data.currentModule || 1;
-      S.currentStep = data.currentStep || 1;
-      S.stepsValidated = data.stepsValidated || [];
-      S.productions = data.productions || [];
-      S.brouillon = data.brouillon || '';
-      S.showBrouillon = data.showBrouillon || false;
-      S.conversation = []; // on repart sans historique, la leçon sera rechargée
-      return true;
-    }
-  } catch(e) {}
-  return false;
-}
-
-function resetAndClear() {
-  localStorage.removeItem('ecritureState');
-  location.reload();
-}
-
-/* ═══════════════════════════════════════════════════════════
-   APPELS API (Groq + Mistral)
-═══════════════════════════════════════════════════════════ */
-async function callAI(provider, messages) {
-  // provider: 'groq' ou 'mistral'
-  const res = await fetch('/.netlify/functions/api', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ provider, messages })
-  });
-  const data = await res.json();
-  if(!res.ok) throw new Error(data.error || `Erreur ${res.status}`);
-  return data.text;
-}
-
-// Envoi d'une notification à l'enseignant (webhook)
-async function notifyTeacher(action, details) {
-  try {
-    await fetch('/.netlify/functions/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, details, timestamp: new Date().toISOString() })
-    });
-  } catch(e) { console.warn("Notification failed", e); }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   NAVIGATION & PERSISTANCE
-═══════════════════════════════════════════════════════════ */
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('learn-screen').classList.remove('active');
-  if(id==='learn') document.getElementById('learn-screen').classList.add('active');
-  else document.getElementById(id).classList.add('active');
-}
-
-function goToLevel() {
-  const v = document.getElementById('name-input').value.trim();
-  if(!v){ document.getElementById('name-err').textContent='Écris ton prénom !'; return; }
-  S.name = v;
-  document.getElementById('level-heading').textContent = `Quelle est ta classe, ${S.name} ?`;
-  show('s-level');
-  saveState();
-}
-document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')goToLevel()});
-
-function selectLevel(id, label) {
-  S.niveau = id; S.niveauLabel = label;
-  document.getElementById('diag-intro').innerHTML =
-    `Bonjour ${S.name} ! Je suis l'assistante de Mme Granger.<br><br>
-    <strong>Pour commencer</strong>, j'aimerais voir comment tu écris aujourd'hui. <em>Ce n'est pas noté, il n'y a pas de bonne ou mauvaise réponse.</em><br><br>
-    Écris <strong>3 ou 4 phrases</strong> pour décrire un endroit que tu aimes bien (ta chambre, un parc, la maison de tes grands-parents...).`;
-  show('s-diagnostic');
-  setTimeout(()=>document.getElementById('diag-input').focus(),200);
-  saveState();
-}
-
-function goToThemes() {
-  const grid = document.getElementById('theme-grid');
-  grid.innerHTML = '';
-  document.getElementById('theme-heading').textContent = `Choisis ton thème, ${S.name} !`;
-  THEMES[S.niveau].forEach(t=>{
-    const d = document.createElement('div');
-    d.className = 'theme-card';
-    d.innerHTML = `<span class="ti">${t.icon}</span><div class="tl">${t.label}</div><div class="td">${t.desc}</div>`;
-    d.onclick = ()=>selectTheme(t.id, t.label, t.icon);
-    grid.appendChild(d);
-  });
-  show('s-theme');
-}
-
-function selectTheme(id, label, icon) {
-  S.theme=id; S.themeLabel=label;
-  S.conversation=[]; S.currentInput=''; S.productions=[];
-  S.stepsValidated=[]; S.showBrouillon=false; S.brouillon='';
-  if(S.profile){
-    S.currentModule = S.profile.moduleDepart||1;
-    S.currentStep = S.profile.etapeDepart||1;
-  } else { S.currentModule=1; S.currentStep=1; }
-  document.getElementById('tb-title').textContent=`${icon} ${S.name}`;
-  updateProgress();
-  saveState();
-  show('learn');
-  loadLesson();
-}
-
-function updateProgress() {
-  const mod = MODULES[S.currentModule-1];
-  const step = mod?.steps[S.currentStep-1];
-  document.getElementById('tb-progress').textContent = `Module ${S.currentModule} — ${step?.short||''}`;
-}
-
-function nextStep() {
-  const mod = MODULES[S.currentModule-1];
-  if(S.currentStep < mod.steps.length) {
-    S.currentStep++;
-  } else if(S.currentModule < MODULES.length) {
-    S.currentModule++; S.currentStep=1;
-  } else {
-    show('s-stepok');
-    document.getElementById('stepok-title').textContent=`Incroyable ${S.name} ! 🏆`;
-    document.getElementById('stepok-msg').textContent='Tu as terminé tout le programme. Mme Granger va être très fière !';
-    document.getElementById('stepok-btn').textContent='Recommencer';
-    document.getElementById('stepok-btn').onclick=()=>show('s-theme');
-    return;
-  }
-  S.conversation=[]; S.currentInput='';
-  updateProgress();
-  saveState();
-  show('learn');
-  loadLesson();
-}
-
-function toggleBrouillon(){S.showBrouillon=!S.showBrouillon;renderLearnBody();saveState();}
-
-/* ═══════════════════════════════════════════════════════════
-   DIAGNOSTIC (utilise Mistral)
-═══════════════════════════════════════════════════════════ */
-async function submitDiagnostic() {
-  const text = document.getElementById('diag-input').value.trim();
-  if(text.length < 10){ document.getElementById('diag-err').textContent='Écris un peu plus !'; return; }
-  document.getElementById('diag-btn').disabled=true;
-  document.getElementById('diag-btn').innerHTML='<span class="spinner"></span>Lecture...';
-  show('s-analyzing');
-  const prompt = `Tu es Mme Granger, professeure de français experte en pédagogie différenciée.
-Analyse cette production d'un(e) élève de ${S.niveauLabel} nommé(e) ${S.name}.
-Sujet donné : "Décris en 3 ou 4 phrases un endroit que tu aimes bien"
-Production : "${text}"
-
-Évalue bienveillamment : structure des phrases (sujet/verbe), ponctuation, orthographe, cohérence, vocabulaire.
-Détermine le point de départ pédagogique parmi ces modules/étapes :
-- Module 1 Étape 1 : ne sait pas former une phrase (sujet+verbe)
-- Module 1 Étape 2 : forme des phrases simples mais sans détails
-- Module 1 Étape 3 : fait des phrases mais oublie majuscules/points
-- Module 1 Étape 4 : sait faire des phrases mais ne les enchaîne pas
-- Module 2 Étape 1 : sait enchaîner des phrases mais pas structurer un paragraphe
-- Module 2 Étape 2 : peut commencer le récit
-Sois sincère mais bienveillant. Ne mets pas un niveau de départ trop haut.
-Réponds UNIQUEMENT en JSON valide (sans markdown) :
-{"forces":["force1 formulée positivement","force2"],"pointsATravail":["point1 comme objectif","point2"],"moduleDepart":1,"etapeDepart":1,"messageEncourageant":"message sincère et chaleureux de 2-3 phrases pour ${S.name}","premierObjectif":"en 1 phrase simple ce qu'on va travailler d'abord"}`;
-
-  try {
-    const messages = [{ role: 'user', content: prompt }];
-    const r = await callAI('mistral', messages);
-    const clean = r.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-    let p; try{p=JSON.parse(clean);}catch{const m=clean.match(/\{[\s\S]*\}/);p=JSON.parse(m[0]);}
-    S.profile = p;
-    document.getElementById('profile-msg').textContent = p.messageEncourageant;
-    document.getElementById('profile-forces').innerHTML = p.forces.map(f=>`<li>${esc(f)}</li>`).join('');
-    document.getElementById('profile-points').innerHTML = p.pointsATravail.map(f=>`<li>${esc(f)}</li>`).join('');
-    document.getElementById('profile-obj').textContent = p.premierObjectif;
-    saveState();
-    show('s-profile');
-  } catch(e) {
-    S.profile = {moduleDepart:1,etapeDepart:1,forces:['Tu as essayé !'],pointsATravail:['Construire des phrases complètes'],messageEncourageant:`Merci ${S.name} ! On va apprendre ensemble étape par étape.`,premierObjectif:'Écrire des phrases simples et correctes'};
-    document.getElementById('profile-msg').textContent = S.profile.messageEncourageant;
-    document.getElementById('profile-forces').innerHTML=`<li>${esc(S.profile.forces[0])}</li>`;
-    document.getElementById('profile-points').innerHTML=`<li>${esc(S.profile.pointsATravail[0])}</li>`;
-    document.getElementById('profile-obj').textContent=S.profile.premierObjectif;
-    saveState();
-    show('s-profile');
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   MOTEUR PÉDAGOGIQUE (utilise Groq pour le dialogue)
-═══════════════════════════════════════════════════════════ */
-function getStep() {
-  return MODULES[S.currentModule-1]?.steps[S.currentStep-1];
-}
-
-function buildSystemPrompt() {
-  const step = getStep();
-  return `Tu es un professeur particulier de français expert, envoyé par Mme Granger.
-Tu aides ${S.name} (élève de ${S.niveauLabel}) à apprendre à écrire.
-Thème choisi par l'élève : "${S.themeLabel}"
-Objectif de cette séance : ${step.objective}
-Mini-leçon : ${step.lecon}
-
-RÈGLES PÉDAGOGIQUES ABSOLUES — ne jamais enfreindre :
-1. Tu ne réécris JAMAIS la phrase ou le texte de l'élève. Jamais. Même partiellement.
-2. Tu poses des questions précises pour que l'élève trouve lui-même. ("Qui fait l'action ?" "Qu'est-ce qui se passe exactement ?" "Ajoute un endroit")
-3. Tes exemples sont TOUJOURS sur un sujet TRÈS différent du thème "${S.themeLabel}". (ex: si thème=aventure, donne un exemple sur la cuisine ou les animaux de ferme)
-4. Tu ne corriges qu'UNE chose à la fois.
-5. Tu commences TOUJOURS par nommer quelque chose de bien dans ce que l'élève a écrit.
-6. Tu tutoies l'élève et l'appelles "${S.name}".
-7. Si le texte contient quelque chose d'inquiétant (violence réelle, maltraitance, détresse grave, pensées suicidaires) → alerte:true IMMÉDIATEMENT.
-8. Tu valides UNIQUEMENT quand l'objectif est vraiment atteint. Pas de pitié pédagogique.
-9. Ne jamais donner la réponse. Toujours guider.
-10. Si c'est la première interaction (lecon), donne la mini-leçon, un exemple sur un sujet DIFFÉRENT, et la consigne.
-
-Format de ta réponse — JSON uniquement, sans markdown, sans texte avant ou après :
-{"message":"ton message (2-4 phrases)","questionCle":"UNE question précise pour progresser (vide si validé)","exemple":"si tu donnes un exemple: une phrase courte sur un sujet très différent du thème (sinon vide)","valide":false,"messageValidation":"si valide=true: explique CE QUI EST BIEN et POURQUOI, en termes simples","alerte":false,"messageAlerte":"si alerte=true: message doux pour orienter vers un adulte"}`;
-}
-
-async function loadLesson() {
-  S.loading=true; S.conversation=[]; S.currentInput='';
-  renderLearnBody();
-  const step = getStep();
-  const systemPrompt = buildSystemPrompt();
-  const userMsg = `[DÉBUT DE SÉANCE] Présente la mini-leçon sur "${step.title}" à ${S.name}. Rappel : ton exemple doit être sur un sujet TRÈS différent de "${S.themeLabel}".`;
-  try {
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMsg }
-    ];
-    const r = await callAI('groq', messages);
-    const parsed = parseResponse(r);
-    if(parsed.alerte){showAlert(parsed.messageAlerte);return;}
-    S.conversation.push({role:'assistant',content:JSON.stringify(parsed)});
-    S.loading=false;
-    renderLearnBody();
-  } catch(e){
-    S.loading=false;
-    renderLearnBody();
-  }
-}
-
-async function submitAttempt() {
-  const text = S.currentInput.trim();
-  if(!text||text.length<3) return;
-  S.loading=true;
-  const studentMsg = text;
-  S.currentInput='';
-  renderLearnBody();
-  const systemPrompt = buildSystemPrompt();
-  // Construire l'historique des messages pour Groq
-  const messages = [{ role: 'system', content: systemPrompt }];
-  // Ajouter l'historique précédent (conversation)
-  for(let c of S.conversation) {
-    if(c.role === 'user') {
-      messages.push({ role: 'user', content: c.content });
-    } else if(c.role === 'assistant') {
-      try {
-        const parsed = JSON.parse(c.content);
-        let assistantText = parsed.message;
-        if(parsed.questionCle) assistantText += " " + parsed.questionCle;
-        messages.push({ role: 'assistant', content: assistantText });
-      } catch(e) { messages.push({ role: 'assistant', content: c.content }); }
-    }
-  }
-  messages.push({ role: 'user', content: studentMsg });
-  try {
-    const r = await callAI('groq', messages);
-    const parsed = parseResponse(r);
-    if(parsed.alerte){showAlert(parsed.messageAlerte);return;}
-    S.conversation.push({role:'user',content:studentMsg});
-    S.conversation.push({role:'assistant',content:JSON.stringify(parsed)});
-    S.loading=false;
-    if(parsed.valide){
-      S.lastValidatedText = studentMsg;
-      S.lastValidationMsg = parsed.messageValidation||parsed.message;
-      S.stepsValidated.push(`${S.currentModule}-${S.currentStep}`);
-      S.productions.push(studentMsg);
-      saveState();
-      renderLearnBody();
-      // Notifier l'enseignant
-      notifyTeacher('step_validated', {
-        eleve: S.name,
-        niveau: S.niveauLabel,
-        module: S.currentModule,
-        etape: getStep().title,
-        production: studentMsg,
-        feedback: parsed.messageValidation
-      });
-      setTimeout(()=>showStepComplete(),600);
-    } else {
-      renderLearnBody();
-    }
-  } catch(e){
-    S.loading=false;
-    renderLearnBody();
-  }
-}
-
-function showStepComplete() {
-  const step = getStep();
-  document.getElementById('stepok-title').textContent=`Bravo ${S.name} ! 🌟`;
-  document.getElementById('stepok-msg').textContent=`Tu as maîtrisé : "${step.title}"`;
-  document.getElementById('stepok-prod').textContent=`"${S.lastValidatedText}"`;
-  document.getElementById('stepok-learned').textContent=S.lastValidationMsg;
-  const nextMod = S.currentModule;
-  const nextStep = S.currentStep+1;
-  const mod = MODULES[nextMod-1];
-  if(nextStep<=mod.steps.length){
-    document.getElementById('stepok-btn').textContent=`Étape suivante : ${mod.steps[nextStep-1].title} →`;
-  } else if(S.currentModule<MODULES.length){
-    document.getElementById('stepok-btn').textContent=`Module suivant : ${MODULES[S.currentModule].title} →`;
-  } else {
-    document.getElementById('stepok-btn').textContent='Voir le résultat final 🏆';
-  }
-  document.getElementById('stepok-btn').onclick=()=>nextStep();
-  show('s-stepok');
-}
-
-/* ═══════════════════════════════════════════════════════════
-   RENDU
-═══════════════════════════════════════════════════════════ */
-function renderLearnBody() {
-  const body = document.getElementById('learn-body');
-  let html = '';
-  const step = getStep();
-  if(!step){body.innerHTML='';return;}
-  // Progress map
-  html += `<div class="prog-map"><div class="prog-map-title">Ta progression</div>`;
-  MODULES.forEach(mod=>{
-    html+=`<div class="mod-row"><div class="mod-label">Module ${mod.id}</div>`;
-    mod.steps.forEach(st=>{
-      const key=`${mod.id}-${st.id}`;
-      const done=S.stepsValidated.includes(key);
-      const current=mod.id===S.currentModule&&st.id===S.currentStep;
-      const cls=done?'done':current?'current':'todo';
-      html+=`<div class="step-dot ${cls}" title="${st.title}">${done?'✓':st.id}</div>`;
-    });
-    html+='</div>';
-  });
-  html+='</div>';
-  if(S.showBrouillon){
-    html+=`<div class="brouillon-panel"><div class="write-label">📝 Mon brouillon — idées, mots...</div>
-    <textarea id="brouillon-ta" rows="4" placeholder="Écris tes idées ici avant de rédiger...">${esc(S.brouillon)}</textarea></div>`;
-  }
-  if(S.productions.length>0){
-    html+=`<div class="story-built"><div class="write-label">📖 Ce que j'ai écrit jusqu'ici (${S.productions.length} étape${S.productions.length>1?'s':''})</div>
-    <div class="story-text">${S.productions.map(p=>`<span>${esc(p)} </span>`).join('')}</div></div>`;
-  }
-  if(S.loading && S.conversation.length===0){
-    html+=`<div class="teacher-bubble"><div class="teacher-header"><div class="avatar">👩‍🏫</div><div><div class="teacher-name">Ton professeur</div><div class="teacher-role">Prépare ta leçon...</div></div></div><div style="text-align:center;padding:1rem;color:var(--t3)">⏳ Chargement...</div></div>`;
-  } else if(S.conversation.length>0){
-    html+=`<div class="teacher-bubble"><div class="teacher-header"><div class="avatar">👩‍🏫</div><div><div class="teacher-name">Ton professeur</div><div class="teacher-role">Module ${S.currentModule} · ${step.title}</div></div></div>`;
-    let firstAssistant = true;
-    for(let i=0;i<S.conversation.length;i++){
-      const c=S.conversation[i];
-      if(c.role==='assistant'){
-        let parsed;
-        try{parsed=JSON.parse(c.content);}catch{continue;}
-        if(firstAssistant){
-          html+=`<div class="msg-lesson">${esc(parsed.message)}</div>`;
-          if(parsed.exemple) html+=`<div class="msg-example"><strong>Exemple :</strong> ${esc(parsed.exemple)}</div>`;
-          if(parsed.questionCle) html+=`<div class="msg-consigne">${esc(parsed.questionCle)}</div>`;
-          firstAssistant=false;
-        } else {
-          if(i===S.conversation.length-1){
-            html+=`<div class="msg-question">${esc(parsed.message)}</div>`;
-            if(parsed.questionCle) html+=`<div class="msg-question" style="margin-top:.4rem;font-weight:700">💬 ${esc(parsed.questionCle)}</div>`;
-          } else {
-            html+=`<div class="history-item"><div class="history-teacher">${esc(parsed.message)}</div></div>`;
-          }
+        // --- FONCTIONS DE NAVIGATION ---
+        function startApp() {
+            const name = document.getElementById('input-name').value.trim();
+            if(!name) return alert("N'oublie pas d'entrer ton prénom !");
+            
+            S.name = name;
+            S.level = document.getElementById('select-level').value;
+            
+            document.getElementById('user-title').textContent = "Atelier de " + S.name;
+            showScreen('screen-app');
+            saveState();
         }
-      } else if(c.role==='user' && !c.content.startsWith('[DÉBUT')){
-        html+=`<div class="history-item"><div class="history-student">${esc(c.content)}</div></div>`;
-      }
-    }
-    html+='</div>';
-  }
-  if(!S.loading && S.conversation.length>0){
-    html+=`<div class="write-box"><div class="write-label">✍️ Ton écriture</div>
-    <textarea id="attempt-input" rows="3" placeholder="Écris ta phrase ici... (Entrée pour valider)"
-      onkeydown="handleKey(event)" oninput="S.currentInput=this.value">${esc(S.currentInput)}</textarea>
-    <div class="write-actions"><button class="btn bp" onclick="submitAttempt()">Valider ✓</button></div></div>`;
-  } else if(S.loading && S.conversation.length>0){
-    html+=`<div class="write-box"><div style="text-align:center;color:var(--t3);padding:.75rem"><span class="spinner" style="border-top-color:var(--g);border-color:var(--gm)"></span> Ton professeur lit ta phrase...</div></div>`;
-  }
-  body.innerHTML=html;
-  if(S.showBrouillon){
-    const ta=document.getElementById('brouillon-ta');
-    if(ta) ta.addEventListener('input',e=>{S.brouillon=e.target.value; saveState();});
-  }
-  if(!S.loading){
-    const inp=document.getElementById('attempt-input');
-    if(inp){inp.focus();inp.selectionStart=inp.selectionEnd=inp.value.length;}
-  }
-  setTimeout(()=>body.scrollTop=body.scrollHeight,50);
-}
 
-function handleKey(e){
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!S.loading)submitAttempt();}
-}
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-function showAlert(msg){
-  document.getElementById('alert-msg').textContent = msg || `${S.name}, ce que tu m'as écrit m'inquiète. Parles-en à un adulte en qui tu as confiance.`;
-  document.getElementById('alert-overlay').classList.add('active');
-  S.loading=false;
-}
-function closeAlert(){document.getElementById('alert-overlay').classList.remove('active');renderLearnBody();}
+        function resetApp() {
+            localStorage.clear();
+            location.reload();
+        }
 
-function parseResponse(raw){
-  const cleaned=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-  try{return JSON.parse(cleaned);}catch{
-    const m=cleaned.match(/\{[\s\S]*\}/);
-    if(m)return JSON.parse(m[0]);
-    throw new Error('Réponse invalide');
-  }
-}
-function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+        // --- GESTION DES MESSAGES ---
+        async function sendMessage() {
+            const text = document.getElementById('input-text').value.trim();
+            if(!text || S.loading) return;
 
-// Au chargement, restaurer l'état si possible
-window.addEventListener('DOMContentLoaded', () => {
-  if(restoreState()) {
-    // Rediriger vers l'écran approprié
-    if(S.name && S.niveau && S.theme && S.profile) {
-      document.getElementById('tb-title').textContent = `✏️ ${S.name}`;
-      updateProgress();
-      show('learn');
-      loadLesson();
-    } else if(S.name && S.niveau) {
-      selectLevel(S.niveau, S.niveauLabel);
-    } else if(S.name) {
-      document.getElementById('name-input').value = S.name;
-      goToLevel();
-    }
-  }
-});
-</script>
+            addMessage(text, 'user');
+            document.getElementById('input-text').value = "";
+            S.loading = true;
+            document.getElementById('btn-send').textContent = "Mme Granger réfléchit...";
+
+            try {
+                const response = await fetch('/.netlify/functions/gemini', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        prompt: `Tu es Mme Granger, une maîtresse bienveillante. Aide l'élève nommé ${S.name} (niveau ${S.level}) à améliorer ce texte : "${text}". Donne un conseil court et encourageant.`
+                    })
+                });
+
+                const data = await response.json();
+                if(data.answer) {
+                    addMessage(data.answer, 'pro');
+                } else {
+                    addMessage("Oh, j'ai eu un petit souci. Peux-tu répéter ?", 'pro');
+                }
+            } catch (err) {
+                addMessage("Je n'arrive pas à te répondre pour l'instant. Vérifie ta connexion.", 'pro');
+            } finally {
+                S.loading = false;
+                document.getElementById('btn-send').textContent = "Demander de l'aide";
+            }
+        }
+
+        function addMessage(txt, side) {
+            const box = document.getElementById('chat-box');
+            const div = document.createElement('div');
+            div.className = `msg ${side}`;
+            div.textContent = txt;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // --- SAUVEGARDE ET RESTAURATION ---
+        function saveState() {
+            localStorage.setItem('mme_granger_state', JSON.stringify(S));
+        }
+
+        function restoreState() {
+            try {
+                const saved = localStorage.getItem('mme_granger_state');
+                if(saved) {
+                    S = JSON.parse(saved);
+                    if(S.name) {
+                        document.getElementById('user-title').textContent = "Atelier de " + S.name;
+                        showScreen('screen-app');
+                    }
+                }
+            } catch(e) {
+                console.error("Erreur de restauration");
+                localStorage.clear();
+            }
+        }
+
+        function closeAlert() {
+            document.getElementById('alert-overlay').classList.remove('active');
+        }
+
+        // --- LANCEMENT ---
+        window.onload = () => {
+            // Si on demande un nettoyage via l'URL
+            if(window.location.search.includes('clear=true')) {
+                localStorage.clear();
+                window.history.replaceState({}, document.title, "/");
+            }
+            restoreState();
+        };
+    </script>
 </body>
 </html>
