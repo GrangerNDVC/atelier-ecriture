@@ -487,8 +487,11 @@ function initSession() {
     document.getElementById('chat-level').textContent = levelLabels[state.level];
     if (state.dys) document.getElementById('dys-badge').style.display = 'inline-flex';
 
-    const intro = `Salut ${user} ! 👋 Bienvenue dans ton atelier d'écriture.<br><br>On va travailler ensemble, tranquillement. Pas de panique, je suis là pour t'aider — pas pour te noter ! 😊<br><br>Pour commencer, dis-moi juste : <strong>est-ce que tu aimes lire ou écrire des histoires ?</strong>`;
-    addMsg(intro, 'ia');
+    const introText = `Salut ${user} ! 👋 Bienvenue dans ton atelier d'écriture. On va travailler ensemble, tranquillement. Pas de panique, je suis là pour t'aider — pas pour te noter ! 😊 Pour commencer, dis-moi juste : est-ce que tu aimes lire ou écrire des histoires ?`;
+    const introHtml = `Salut ${user} ! 👋 Bienvenue dans ton atelier d'écriture.<br><br>On va travailler ensemble, tranquillement. Pas de panique, je suis là pour t'aider — pas pour te noter ! 😊<br><br>Pour commencer, dis-moi juste : <strong>est-ce que tu aimes lire ou écrire des histoires ?</strong>`;
+    addMsg(introHtml, 'ia');
+    // ✅ On injecte le message d'accueil dans l'historique pour que le modèle sache ce qu'il a dit
+    state.history.push({ role: "assistant", content: introText });
 }
 
 async function sendToIA() {
