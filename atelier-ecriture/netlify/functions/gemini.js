@@ -1,9 +1,12 @@
 const https = require('https');
 
-// Ordre de priorité : DeepSeek V3 (meilleur gratuit) → Llama 3.3 70B → Mistral 7B
+// Priorité modèles : Mistral Small 3.1 (société française, excellent en français)
+// → Qwen 2.5 72B (très bon multilingue) → Llama 3.3 70B → DeepSeek → Mistral 7B
 const OPENROUTER_MODELS = [
-  "deepseek/deepseek-chat-v3-0324:free",
+  "mistralai/mistral-small-3.1-24b-instruct:free",
+  "qwen/qwen-2.5-72b-instruct:free",
   "meta-llama/llama-3.3-70b-instruct:free",
+  "deepseek/deepseek-chat-v3-0324:free",
   "mistralai/mistral-7b-instruct:free"
 ];
 
