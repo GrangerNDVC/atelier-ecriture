@@ -6,346 +6,302 @@
 <title>Tableau de bord — Professeur</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --purple:#5b4fcf; --accent:#3b82f6; --green:#10b981;
-  --orange:#f97316; --red:#ef4444;
-  --bg:#f0f4f8; --white:#fff; --text:#1a2035; --soft:#64748b;
-  --r:14px; --sh:0 4px 20px rgba(59,80,180,.09);
-}
+:root{--p:#5b4fcf;--a:#3b82f6;--g:#10b981;--o:#f97316;--r:#ef4444;
+  --bg:#f0f4f8;--w:#fff;--t:#1a2035;--s:#64748b;--rad:14px;--sh:0 4px 20px rgba(59,80,180,.09)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito',sans-serif;font-size:15px;background:var(--bg);color:var(--text);padding:24px}
-.container{max-width:1100px;margin:0 auto}
-/* Header */
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
-.page-header h1{font-size:1.6rem;font-weight:800;color:var(--purple)}
-.page-header p{color:var(--soft);font-size:.9rem;margin-top:2px}
-.badge-auth{background:var(--purple);color:#fff;padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:700}
+body{font-family:'Nunito',sans-serif;font-size:15px;background:var(--bg);color:var(--t);padding:24px}
+.wrap{max-width:1100px;margin:0 auto}
 /* Auth */
-#auth-screen{max-width:400px;margin:80px auto}
-.auth-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:36px 32px;text-align:center}
-.auth-card h2{font-size:1.4rem;font-weight:800;color:var(--purple);margin-bottom:8px}
-.auth-card p{color:var(--soft);font-size:.9rem;margin-bottom:24px}
-.auth-input{width:100%;padding:13px 15px;border:2px solid #e5e7eb;border-radius:10px;
-  font-family:'Nunito',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;margin-bottom:14px}
-.auth-input:focus{border-color:var(--purple)}
-.auth-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--accent));
-  color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;
-  font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s}
-.auth-btn:hover{transform:translateY(-1px)}
-.auth-error{color:var(--red);font-size:.85rem;margin-top:8px;display:none}
+#auth{max-width:400px;margin:80px auto}
+.auth-box{background:var(--w);border-radius:var(--rad);box-shadow:var(--sh);padding:36px 32px;text-align:center}
+.auth-box h2{font-size:1.4rem;font-weight:800;color:var(--p);margin-bottom:8px}
+.auth-box p{color:var(--s);font-size:.9rem;margin-bottom:24px}
+.ai{width:100%;padding:13px 15px;border:2px solid #e5e7eb;border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;margin-bottom:12px}
+.ai:focus{border-color:var(--p)}
+.ab{width:100%;padding:14px;background:linear-gradient(135deg,var(--p),var(--a));color:#fff;border:none;
+  border-radius:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer}
+.ab:hover{opacity:.92}
+.aerr{color:var(--r);font-size:.85rem;margin-top:8px;display:none}
 /* Dashboard */
-#dashboard{display:none}
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
-.stat-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:20px 22px;
-  border-left:4px solid var(--purple)}
-.stat-card .val{font-size:2rem;font-weight:900;color:var(--purple)}
-.stat-card .lbl{font-size:.82rem;color:var(--soft);margin-top:2px}
-.stat-card.green{border-left-color:var(--green)}.stat-card.green .val{color:var(--green)}
-.stat-card.orange{border-left-color:var(--orange)}.stat-card.orange .val{color:var(--orange)}
-.stat-card.red{border-left-color:var(--red)}.stat-card.red .val{color:var(--red)}
+#dash{display:none}
+.dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.dh h1{font-size:1.5rem;font-weight:800;color:var(--p)}
+.dh small{display:block;color:var(--s);font-size:.85rem;margin-top:2px}
+.cbadge{background:var(--p);color:#fff;padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:700}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.sc{background:var(--w);border-radius:var(--rad);box-shadow:var(--sh);padding:18px 20px;border-left:4px solid var(--p)}
+.sc .v{font-size:2rem;font-weight:900;color:var(--p)}.sc .l{font-size:.8rem;color:var(--s);margin-top:2px}
+.sc.g{border-left-color:var(--g)}.sc.g .v{color:var(--g)}
+.sc.o{border-left-color:var(--o)}.sc.o .v{color:var(--o)}
+.sc.r{border-left-color:var(--r)}.sc.r .v{color:var(--r)}
 /* Filters */
-.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
-.filters label{font-weight:700;font-size:.85rem;color:var(--purple)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.filters label{font-weight:700;font-size:.85rem;color:var(--p)}
 .filters select,.filters input{padding:8px 12px;border:2px solid #e5e7eb;border-radius:8px;
-  font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;color:var(--text)}
-.filters select:focus,.filters input:focus{border-color:var(--purple)}
-.btn-refresh{padding:8px 16px;background:var(--purple);color:#fff;border:none;border-radius:8px;
-  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:transform .15s}
-.btn-refresh:hover{transform:translateY(-1px)}
-.btn-export{padding:8px 16px;background:var(--green);color:#fff;border:none;border-radius:8px;
-  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-left:auto}
-/* Students table */
-.section-title{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:12px;margin-top:8px}
-.students-grid{display:grid;gap:12px}
-.student-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:0;overflow:hidden;cursor:pointer;transition:box-shadow .2s}
-.student-card:hover{box-shadow:0 6px 24px rgba(59,80,180,.15)}
-.student-header{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
-.student-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--accent));
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1rem;flex-shrink:0}
-.student-name{font-weight:800;font-size:.98rem}
-.student-meta{font-size:.78rem;color:var(--soft)}
-.student-badges{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.badge{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700}
-.badge.niveau{background:#ede9fe;color:var(--purple)}
-.badge.dys{background:#fff7ed;color:var(--orange)}
-.badge.livre{background:#ecfdf5;color:var(--green)}
-.badge.actif{background:#eff6ff;color:var(--accent)}
-.student-body{padding:16px 20px;display:none}
-.student-card.open .student-body{display:block}
-/* Métriques élève */
-.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
-.metric{background:#f8fafc;border-radius:10px;padding:12px 14px;text-align:center}
-.metric .mv{font-size:1.4rem;font-weight:900;color:var(--purple)}
-.metric .ml{font-size:.72rem;color:var(--soft);margin-top:2px}
-/* Historique */
-.history-title{font-weight:700;font-size:.88rem;color:var(--soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
-.log-entry{display:flex;gap:10px;margin-bottom:10px;font-size:.85rem}
-.log-time{color:var(--soft);flex-shrink:0;padding-top:2px;font-size:.75rem;min-width:70px}
-.log-user{background:#d1fae5;border-radius:8px;padding:6px 10px;flex:1;color:var(--text);line-height:1.5}
-.log-ia{background:var(--purple-light,#eef0fb);border-radius:8px;padding:6px 10px;flex:2;color:var(--text);line-height:1.5;font-size:.82rem}
-/* Difficultés */
-.diff-section{margin-top:12px}
-.diff-title{font-weight:700;font-size:.85rem;color:var(--red);margin-bottom:6px}
-.diff-item{background:#fff5f5;border-left:3px solid var(--red);border-radius:6px;padding:8px 12px;
-  font-size:.82rem;color:var(--text);margin-bottom:6px;line-height:1.5}
-.progress-section{margin-top:12px}
-.progress-title{font-weight:700;font-size:.85rem;color:var(--green);margin-bottom:6px}
-.progress-item{background:#f0fdf4;border-left:3px solid var(--green);border-radius:6px;padding:8px 12px;
-  font-size:.82rem;color:var(--text);margin-bottom:6px;line-height:1.5}
+  font-family:'Nunito',sans-serif;font-size:.88rem;outline:none}
+.filters select:focus,.filters input:focus{border-color:var(--p)}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;
+  font-size:.88rem;font-weight:700;cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-p{background:var(--p);color:#fff}
+.btn-g{background:var(--g);color:#fff}
+/* Loading */
+.loading{text-align:center;padding:50px;color:var(--s);font-size:1rem}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid #e5e7eb;
+  border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Students */
+.grid{display:grid;gap:10px}
+.sc2{background:var(--w);border-radius:var(--rad);box-shadow:var(--sh);overflow:hidden;cursor:pointer;transition:box-shadow .2s}
+.sc2:hover{box-shadow:0 6px 24px rgba(59,80,180,.15)}
+.sh2{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid #f1f5f9}
+.sav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--a));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.95rem;flex-shrink:0}
+.sname{font-weight:800;font-size:.95rem}.smeta{font-size:.75rem;color:var(--s)}
+.sbadges{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.badge{padding:3px 9px;border-radius:12px;font-size:.7rem;font-weight:700}
+.bn{background:#ede9fe;color:var(--p)}.bd{background:#fff7ed;color:var(--o)}
+.bl{background:#ecfdf5;color:var(--g)}.ba{background:#eff6ff;color:var(--a)}
+.sbody{padding:16px 18px;display:none}
+.sc2.open .sbody{display:block}
+/* Metrics */
+.mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px}
+.mc{background:#f8fafc;border-radius:8px;padding:10px 12px;text-align:center}
+.mc .mv{font-size:1.3rem;font-weight:900;color:var(--p)}.mc .ml{font-size:.7rem;color:var(--s);margin-top:2px}
+/* Difficultés / Progrès */
+.dsec{margin-top:10px}
+.dtitle{font-weight:700;font-size:.83rem;color:var(--r);margin-bottom:5px}
+.di{background:#fff5f5;border-left:3px solid var(--r);border-radius:5px;padding:7px 11px;
+  font-size:.8rem;margin-bottom:5px;line-height:1.5}
+.ptitle{font-weight:700;font-size:.83rem;color:var(--g);margin-bottom:5px;margin-top:10px}
+.pi{background:#f0fdf4;border-left:3px solid var(--g);border-radius:5px;padding:7px 11px;
+  font-size:.8rem;margin-bottom:5px;line-height:1.5}
+/* Logs */
+.htitle{font-weight:700;font-size:.82rem;color:var(--s);margin:12px 0 8px;text-transform:uppercase;letter-spacing:.04em}
+.le{display:flex;gap:8px;margin-bottom:8px;font-size:.82rem}
+.lt{color:var(--s);flex-shrink:0;font-size:.72rem;min-width:65px;padding-top:3px}
+.lu{background:#d1fae5;border-radius:7px;padding:5px 9px;flex:1;line-height:1.5}
+.lia{background:#eef0fb;border-radius:7px;padding:5px 9px;flex:2;line-height:1.5;font-size:.78rem}
+/* Roman */
+.rsec{margin-top:10px;background:#ecfdf5;border-radius:8px;padding:11px 14px}
+.rsec h4{color:#065f46;font-size:.83rem;font-weight:700;margin-bottom:5px}
+.rsec p{font-size:.8rem;color:#065f46;line-height:1.6;white-space:pre-wrap}
 /* Empty */
-.empty{text-align:center;padding:60px 20px;color:var(--soft)}
-.empty .icon{font-size:3rem;margin-bottom:12px}
-.empty p{font-size:1rem}
-/* Livre icon */
-.livre-section{margin-top:12px;background:#ecfdf5;border-radius:10px;padding:12px 14px}
-.livre-section h4{color:#065f46;font-size:.85rem;font-weight:700;margin-bottom:6px}
-.livre-section p{font-size:.82rem;color:#065f46;line-height:1.6;white-space:pre-wrap}
+.empty{text-align:center;padding:50px;color:var(--s)}
+.empty .ico{font-size:2.5rem;margin-bottom:10px}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
 
 <!-- AUTH -->
-<div id="auth-screen">
-  <div class="auth-card">
-    <div style="font-size:2.5rem;margin-bottom:12px">🔐</div>
+<div id="auth">
+  <div class="auth-box">
+    <div style="font-size:2.2rem;margin-bottom:10px">🔐</div>
     <h2>Espace Professeur</h2>
     <p>Accès réservé — entrez le mot de passe enseignant</p>
-    <input type="password" id="prof-pwd" class="auth-input" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkAuth()">
-    <button class="auth-btn" onclick="checkAuth()">Accéder au tableau de bord</button>
-    <div id="auth-error" class="auth-error">Mot de passe incorrect.</div>
-    <p style="margin-top:18px;font-size:.78rem;color:var(--soft)">Ce tableau de bord lit les données du navigateur. Ouvrez-le depuis le même navigateur que les élèves, ou configurez une base de données partagée.</p>
+    <input type="password" id="pwd" class="ai" placeholder="Mot de passe"
+      onkeydown="if(event.key==='Enter')checkAuth()">
+    <button class="ab" onclick="checkAuth()">Accéder au tableau de bord</button>
+    <div id="aerr" class="aerr">Mot de passe incorrect.</div>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="page-header">
+<div id="dash">
+  <div class="dh">
     <div>
       <h1>📊 Tableau de bord — Atelier d'Écriture</h1>
-      <p id="last-refresh">Chargement...</p>
+      <small id="last-update">Chargement des données...</small>
     </div>
-    <span class="badge-auth">🔐 Connecté</span>
+    <span class="cbadge">🔐 Connecté</span>
   </div>
 
-  <div class="stats-row" id="stats-row"></div>
+  <div class="stats" id="stats"></div>
 
   <div class="filters">
     <label>Filtrer :</label>
-    <select id="filter-level" onchange="renderDashboard()">
+    <select id="fl" onchange="applyFilters()">
       <option value="">Tous niveaux</option>
-      <option value="6eme">6ème</option>
-      <option value="5eme">5ème</option>
-      <option value="4eme">4ème</option>
-      <option value="3eme">3ème</option>
+      <option value="6eme">6ème</option><option value="5eme">5ème</option>
+      <option value="4eme">4ème</option><option value="3eme">3ème</option>
     </select>
-    <select id="filter-dys" onchange="renderDashboard()">
+    <select id="fd" onchange="applyFilters()">
       <option value="">Tous profils</option>
-      <option value="1">DYS seulement</option>
-      <option value="0">Sans DYS</option>
+      <option value="1">DYS</option><option value="0">Sans DYS</option>
     </select>
-    <input type="text" id="filter-search" placeholder="Rechercher un élève..." oninput="renderDashboard()">
-    <button class="btn-refresh" onclick="renderDashboard()">🔄 Actualiser</button>
-    <button class="btn-export" onclick="exportCSV()">📥 Exporter CSV</button>
+    <input type="text" id="fs" placeholder="Rechercher..." oninput="applyFilters()">
+    <button class="btn btn-p" onclick="loadData()">🔄 Actualiser</button>
+    <button class="btn btn-g" onclick="exportCSV()">📥 CSV</button>
   </div>
 
-  <div class="section-title" id="section-title">Élèves</div>
-  <div class="students-grid" id="students-grid"></div>
+  <div id="main-content">
+    <div class="loading"><div class="spinner"></div><br>Chargement depuis Supabase...</div>
+  </div>
 </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
-// ══ MOT DE PASSE PROF (à changer ici) ══
-const PROF_PASSWORD = "granger2024";
-const STORAGE_PREFIX = "atelier_";
-const LOG_PREFIX = "proflog_";
+const PROF_PWD = "granger2024"; // ← Changer ici
+const SB_URL  = "https://sctfzwqqlmjprodszsrv.supabase.co";
+const SB_KEY  = "sb_publishable_ZzeJrdg2kGsySOcWpKCPug_eLt9Xzwz";
+
+let allStudents = [];
+let allLogs = [];
 
 function checkAuth() {
-  const pwd = document.getElementById('prof-pwd').value;
-  if (pwd === PROF_PASSWORD) {
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    renderDashboard();
+  if (document.getElementById('pwd').value === PROF_PWD) {
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('dash').style.display = 'block';
+    loadData();
   } else {
-    document.getElementById('auth-error').style.display = 'block';
+    document.getElementById('aerr').style.display = 'block';
   }
 }
 
-// ══ LECTURE DES DONNÉES ══
-function getAllStudents() {
-  const students = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (!key.startsWith(STORAGE_PREFIX)) continue;
-    try {
-      const data = JSON.parse(localStorage.getItem(key));
-      if (!data || !data.username) continue;
-      // Récupère aussi les logs
-      const logKey = LOG_PREFIX + data.username;
-      const logs = JSON.parse(localStorage.getItem(logKey) || '[]');
-      students.push({ ...data, logs });
-    } catch(e) {}
+async function sbGet(path) {
+  const res = await fetch(SB_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  if (!res.ok) throw new Error('Supabase ' + res.status);
+  return res.json();
+}
+
+async function loadData() {
+  document.getElementById('main-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div><br>Chargement depuis Supabase...</div>';
+  try {
+    const [sessions, logs] = await Promise.all([
+      sbGet('sessions?select=*&order=updated_at.desc'),
+      sbGet('logs?select=*&order=created_at.desc')
+    ]);
+    allStudents = sessions;
+    allLogs = logs;
+    document.getElementById('last-update').textContent =
+      'Dernière actualisation : ' + new Date().toLocaleTimeString('fr-FR') +
+      ' · ' + sessions.length + ' élève(s) · ' + logs.length + ' échange(s)';
+    renderStats();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('main-content').innerHTML =
+      `<div class="empty"><div class="ico">⚠️</div><p>Erreur de connexion à Supabase.<br><small>${e.message}</small></p></div>`;
   }
-  return students.sort((a,b) => (b.startTime || 0) - (a.startTime || 0));
 }
 
-// ══ ANALYSE AUTO DES DIFFICULTÉS ══
-function analyzeStudent(student) {
-  const logs = student.logs || [];
-  const difficulties = [];
-  const progress = [];
-
-  // Détecte les patterns de correction récurrents dans les messages IA
-  const iaTexts = logs.map(l => l.ia || '').join(' ').toLowerCase();
-  const userTexts = logs.map(l => l.user || '').join(' ').toLowerCase();
-
-  if ((iaTexts.match(/sans verbe|verbe principal|phrase incomplète/g) || []).length >= 2)
-    difficulties.push("Phrases sans verbe conjugué (erreur récurrente)");
-  if ((iaTexts.match(/majuscule|ponctuation|point en fin/g) || []).length >= 2)
-    difficulties.push("Ponctuation de base non maîtrisée (majuscules, points)");
-  if ((iaTexts.match(/registre oral|onomatopée|trop familier/g) || []).length >= 1)
-    difficulties.push("Registre oral dans l'écrit");
-  if ((iaTexts.match(/concordance|temps verbal|imparfait|passé simple/g) || []).length >= 2)
-    difficulties.push("Concordance des temps");
-  if ((iaTexts.match(/verbe d'action|être.*avoir|enrichi/g) || []).length >= 1)
-    progress.push("Travail sur les verbes d'action engagé");
-  if (student.modeLivre)
-    progress.push("🎉 Niveau confirmé — Mode Livre activé");
-  if (logs.length >= 10)
-    progress.push(`Bonne assiduité : ${logs.length} échanges`);
-
-  const nbEchanges = logs.length;
-  const derniereSession = logs.length > 0 ? logs[logs.length-1].t : null;
-
-  return { difficulties, progress, nbEchanges, derniereSession };
-}
-
-// ══ RENDU ══
-function renderDashboard() {
-  const filterLevel = document.getElementById('filter-level').value;
-  const filterDys = document.getElementById('filter-dys').value;
-  const filterSearch = document.getElementById('filter-search').value.toLowerCase();
-
-  let students = getAllStudents();
-
-  if (filterLevel) students = students.filter(s => s.level === filterLevel);
-  if (filterDys === '1') students = students.filter(s => s.dys);
-  if (filterDys === '0') students = students.filter(s => !s.dys);
-  if (filterSearch) students = students.filter(s => s.username.toLowerCase().includes(filterSearch));
-
-  // Stats globales
-  const all = getAllStudents();
-  document.getElementById('stats-row').innerHTML = `
-    <div class="stat-card"><div class="val">${all.length}</div><div class="lbl">Élèves enregistrés</div></div>
-    <div class="stat-card green"><div class="val">${all.filter(s=>s.modeLivre).length}</div><div class="lbl">En Mode Livre</div></div>
-    <div class="stat-card orange"><div class="val">${all.filter(s=>s.dys).length}</div><div class="lbl">Profil DYS</div></div>
-    <div class="stat-card red"><div class="val">${all.filter(s=>(s.logs||[]).length < 3).length}</div><div class="lbl">Peu actifs (&lt;3 échanges)</div></div>
+function renderStats() {
+  const s = allStudents;
+  document.getElementById('stats').innerHTML = `
+    <div class="sc"><div class="v">${s.length}</div><div class="l">Élèves enregistrés</div></div>
+    <div class="sc g"><div class="v">${s.filter(x=>x.mode_livre).length}</div><div class="l">En Mode Livre</div></div>
+    <div class="sc o"><div class="v">${s.filter(x=>x.dys).length}</div><div class="l">Profil DYS</div></div>
+    <div class="sc r"><div class="v">${s.filter(x=>x.nb_echanges<3).length}</div><div class="l">Peu actifs</div></div>
+    <div class="sc"><div class="v">${allLogs.length}</div><div class="l">Échanges total</div></div>
   `;
+}
 
-  document.getElementById('section-title').textContent = `${students.length} élève(s) affiché(s)`;
-  document.getElementById('last-refresh').textContent = `Dernière actualisation : ${new Date().toLocaleTimeString('fr-FR')}`;
+function applyFilters() {
+  const fl = document.getElementById('fl').value;
+  const fd = document.getElementById('fd').value;
+  const fs = document.getElementById('fs').value.toLowerCase();
+  let list = allStudents;
+  if (fl) list = list.filter(s => s.level === fl);
+  if (fd === '1') list = list.filter(s => s.dys);
+  if (fd === '0') list = list.filter(s => !s.dys);
+  if (fs) list = list.filter(s => s.username.toLowerCase().includes(fs));
+  renderStudents(list);
+}
 
-  const grid = document.getElementById('students-grid');
-
-  if (students.length === 0) {
-    grid.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>Aucun élève trouvé.<br>Les données apparaissent ici après les premières sessions élèves.</p></div>`;
+function renderStudents(students) {
+  const lvl = {"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+  if (!students.length) {
+    document.getElementById('main-content').innerHTML =
+      '<div class="empty"><div class="ico">🔍</div><p>Aucun élève trouvé.</p></div>';
     return;
   }
 
-  grid.innerHTML = students.map((s, idx) => {
-    const { difficulties, progress, nbEchanges, derniereSession } = analyzeStudent(s);
-    const levelLabels = {"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
-    const initiale = (s.username || '?')[0].toUpperCase();
-    const dernSession = derniereSession ? new Date(derniereSession).toLocaleDateString('fr-FR') : '—';
+  const html = students.map((s, i) => {
+    const logs = allLogs.filter(l => l.username === s.username)
+      .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 5);
 
-    const logs = (s.logs || []).slice(-5).reverse();
-    const logsHtml = logs.length === 0 ? '<p style="color:var(--soft);font-size:.82rem">Aucun échange enregistré.</p>' :
-      logs.map(l => `
-        <div class="log-entry">
-          <div class="log-time">${new Date(l.t).toLocaleDateString('fr-FR')}</div>
-          <div class="log-user">😊 ${escHtml(l.user)}</div>
-          <div class="log-ia">🤖 ${escHtml(l.ia)}</div>
+    const allLg = allLogs.filter(l => l.username === s.username);
+    const iaText = allLg.map(l => l.ia_msg||'').join(' ').toLowerCase();
+    const diff = [], prog = [];
+
+    if ((iaText.match(/sans verbe|verbe principal|phrase incomplète/g)||[]).length >= 2)
+      diff.push("Phrases sans verbe conjugué (récurrent)");
+    if ((iaText.match(/majuscule|ponctuation|point en fin/g)||[]).length >= 2)
+      diff.push("Ponctuation de base non maîtrisée");
+    if ((iaText.match(/registre oral|onomatopée|trop familier/g)||[]).length >= 1)
+      diff.push("Registre oral dans l'écrit");
+    if ((iaText.match(/concordance|temps verbal|imparfait|passé simple/g)||[]).length >= 2)
+      diff.push("Concordance des temps");
+    if ((iaText.match(/verbe d'action|verbe expressif/g)||[]).length >= 1)
+      prog.push("Travail sur les verbes d'action engagé");
+    if (s.mode_livre) prog.push("🎉 Mode Livre activé — niveau confirmé");
+    if (s.nb_echanges >= 10) prog.push("Bonne assiduité : " + s.nb_echanges + " échanges");
+
+    const lastDate = s.updated_at ? new Date(s.updated_at).toLocaleDateString('fr-FR') : '—';
+    const init = (s.username||'?')[0].toUpperCase();
+
+    const logsHtml = logs.length === 0
+      ? '<p style="color:var(--s);font-size:.8rem">Aucun échange.</p>'
+      : logs.map(l => `<div class="le">
+          <div class="lt">${new Date(l.created_at).toLocaleDateString('fr-FR')}</div>
+          <div class="lu">😊 ${esc(l.user_msg)}</div>
+          <div class="lia">🤖 ${esc((l.ia_msg||'').slice(0,200))}</div>
         </div>`).join('');
 
-    const diffHtml = difficulties.length > 0 ? `
-      <div class="diff-section">
-        <div class="diff-title">⚠️ Difficultés détectées</div>
-        ${difficulties.map(d => `<div class="diff-item">${d}</div>`).join('')}
-      </div>` : '';
-
-    const progHtml = progress.length > 0 ? `
-      <div class="progress-section">
-        <div class="progress-title">✅ Progrès & points forts</div>
-        ${progress.map(p => `<div class="progress-item">${p}</div>`).join('')}
-      </div>` : '';
-
-    const livreHtml = s.modeLivre && s.livrePlan ? `
-      <div class="livre-section">
-        <h4>📖 Plan du roman en cours</h4>
-        <p>${escHtml(s.livrePlan)}</p>
-      </div>` : '';
-
-    return `
-    <div class="student-card" id="sc-${idx}">
-      <div class="student-header" onclick="toggleCard(${idx})">
-        <div class="student-avatar">${initiale}</div>
+    return `<div class="sc2" id="sc${i}">
+      <div class="sh2" onclick="tog(${i})">
+        <div class="sav">${init}</div>
         <div>
-          <div class="student-name">${escHtml(s.username)}</div>
-          <div class="student-meta">${nbEchanges} échanges · Dernière session : ${dernSession}</div>
+          <div class="sname">${esc(s.username)}</div>
+          <div class="smeta">${s.nb_echanges||0} échanges · Dernière session : ${lastDate}</div>
         </div>
-        <div class="student-badges">
-          <span class="badge niveau">${levelLabels[s.level] || s.level}</span>
-          ${s.dys ? '<span class="badge dys">🧩 DYS</span>' : ''}
-          ${s.modeLivre ? '<span class="badge livre">📖 Livre</span>' : ''}
-          ${nbEchanges >= 5 ? '<span class="badge actif">✅ Actif</span>' : ''}
+        <div class="sbadges">
+          <span class="badge bn">${lvl[s.level]||s.level}</span>
+          ${s.dys?'<span class="badge bd">🧩 DYS</span>':''}
+          ${s.mode_livre?'<span class="badge bl">📖 Livre</span>':''}
+          ${(s.nb_echanges||0)>=5?'<span class="badge ba">✅ Actif</span>':''}
         </div>
       </div>
-      <div class="student-body">
-        <div class="metrics-row">
-          <div class="metric"><div class="mv">${nbEchanges}</div><div class="ml">Échanges total</div></div>
-          <div class="metric"><div class="mv">${difficulties.length}</div><div class="ml">Difficultés détectées</div></div>
-          <div class="metric"><div class="mv">${s.history ? Math.floor(s.history.filter(m=>m.role==='user').length) : 0}</div><div class="ml">Phrases produites</div></div>
-          <div class="metric"><div class="mv">${s.modeLivre ? '📖' : '✍️'}</div><div class="ml">${s.modeLivre ? 'Mode Livre' : 'Mode Atelier'}</div></div>
+      <div class="sbody">
+        <div class="mrow">
+          <div class="mc"><div class="mv">${s.nb_echanges||0}</div><div class="ml">Échanges</div></div>
+          <div class="mc"><div class="mv">${diff.length}</div><div class="ml">Difficultés</div></div>
+          <div class="mc"><div class="mv">${allLg.length}</div><div class="ml">Logs total</div></div>
+          <div class="mc"><div class="mv">${s.mode_livre?'📖':'✍️'}</div><div class="ml">${s.mode_livre?'Livre':'Atelier'}</div></div>
         </div>
-        ${diffHtml}
-        ${progHtml}
-        ${livreHtml}
-        <div style="margin-top:14px">
-          <div class="history-title">5 derniers échanges</div>
-          ${logsHtml}
-        </div>
+        ${diff.length?`<div class="dsec"><div class="dtitle">⚠️ Difficultés détectées</div>${diff.map(d=>`<div class="di">${d}</div>`).join('')}</div>`:''}
+        ${prog.length?`<div class="dsec"><div class="ptitle">✅ Progrès</div>${prog.map(p=>`<div class="pi">${p}</div>`).join('')}</div>`:''}
+        ${s.mode_livre&&s.livre_plan?`<div class="rsec"><h4>📖 Plan du roman</h4><p>${esc(s.livre_plan)}</p></div>`:''}
+        <div class="htitle">5 derniers échanges</div>
+        ${logsHtml}
       </div>
     </div>`;
   }).join('');
+
+  document.getElementById('main-content').innerHTML = `<div class="grid">${html}</div>`;
 }
 
-function toggleCard(idx) {
-  document.getElementById('sc-' + idx).classList.toggle('open');
-}
+function tog(i) { document.getElementById('sc'+i).classList.toggle('open'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ══ EXPORT CSV ══
 function exportCSV() {
-  const students = getAllStudents();
-  const rows = [['Pseudo','Niveau','DYS','Mode Livre','Nb échanges','Dernière session','Difficultés','Progrès']];
-  for (const s of students) {
-    const { difficulties, progress, nbEchanges, derniereSession } = analyzeStudent(s);
-    rows.push([
-      s.username, s.level, s.dys ? 'Oui' : 'Non', s.modeLivre ? 'Oui' : 'Non',
-      nbEchanges,
-      derniereSession ? new Date(derniereSession).toLocaleDateString('fr-FR') : '—',
-      difficulties.join(' | '),
-      progress.join(' | ')
-    ]);
+  const rows = [['Pseudo','Niveau','DYS','Mode Livre','Échanges','Dernière session']];
+  for (const s of allStudents) {
+    rows.push([s.username, s.level, s.dys?'Oui':'Non', s.mode_livre?'Oui':'Non',
+      s.nb_echanges||0, s.updated_at ? new Date(s.updated_at).toLocaleDateString('fr-FR') : '—']);
   }
-  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `atelier_rapport_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  const csv = rows.map(r => r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download = 'atelier_rapport_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
 }
 </script>
 </body>
