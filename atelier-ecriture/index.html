@@ -290,12 +290,29 @@ function replayHistory() {
 }
 
 // ════════════════════════════════════════
-// PERSISTANCE (localStorage)
+// PERSISTANCE — Supabase (via Netlify function)
+// + localStorage en fallback local
 // ════════════════════════════════════════
 function saveState() {
-  try {
-    localStorage.setItem(STORAGE_PREFIX + state.username, JSON.stringify(state));
-  } catch(e) {}
+  // Sauvegarde locale (fallback)
+  try { localStorage.setItem(STORAGE_PREFIX + state.username, JSON.stringify(state)); } catch(e) {}
+  // Sauvegarde distante (Supabase)
+  const nbEchanges = state.history.filter(m => m.role === 'user').length;
+  fetch('/.netlify/functions/supabase-save', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      action: 'save_session',
+      data: {
+        username: state.username,
+        level: state.level,
+        dys: state.dys,
+        modeLivre: state.modeLivre,
+        livrePlan: state.livrePlan,
+        nbEchanges
+      }
+    })
+  }).catch(() => {}); // silencieux si offline
 }
 
 function loadState(username) {
@@ -516,23 +533,33 @@ EXEMPLE MAUVAIS à éviter:
 }
 
 // ════════════════════════════════════════
-// LOGS PROF
+// LOGS PROF — envoi à Supabase
 // ════════════════════════════════════════
 function logProf(userMsg, iaReply) {
+  // Log local (fallback)
   try {
     const key = "proflog_" + state.username;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    existing.push({
-      t: new Date().toISOString(),
-      level: state.level,
-      dys: state.dys,
-      user: userMsg,
-      ia: iaReply.slice(0, 300)
-    });
-    // Garde max 100 entrées
+    existing.push({ t: new Date().toISOString(), level: state.level, dys: state.dys,
+      user: userMsg, ia: iaReply.slice(0, 300) });
     if (existing.length > 100) existing.splice(0, existing.length - 100);
     localStorage.setItem(key, JSON.stringify(existing));
   } catch(e) {}
+  // Log distant (Supabase)
+  fetch('/.netlify/functions/supabase-save', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      action: 'save_log',
+      data: {
+        username: state.username,
+        level: state.level,
+        dys: state.dys,
+        userMsg,
+        iaMsg: iaReply.slice(0, 2000)
+      }
+    })
+  }).catch(() => {});
 }
 
 // ════════════════════════════════════════
