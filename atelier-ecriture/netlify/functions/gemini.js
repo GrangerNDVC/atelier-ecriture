@@ -1,5 +1,12 @@
 const https = require('https');
 
+// Ordre de priorité : DeepSeek V3 (meilleur gratuit) → Llama 3.3 70B → Mistral 7B
+const OPENROUTER_MODELS = [
+  "deepseek/deepseek-chat-v3-0324:free",
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "mistralai/mistral-7b-instruct:free"
+];
+
 exports.handler = async (event) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -14,7 +21,6 @@ exports.handler = async (event) => {
     const payload = JSON.parse(event.body);
     const messages = payload._messages || [{ role: "user", content: payload.prompt }];
 
-    // ✅ Noms corrigés pour correspondre aux variables Netlify
     const openRouterKeys = [
       process.env.OPENROUTER_KEY_1,
       process.env.OPENROUTER_KEY_2,
@@ -31,42 +37,37 @@ exports.handler = async (event) => {
       throw new Error("Aucune clé API trouvée dans les variables Netlify.");
     }
 
-    // Tente chaque clé OpenRouter dans l'ordre
-    for (const key of openRouterKeys) {
-      const result = await tryOpenRouter(key, messages);
-      if (result.success) {
-        return { statusCode: 200, headers, body: JSON.stringify({ answer: result.answer }) };
+    // Essaie chaque modèle dans l'ordre de priorité, avec toutes les clés disponibles
+    for (const model of OPENROUTER_MODELS) {
+      for (const key of openRouterKeys) {
+        const result = await tryOpenRouter(key, model, messages);
+        if (result.success) {
+          console.log("Modèle utilisé:", model);
+          return { statusCode: 200, headers, body: JSON.stringify({ answer: result.answer }) };
+        }
+        console.warn(`Échec ${model} / clé ...${key.slice(-4)}: ${result.error}`);
       }
-      console.warn("Clé OpenRouter échouée, tentative suivante...", result.error);
     }
 
-    // Fallback : tente chaque clé Mistral dans l'ordre
+    // Fallback final : API Mistral directe
     for (const key of mistralKeys) {
       const result = await tryMistral(key, messages);
       if (result.success) {
         return { statusCode: 200, headers, body: JSON.stringify({ answer: result.answer }) };
       }
-      console.warn("Clé Mistral échouée, tentative suivante...", result.error);
+      console.warn("Mistral direct échoué:", result.error);
     }
 
-    throw new Error("Toutes les clés API ont échoué.");
+    throw new Error("Tous les modèles ont échoué.");
 
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message })
-    };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };
 
-function tryOpenRouter(key, messages) {
+function tryOpenRouter(key, model, messages) {
   return new Promise((resolve) => {
-    const postData = JSON.stringify({
-      model: "mistralai/mistral-7b-instruct:free",
-      messages: messages
-    });
-
+    const postData = JSON.stringify({ model, messages });
     const options = {
       hostname: 'openrouter.ai',
       path: '/api/v1/chat/completions',
@@ -77,28 +78,26 @@ function tryOpenRouter(key, messages) {
         'HTTP-Referer': 'https://netlify.app',
         'X-Title': 'Atelier College'
       },
-      timeout: 10000
+      timeout: 25000
     };
-
     const req = https.request(options, (res) => {
       let data = '';
       res.on('data', (chunk) => data += chunk);
       res.on('end', () => {
         if (res.statusCode === 200) {
           try {
-            const result = JSON.parse(data);
-            resolve({ success: true, answer: result.choices[0].message.content });
-          } catch (e) {
-            resolve({ success: false, error: "Parse error: " + e.message });
-          }
+            const parsed = JSON.parse(data);
+            const content = parsed?.choices?.[0]?.message?.content;
+            if (content) resolve({ success: true, answer: content });
+            else resolve({ success: false, error: "Contenu vide" });
+          } catch (e) { resolve({ success: false, error: "Parse: " + e.message }); }
         } else {
-          resolve({ success: false, error: `HTTP ${res.statusCode}: ${data}` });
+          resolve({ success: false, error: `HTTP ${res.statusCode}: ${data.slice(0,150)}` });
         }
       });
     });
-
-    req.on('error', (e) => resolve({ success: false, error: e.message }));
-    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout' }); });
+    req.on('error', e => resolve({ success: false, error: e.message }));
+    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout 25s' }); });
     req.write(postData);
     req.end();
   });
@@ -106,45 +105,26 @@ function tryOpenRouter(key, messages) {
 
 function tryMistral(key, messages) {
   return new Promise((resolve) => {
-    // Filtre le message "system" car l'API Mistral directe le supporte différemment
-    const mistralMessages = messages.map(m =>
-      m.role === 'system' ? { ...m, role: 'user' } : m
-    );
-
-    const postData = JSON.stringify({
-      model: "mistral-small-latest",
-      messages: mistralMessages
-    });
-
+    const msgs = messages.map(m => m.role === 'system' ? { ...m, role: 'user' } : m);
+    const postData = JSON.stringify({ model: "mistral-small-latest", messages: msgs });
     const options = {
       hostname: 'api.mistral.ai',
       path: '/v1/chat/completions',
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${key}`,
-        'Content-Type': 'application/json'
-      },
-      timeout: 10000
+      headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+      timeout: 15000
     };
-
     const req = https.request(options, (res) => {
       let data = '';
-      res.on('data', (chunk) => data += chunk);
+      res.on('data', chunk => data += chunk);
       res.on('end', () => {
         if (res.statusCode === 200) {
-          try {
-            const result = JSON.parse(data);
-            resolve({ success: true, answer: result.choices[0].message.content });
-          } catch (e) {
-            resolve({ success: false, error: "Parse error: " + e.message });
-          }
-        } else {
-          resolve({ success: false, error: `HTTP ${res.statusCode}: ${data}` });
-        }
+          try { resolve({ success: true, answer: JSON.parse(data).choices[0].message.content }); }
+          catch (e) { resolve({ success: false, error: "Parse: " + e.message }); }
+        } else resolve({ success: false, error: `HTTP ${res.statusCode}` });
       });
     });
-
-    req.on('error', (e) => resolve({ success: false, error: e.message }));
+    req.on('error', e => resolve({ success: false, error: e.message }));
     req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout' }); });
     req.write(postData);
     req.end();
