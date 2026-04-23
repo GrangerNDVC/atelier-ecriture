@@ -7,38 +7,73 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --purple: #7c3aed;
-            --purple-light: #ede9fe;
-            --pink: #ec4899;
+            --purple: #5b4fcf;
+            --purple-light: #eef0fb;
+            --accent: #3b82f6;
             --orange: #f97316;
-            --yellow: #fbbf24;
             --green: #10b981;
-            --bg: #faf5ff;
+            --bg: #f0f4f8;
             --white: #ffffff;
-            --text: #1e1b4b;
-            --text-soft: #6b7280;
+            --text: #1a2035;
+            --text-soft: #64748b;
             --radius: 18px;
-            --shadow: 0 4px 24px rgba(124,58,237,0.10);
+            --shadow: 0 4px 24px rgba(59,80,180,0.09);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Nunito', sans-serif;
+            font-size: 17px;
             background: var(--bg);
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(236,72,153,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(124,58,237,0.10) 0%, transparent 50%),
-                radial-gradient(circle at 60% 10%, rgba(249,115,22,0.06) 0%, transparent 40%);
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(91,79,207,0.07) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(59,130,246,0.07) 0%, transparent 45%);
             min-height: 100vh;
             color: var(--text);
-            padding: 20px 16px 40px;
+            padding: 20px 20px 50px;
         }
 
         .container {
-            max-width: 680px;
+            max-width: 960px;
             margin: 0 auto;
         }
+
+        /* ══ MODE DYS ══ */
+        body.dys-mode {
+            font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive !important;
+            font-size: 20px;
+            background: #f8f6ee;
+        }
+        body.dys-mode .card { padding: 34px 30px; }
+        body.dys-mode .msg-bubble {
+            font-family: 'Comic Sans MS', cursive !important;
+            font-size: 1.05rem; line-height: 2.1; padding: 16px 22px;
+        }
+        body.dys-mode textarea#user-input {
+            font-family: 'Comic Sans MS', cursive !important;
+            font-size: 1.1rem; line-height: 1.9;
+        }
+        body.dys-mode .header h1 { font-family: 'Comic Sans MS', cursive !important; }
+        body.dys-mode #chat { height: 460px; }
+        body.dys-mode .btn-start { font-size: 1.15rem; padding: 18px; }
+
+        /* Alerte copier-coller */
+        .paste-alert {
+            position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+            background: #1a2035; color: white;
+            padding: 11px 26px; border-radius: 30px;
+            font-size: 0.9rem; font-weight: 700;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            z-index: 9999;
+            animation: slideDown 0.25s ease, fadeOut 0.4s ease 2.4s forwards;
+            pointer-events: none;
+        }
+        @keyframes slideDown {
+            from { opacity:0; transform: translateX(-50%) translateY(-12px); }
+            to   { opacity:1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes fadeOut { to { opacity: 0; } }
 
         /* ── Header ── */
         .header {
@@ -57,9 +92,9 @@
         }
         .header h1 {
             font-family: 'Caveat', cursive;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 600;
-            background: linear-gradient(135deg, var(--purple), var(--pink));
+            background: linear-gradient(135deg, var(--purple), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -67,7 +102,7 @@
         }
         .header p {
             color: var(--text-soft);
-            font-size: 0.95rem;
+            font-size: 1rem;
             margin-top: 6px;
         }
 
@@ -175,11 +210,10 @@
         .dys-toggle.active .toggle-switch { background: var(--orange); }
         .dys-toggle.active .toggle-switch::after { transform: translateX(18px); }
 
-        /* Start button */
         .btn-start {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, var(--purple), var(--pink));
+            background: linear-gradient(135deg, var(--purple), var(--accent));
             color: white;
             border: none;
             border-radius: 14px;
@@ -188,10 +222,10 @@
             font-weight: 800;
             cursor: pointer;
             transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 4px 15px rgba(124,58,237,0.35);
+            box-shadow: 0 4px 15px rgba(91,79,207,0.35);
             letter-spacing: 0.01em;
         }
-        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,58,237,0.45); }
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91,79,207,0.45); }
         .btn-start:active { transform: translateY(0); }
 
         /* ── Chat screen ── */
@@ -224,7 +258,7 @@
         }
 
         #chat {
-            height: 380px;
+            height: 430px;
             overflow-y: auto;
             padding: 12px 4px;
             scroll-behavior: smooth;
@@ -259,10 +293,10 @@
 
         .msg-bubble {
             max-width: 82%;
-            padding: 12px 16px;
+            padding: 13px 18px;
             border-radius: 16px;
-            font-size: 0.95rem;
-            line-height: 1.65;
+            font-size: 1rem;
+            line-height: 1.75;
         }
         .msg.ia .msg-bubble {
             background: var(--purple-light);
@@ -306,13 +340,13 @@
             border: 2px solid #e5e7eb;
             border-radius: 14px;
             font-family: 'Nunito', sans-serif;
-            font-size: 0.97rem;
+            font-size: 1.02rem;
             resize: none;
-            min-height: 52px;
-            max-height: 120px;
+            min-height: 54px;
+            max-height: 130px;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
-            line-height: 1.5;
+            line-height: 1.6;
             overflow-y: auto;
         }
         textarea#user-input:focus {
@@ -320,18 +354,18 @@
             box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
         }
         .btn-send {
-            width: 52px; height: 52px;
-            background: linear-gradient(135deg, var(--purple), var(--pink));
+            width: 54px; height: 54px;
+            background: linear-gradient(135deg, var(--purple), var(--accent));
             border: none;
             border-radius: 14px;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.3rem;
             transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 4px 12px rgba(124,58,237,0.30);
+            box-shadow: 0 4px 12px rgba(91,79,207,0.30);
             flex-shrink: 0;
         }
-        .btn-send:hover { transform: scale(1.06); box-shadow: 0 6px 16px rgba(124,58,237,0.40); }
+        .btn-send:hover { transform: scale(1.06); box-shadow: 0 6px 16px rgba(91,79,207,0.40); }
         .btn-send:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
 
         .btn-reset {
@@ -441,7 +475,8 @@
         <div class="card">
             <div class="input-area">
                 <textarea id="user-input" placeholder="Écris ta réponse ici..." rows="1"
-                    onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+                    onkeydown="handleKey(event)" oninput="autoResize(this)"
+                    onpaste="blockPaste(event)"></textarea>
                 <button class="btn-send" id="send-btn" onclick="sendToIA()" title="Envoyer">
                     ➤
                 </button>
@@ -455,7 +490,7 @@
 </div>
 
 <script>
-let state = { username: "", level: "6eme", dys: false, history: [] };
+let state = { username: "", level: "6eme", dys: false, history: [], correctionCount: {} };
 
 function selectLevel(el) {
     document.querySelectorAll('.level-pill').forEach(p => p.classList.remove('selected'));
@@ -477,12 +512,13 @@ function initSession() {
 
     state.username = user;
 
+    // Active le mode DYS sur tout le document
+    if (state.dys) document.body.classList.add('dys-mode');
+
     document.getElementById('screen-setup').classList.remove('active');
     document.getElementById('screen-atelier').classList.add('active');
 
-    const levelLabels = {
-        "6eme": "6ème", "5eme": "5ème", "4eme": "4ème", "3eme": "3ème"
-    };
+    const levelLabels = { "6eme": "6ème", "5eme": "5ème", "4eme": "4ème", "3eme": "3ème" };
     document.getElementById('chat-username').textContent = user;
     document.getElementById('chat-level').textContent = levelLabels[state.level];
     if (state.dys) document.getElementById('dys-badge').style.display = 'inline-flex';
@@ -490,8 +526,17 @@ function initSession() {
     const introText = `Salut ${user} ! 👋 Bienvenue dans ton atelier d'écriture. On va travailler ensemble, tranquillement. Pas de panique, je suis là pour t'aider — pas pour te noter ! 😊 Pour commencer, dis-moi juste : est-ce que tu aimes lire ou écrire des histoires ?`;
     const introHtml = `Salut ${user} ! 👋 Bienvenue dans ton atelier d'écriture.<br><br>On va travailler ensemble, tranquillement. Pas de panique, je suis là pour t'aider — pas pour te noter ! 😊<br><br>Pour commencer, dis-moi juste : <strong>est-ce que tu aimes lire ou écrire des histoires ?</strong>`;
     addMsg(introHtml, 'ia');
-    // ✅ On injecte le message d'accueil dans l'historique pour que le modèle sache ce qu'il a dit
     state.history.push({ role: "assistant", content: introText });
+}
+
+// ── Bloquer le copier-coller dans la zone de saisie ──
+function blockPaste(e) {
+    e.preventDefault();
+    const alert = document.createElement('div');
+    alert.className = 'paste-alert';
+    alert.textContent = '✋ Pas de copier-coller — réécris toi-même !';
+    document.body.appendChild(alert);
+    setTimeout(() => alert.remove(), 3000);
 }
 
 async function sendToIA() {
@@ -504,6 +549,13 @@ async function sendToIA() {
     document.getElementById('send-btn').disabled = true;
 
     const thinkingId = showThinking();
+
+    // ── Contexte de remédiation : combien de tours de conversation ? ──
+    const userTurns = state.history.filter(m => m.role === 'user').length;
+    // Déclenchement de la vérification de cohérence paragraphe après 4 échanges écrits
+    const checkCoherence = userTurns >= 4;
+    // Récupère les 2 derniers messages de l'IA pour détecter répétition du même type d'erreur
+    const lastIAMessages = state.history.filter(m => m.role === 'assistant').slice(-3).map(m => m.content).join(' | ');
 
     const levelThemes = {
         "6eme": "Le monstre, aux limites de l'humain",
@@ -608,10 +660,64 @@ AXE E — CONNECTEURS ET STRUCTURE NARRATIVE (après D) :
 AXE F — ORGANISATION EN PARAGRAPHES (après E) :
   Action : quand le texte atteint 6-8 phrases, demander de le structurer : introduction / événement / réaction / conclusion.`;
 
+    const dysProtocol = state.dys ? `
+════════════════════════════════════════
+PROTOCOLE DYS ACTIVÉ — RÈGLES SPÉCIALES
+════════════════════════════════════════
+- Police et affichage : l'interface est déjà en Comic Sans MS et grand format côté élève.
+- Rythme : donne UNE SEULE information par message, jamais deux.
+- Phrases courtes : tes phrases doivent faire maximum 12 mots.
+- Pas d'orthographe : n'observe jamais les fautes d'orthographe, jamais les accords.
+- Travaille uniquement : la construction de la phrase (verbe présent ou non), puis l'idée.
+- Valorise beaucoup plus que d'habitude : chaque effort mérite un encouragement explicite.
+- Si l'élève progresse bien malgré le profil DYS, tu peux accélérer légèrement.` : '';
+
+    const remediationProtocol = `
+════════════════════════════════════════
+PROTOCOLE DE REMÉDIATION EN 4 NIVEAUX
+════════════════════════════════════════
+Quand tu demandes à l'élève de réécrire une phrase, applique ces 4 niveaux selon la situation.
+Consulte les derniers messages de l'IA dans l'historique pour détecter si le même type d'erreur revient.
+
+NIVEAU 1 — PREMIÈRE DEMANDE DE RÉÉCRITURE :
+  → Demande à l'élève de réécrire en expliquant le problème.
+  → NE fournis PAS la correction complète.
+  → Fournis seulement l'amorce ou la structure : "Commence par 'Le chevalier...' et ajoute un verbe d'action."
+  → Rappel : le copier-coller est désactivé côté interface, l'élève doit vraiment réécrire.
+
+NIVEAU 2 — MÊME TYPE D'ERREUR QUE DANS UN MESSAGE PRÉCÉDENT :
+  → Rappelle ce qui avait été corrigé avant : "Souviens-toi, tout à l'heure on avait transformé '...' en '...' — tu peux faire la même chose ici."
+  → Donne un exemple LÉGÈREMENT DÉCALÉ du texte original pour forcer la reformulation (même structure, contexte différent).
+  → Exemple : si l'élève a encore "Il est grand", donner "Regarde ce que j'ai fait avec une autre phrase : 'Le ciel est bleu' → 'Le ciel écrase la ville de son bleu pesant.' Maintenant fais pareil avec ta phrase."
+
+NIVEAU 3 — TOUJOURS BLOQUÉ APRÈS 2 TENTATIVES :
+  → Fournis un exemple encore plus proche mais pas identique : modifie un ou deux mots pour que l'élève ne puisse pas copier exactement.
+  → Exemple : si la phrase est "Il est fort", donner "Regarde : 'Elle écrasait les pierres de ses poings.' Maintenant écris la même chose pour ton personnage à toi."
+  → Pose une question guidante : "Qu'est-ce que ton personnage fait concrètement qui montre sa force ?"
+
+NIVEAU 4 — VRAIMENT BLOQUÉ (3 tentatives ou plus sans progression) :
+  → Donne la correction complète de SA phrase.
+  → Demande-lui de la recopier en changeant UN seul détail (un mot, un adjectif) pour qu'il s'approprie quand même la forme.
+  → Formule : "Voici comment ça pourrait s'écrire : '...' — Maintenant recopie cette phrase mais change [le nom du personnage / l'adjectif / le lieu]."
+
+CONTEXTE DES DERNIERS MESSAGES DE L'IA (pour détecter les répétitions) :
+"${lastIAMessages.slice(0, 400)}"`;
+
+    const coherenceCheck = checkCoherence ? `
+════════════════════════════════════════
+VÉRIFICATION DE COHÉRENCE DE PARAGRAPHE (active après 4 échanges)
+════════════════════════════════════════
+L'élève a maintenant écrit plusieurs phrases. Après avoir traité la correction principale, fais ceci :
+1. Relis mentalement l'ensemble de ce que l'élève a produit au fil de la conversation.
+2. Vérifie : y a-t-il des répétitions de mots ou d'idées ? Des mots de liaison manquants entre les phrases ? Une progression logique ?
+3. Si le paragraphe manque de cohérence : après ta correction habituelle, ajoute UNE remarque courte du type : "Quand tu relis tes phrases ensemble, est-ce qu'elles s'enchaînent bien ? Essaie d'ajouter un connecteur entre la 2e et la 3e phrase."
+4. Si l'élève a produit 5 phrases ou plus : propose un mini-plan de continuation en 2 étapes : "Pour continuer ton texte, tu pourrais : 1) décrire ce que ressent le personnage, 2) montrer ce qu'il fait ensuite."` : '';
+
     const systemPrompt = `Tu es un professeur de français de collège. Tu fais écrire des élèves et tu les aides à progresser, étape par étape.
 
 ÉLÈVE : ${state.username} — CLASSE : ${state.level} — THÈME DU PROGRAMME : ${levelThemes[state.level]}
-PROFIL DYS : ${state.dys ? "OUI — n'observe jamais l'orthographe ni les accords, travaille uniquement la construction des phrases et les idées." : "NON — si une faute d'orthographe importante revient après correction, signale-la en une phrase courte puis passe à autre chose."}
+PROFIL DYS : ${state.dys ? "OUI" : "NON"}
+${dysProtocol}
 
 OBJECTIF OFFICIEL DU NIVEAU : ${objectifNiveau[state.level]}
 
@@ -635,6 +741,10 @@ ${diagnosticSyntaxe}
 
 ${enrichissement}
 
+${remediationProtocol}
+
+${coherenceCheck}
+
 ════════════════════════════════════════
 RÈGLES DE RÉPONSE — NON NÉGOCIABLES
 ════════════════════════════════════════
@@ -646,27 +756,29 @@ R4 — Montre COMMENT corriger en réécrivant toi-même la phrase fautive, tran
 R5 — Termine TOUJOURS par une consigne d'action : "Réécris cette phrase" OU "Continue en ajoutant la suite" OU "Écris la phrase suivante".
 R6 — Commence TOUJOURS par valoriser UNE chose concrète dans le texte (une idée, un mot bien choisi, même minime).
 R7 — Longueur de ta réponse : 4 à 6 lignes maximum. Jamais de liste à puces. Jamais de titre en gras. Ton de conversation directe.
-R8 — INTERDIT : méta-commentaires pédagogiques visibles ("niveau détecté", "axe B", "correction silencieuse", "diagnostic"). L'élève ne doit pas voir la mécanique.
+R8 — INTERDIT : méta-commentaires pédagogiques visibles ("niveau détecté", "axe B", "correction silencieuse", "diagnostic", "niveau 2 de remédiation"). L'élève ne doit pas voir la mécanique.
 R9 — INTERDIT : proposer plusieurs exercices à la fois, plusieurs sujets au choix, plusieurs corrections à faire.
-R10 — RÉPONSES COURTES OU HORS SUJET : Si l'élève répond par un mot, une expression ("non pas trop", "je sais pas", "ok"), TOUJOURS demander une phrase complète avant d'aller plus loin. Exemple : si l'élève dit "non pas trop", répondre : "D'accord ! Dis-le-moi en une phrase complète — par exemple : 'Je n'aime pas beaucoup écrire.' À toi." Attends sa reformulation avant de lancer l'exercice. C'est aussi un entraînement : chaque réponse de l'élève, même hors exercice, doit être une phrase correcte.
-R11 — Ne jamais écrire le texte de l'élève à sa place. Montre une transformation d'exemple sur UNE de ses phrases, mais c'est lui qui réécrit l'ensemble.
+R10 — RÉPONSES COURTES OU HORS SUJET : Si l'élève répond par un mot, une expression ("non pas trop", "je sais pas", "ok"), TOUJOURS demander une phrase complète avant d'aller plus loin. Exemple : si l'élève dit "non pas trop", répondre : "D'accord ! Dis-le-moi en une phrase complète — par exemple : 'Je n'aime pas beaucoup écrire.' À toi." Attends sa reformulation avant de lancer l'exercice.
+R11 — Ne jamais écrire le texte de l'élève à sa place. Montre une transformation sur UNE de ses phrases, c'est lui qui réécrit l'ensemble.
 R12 — La réécriture est le cœur de la séance. Cycle obligatoire : ÉCRIRE → VALORISER → CORRIGER UN POINT → RÉÉCRIRE. Ne jamais sauter l'étape RÉÉCRIRE.
+${!state.dys ? 'R13 — Orthographe : si une faute importante revient après correction, signale-la en une phrase courte puis passe à autre chose.' : ''}
 
 ════════════════════════════════════════
 EXEMPLES DE BON ET MAUVAIS COMPORTEMENT
 ════════════════════════════════════════
 
 SITUATION : L'élève écrit "dans un château avec une princesse. Un chevalier qui la sauve. un conte de fée."
-MAUVAIS (ce que tu ne dois PAS faire) : "Super, tu as choisi un cadre classique ! Réécris ces 3 phrases en ajoutant un détail sensoriel..." [tu ignores les phrases sans verbe — INTERDIT]
-BON (ce que tu dois faire) : "J'aime bien l'idée du château et de la princesse ! Mais regarde : 'Un chevalier qui la sauve.' n'est pas une phrase complète — il n'y a pas de verbe principal, seulement une subordonnée. Essaie : 'Un chevalier la sauve.' Réécris tes trois phrases en t'assurant que chacune a un sujet et un verbe."
+MAUVAIS : "Super, tu as choisi un cadre classique ! Réécris ces 3 phrases en ajoutant un détail sensoriel..." [ignore les phrases sans verbe]
+BON : "J'aime bien l'idée du château ! Mais 'Un chevalier qui la sauve.' n'est pas une phrase complète — 'qui la sauve' est une subordonnée sans verbe principal. Essaie : 'Un chevalier la sauve.' Réécris tes trois phrases en t'assurant que chacune a un sujet et un verbe."
+
+SITUATION : L'élève écrit "pouf ils se cognent"
+MAUVAIS : "Cette phrase n'a pas de verbe conjugué" [ERREUR — 'se cognent' EST conjugué]
+BON : "La phrase est bien construite ! Mais 'pouf' donne un ton oral, comme dans une BD. En écrit littéraire, on préférera : 'Soudain, ils se heurtent violemment.' Réécris cette phrase dans un registre plus soutenu."
 
 SITUATION : L'élève écrit "il est gros. Il a des écailles. Il est bleu."
-MAUVAIS : corriger "bleu/bleues" pendant 5 échanges. [répétition stérile — INTERDIT]
-BON : "Tu as les trois idées, c'est bien ! Maintenant 'il est gros' peut être plus fort avec un verbe d'action. Par exemple : 'Il écrase les rochers de ses pattes.' Réécris ta première phrase avec un verbe d'action à la place de 'est'."
+MAUVAIS : corriger "bleu/bleues" pendant 5 échanges.
+BON : "Tu as les trois idées, c'est bien ! Maintenant 'il est gros' peut être plus fort avec un verbe d'action. Par exemple : 'Il écrase les rochers de ses pattes.' Réécris ta première phrase avec un verbe d'action à la place de 'est'."`;
 
-SITUATION : L'élève a réécrit la phrase avec un verbe d'action
-MAUVAIS : redemander la même chose sur la même phrase.
-BON : valoriser brièvement, passer à la phrase suivante avec le même axe OU passer à l'axe suivant si l'axe A est acquis.`;
 
 
     try {
