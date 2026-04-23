@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau de bord — Professeur</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#5b4fcf; --accent:#3b82f6; --green:#10b981;
+  --orange:#f97316; --red:#ef4444;
+  --bg:#f0f4f8; --white:#fff; --text:#1a2035; --soft:#64748b;
+  --r:14px; --sh:0 4px 20px rgba(59,80,180,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;font-size:15px;background:var(--bg);color:var(--text);padding:24px}
+.container{max-width:1100px;margin:0 auto}
+/* Header */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:1.6rem;font-weight:800;color:var(--purple)}
+.page-header p{color:var(--soft);font-size:.9rem;margin-top:2px}
+.badge-auth{background:var(--purple);color:#fff;padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:700}
+/* Auth */
+#auth-screen{max-width:400px;margin:80px auto}
+.auth-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:36px 32px;text-align:center}
+.auth-card h2{font-size:1.4rem;font-weight:800;color:var(--purple);margin-bottom:8px}
+.auth-card p{color:var(--soft);font-size:.9rem;margin-bottom:24px}
+.auth-input{width:100%;padding:13px 15px;border:2px solid #e5e7eb;border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;margin-bottom:14px}
+.auth-input:focus{border-color:var(--purple)}
+.auth-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--accent));
+  color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;
+  font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s}
+.auth-btn:hover{transform:translateY(-1px)}
+.auth-error{color:var(--red);font-size:.85rem;margin-top:8px;display:none}
+/* Dashboard */
+#dashboard{display:none}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:20px 22px;
+  border-left:4px solid var(--purple)}
+.stat-card .val{font-size:2rem;font-weight:900;color:var(--purple)}
+.stat-card .lbl{font-size:.82rem;color:var(--soft);margin-top:2px}
+.stat-card.green{border-left-color:var(--green)}.stat-card.green .val{color:var(--green)}
+.stat-card.orange{border-left-color:var(--orange)}.stat-card.orange .val{color:var(--orange)}
+.stat-card.red{border-left-color:var(--red)}.stat-card.red .val{color:var(--red)}
+/* Filters */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filters label{font-weight:700;font-size:.85rem;color:var(--purple)}
+.filters select,.filters input{padding:8px 12px;border:2px solid #e5e7eb;border-radius:8px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;color:var(--text)}
+.filters select:focus,.filters input:focus{border-color:var(--purple)}
+.btn-refresh{padding:8px 16px;background:var(--purple);color:#fff;border:none;border-radius:8px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:transform .15s}
+.btn-refresh:hover{transform:translateY(-1px)}
+.btn-export{padding:8px 16px;background:var(--green);color:#fff;border:none;border-radius:8px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-left:auto}
+/* Students table */
+.section-title{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:12px;margin-top:8px}
+.students-grid{display:grid;gap:12px}
+.student-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:0;overflow:hidden;cursor:pointer;transition:box-shadow .2s}
+.student-card:hover{box-shadow:0 6px 24px rgba(59,80,180,.15)}
+.student-header{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.student-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--accent));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1rem;flex-shrink:0}
+.student-name{font-weight:800;font-size:.98rem}
+.student-meta{font-size:.78rem;color:var(--soft)}
+.student-badges{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700}
+.badge.niveau{background:#ede9fe;color:var(--purple)}
+.badge.dys{background:#fff7ed;color:var(--orange)}
+.badge.livre{background:#ecfdf5;color:var(--green)}
+.badge.actif{background:#eff6ff;color:var(--accent)}
+.student-body{padding:16px 20px;display:none}
+.student-card.open .student-body{display:block}
+/* Métriques élève */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.metric{background:#f8fafc;border-radius:10px;padding:12px 14px;text-align:center}
+.metric .mv{font-size:1.4rem;font-weight:900;color:var(--purple)}
+.metric .ml{font-size:.72rem;color:var(--soft);margin-top:2px}
+/* Historique */
+.history-title{font-weight:700;font-size:.88rem;color:var(--soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.log-entry{display:flex;gap:10px;margin-bottom:10px;font-size:.85rem}
+.log-time{color:var(--soft);flex-shrink:0;padding-top:2px;font-size:.75rem;min-width:70px}
+.log-user{background:#d1fae5;border-radius:8px;padding:6px 10px;flex:1;color:var(--text);line-height:1.5}
+.log-ia{background:var(--purple-light,#eef0fb);border-radius:8px;padding:6px 10px;flex:2;color:var(--text);line-height:1.5;font-size:.82rem}
+/* Difficultés */
+.diff-section{margin-top:12px}
+.diff-title{font-weight:700;font-size:.85rem;color:var(--red);margin-bottom:6px}
+.diff-item{background:#fff5f5;border-left:3px solid var(--red);border-radius:6px;padding:8px 12px;
+  font-size:.82rem;color:var(--text);margin-bottom:6px;line-height:1.5}
+.progress-section{margin-top:12px}
+.progress-title{font-weight:700;font-size:.85rem;color:var(--green);margin-bottom:6px}
+.progress-item{background:#f0fdf4;border-left:3px solid var(--green);border-radius:6px;padding:8px 12px;
+  font-size:.82rem;color:var(--text);margin-bottom:6px;line-height:1.5}
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:var(--soft)}
+.empty .icon{font-size:3rem;margin-bottom:12px}
+.empty p{font-size:1rem}
+/* Livre icon */
+.livre-section{margin-top:12px;background:#ecfdf5;border-radius:10px;padding:12px 14px}
+.livre-section h4{color:#065f46;font-size:.85rem;font-weight:700;margin-bottom:6px}
+.livre-section p{font-size:.82rem;color:#065f46;line-height:1.6;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div style="font-size:2.5rem;margin-bottom:12px">🔐</div>
+    <h2>Espace Professeur</h2>
+    <p>Accès réservé — entrez le mot de passe enseignant</p>
+    <input type="password" id="prof-pwd" class="auth-input" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkAuth()">
+    <button class="auth-btn" onclick="checkAuth()">Accéder au tableau de bord</button>
+    <div id="auth-error" class="auth-error">Mot de passe incorrect.</div>
+    <p style="margin-top:18px;font-size:.78rem;color:var(--soft)">Ce tableau de bord lit les données du navigateur. Ouvrez-le depuis le même navigateur que les élèves, ou configurez une base de données partagée.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="page-header">
+    <div>
+      <h1>📊 Tableau de bord — Atelier d'Écriture</h1>
+      <p id="last-refresh">Chargement...</p>
+    </div>
+    <span class="badge-auth">🔐 Connecté</span>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="filters">
+    <label>Filtrer :</label>
+    <select id="filter-level" onchange="renderDashboard()">
+      <option value="">Tous niveaux</option>
+      <option value="6eme">6ème</option>
+      <option value="5eme">5ème</option>
+      <option value="4eme">4ème</option>
+      <option value="3eme">3ème</option>
+    </select>
+    <select id="filter-dys" onchange="renderDashboard()">
+      <option value="">Tous profils</option>
+      <option value="1">DYS seulement</option>
+      <option value="0">Sans DYS</option>
+    </select>
+    <input type="text" id="filter-search" placeholder="Rechercher un élève..." oninput="renderDashboard()">
+    <button class="btn-refresh" onclick="renderDashboard()">🔄 Actualiser</button>
+    <button class="btn-export" onclick="exportCSV()">📥 Exporter CSV</button>
+  </div>
+
+  <div class="section-title" id="section-title">Élèves</div>
+  <div class="students-grid" id="students-grid"></div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ══ MOT DE PASSE PROF (à changer ici) ══
+const PROF_PASSWORD = "granger2024";
+const STORAGE_PREFIX = "atelier_";
+const LOG_PREFIX = "proflog_";
+
+function checkAuth() {
+  const pwd = document.getElementById('prof-pwd').value;
+  if (pwd === PROF_PASSWORD) {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderDashboard();
+  } else {
+    document.getElementById('auth-error').style.display = 'block';
+  }
+}
+
+// ══ LECTURE DES DONNÉES ══
+function getAllStudents() {
+  const students = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key.startsWith(STORAGE_PREFIX)) continue;
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+      if (!data || !data.username) continue;
+      // Récupère aussi les logs
+      const logKey = LOG_PREFIX + data.username;
+      const logs = JSON.parse(localStorage.getItem(logKey) || '[]');
+      students.push({ ...data, logs });
+    } catch(e) {}
+  }
+  return students.sort((a,b) => (b.startTime || 0) - (a.startTime || 0));
+}
+
+// ══ ANALYSE AUTO DES DIFFICULTÉS ══
+function analyzeStudent(student) {
+  const logs = student.logs || [];
+  const difficulties = [];
+  const progress = [];
+
+  // Détecte les patterns de correction récurrents dans les messages IA
+  const iaTexts = logs.map(l => l.ia || '').join(' ').toLowerCase();
+  const userTexts = logs.map(l => l.user || '').join(' ').toLowerCase();
+
+  if ((iaTexts.match(/sans verbe|verbe principal|phrase incomplète/g) || []).length >= 2)
+    difficulties.push("Phrases sans verbe conjugué (erreur récurrente)");
+  if ((iaTexts.match(/majuscule|ponctuation|point en fin/g) || []).length >= 2)
+    difficulties.push("Ponctuation de base non maîtrisée (majuscules, points)");
+  if ((iaTexts.match(/registre oral|onomatopée|trop familier/g) || []).length >= 1)
+    difficulties.push("Registre oral dans l'écrit");
+  if ((iaTexts.match(/concordance|temps verbal|imparfait|passé simple/g) || []).length >= 2)
+    difficulties.push("Concordance des temps");
+  if ((iaTexts.match(/verbe d'action|être.*avoir|enrichi/g) || []).length >= 1)
+    progress.push("Travail sur les verbes d'action engagé");
+  if (student.modeLivre)
+    progress.push("🎉 Niveau confirmé — Mode Livre activé");
+  if (logs.length >= 10)
+    progress.push(`Bonne assiduité : ${logs.length} échanges`);
+
+  const nbEchanges = logs.length;
+  const derniereSession = logs.length > 0 ? logs[logs.length-1].t : null;
+
+  return { difficulties, progress, nbEchanges, derniereSession };
+}
+
+// ══ RENDU ══
+function renderDashboard() {
+  const filterLevel = document.getElementById('filter-level').value;
+  const filterDys = document.getElementById('filter-dys').value;
+  const filterSearch = document.getElementById('filter-search').value.toLowerCase();
+
+  let students = getAllStudents();
+
+  if (filterLevel) students = students.filter(s => s.level === filterLevel);
+  if (filterDys === '1') students = students.filter(s => s.dys);
+  if (filterDys === '0') students = students.filter(s => !s.dys);
+  if (filterSearch) students = students.filter(s => s.username.toLowerCase().includes(filterSearch));
+
+  // Stats globales
+  const all = getAllStudents();
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="val">${all.length}</div><div class="lbl">Élèves enregistrés</div></div>
+    <div class="stat-card green"><div class="val">${all.filter(s=>s.modeLivre).length}</div><div class="lbl">En Mode Livre</div></div>
+    <div class="stat-card orange"><div class="val">${all.filter(s=>s.dys).length}</div><div class="lbl">Profil DYS</div></div>
+    <div class="stat-card red"><div class="val">${all.filter(s=>(s.logs||[]).length < 3).length}</div><div class="lbl">Peu actifs (&lt;3 échanges)</div></div>
+  `;
+
+  document.getElementById('section-title').textContent = `${students.length} élève(s) affiché(s)`;
+  document.getElementById('last-refresh').textContent = `Dernière actualisation : ${new Date().toLocaleTimeString('fr-FR')}`;
+
+  const grid = document.getElementById('students-grid');
+
+  if (students.length === 0) {
+    grid.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>Aucun élève trouvé.<br>Les données apparaissent ici après les premières sessions élèves.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = students.map((s, idx) => {
+    const { difficulties, progress, nbEchanges, derniereSession } = analyzeStudent(s);
+    const levelLabels = {"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+    const initiale = (s.username || '?')[0].toUpperCase();
+    const dernSession = derniereSession ? new Date(derniereSession).toLocaleDateString('fr-FR') : '—';
+
+    const logs = (s.logs || []).slice(-5).reverse();
+    const logsHtml = logs.length === 0 ? '<p style="color:var(--soft);font-size:.82rem">Aucun échange enregistré.</p>' :
+      logs.map(l => `
+        <div class="log-entry">
+          <div class="log-time">${new Date(l.t).toLocaleDateString('fr-FR')}</div>
+          <div class="log-user">😊 ${escHtml(l.user)}</div>
+          <div class="log-ia">🤖 ${escHtml(l.ia)}</div>
+        </div>`).join('');
+
+    const diffHtml = difficulties.length > 0 ? `
+      <div class="diff-section">
+        <div class="diff-title">⚠️ Difficultés détectées</div>
+        ${difficulties.map(d => `<div class="diff-item">${d}</div>`).join('')}
+      </div>` : '';
+
+    const progHtml = progress.length > 0 ? `
+      <div class="progress-section">
+        <div class="progress-title">✅ Progrès & points forts</div>
+        ${progress.map(p => `<div class="progress-item">${p}</div>`).join('')}
+      </div>` : '';
+
+    const livreHtml = s.modeLivre && s.livrePlan ? `
+      <div class="livre-section">
+        <h4>📖 Plan du roman en cours</h4>
+        <p>${escHtml(s.livrePlan)}</p>
+      </div>` : '';
+
+    return `
+    <div class="student-card" id="sc-${idx}">
+      <div class="student-header" onclick="toggleCard(${idx})">
+        <div class="student-avatar">${initiale}</div>
+        <div>
+          <div class="student-name">${escHtml(s.username)}</div>
+          <div class="student-meta">${nbEchanges} échanges · Dernière session : ${dernSession}</div>
+        </div>
+        <div class="student-badges">
+          <span class="badge niveau">${levelLabels[s.level] || s.level}</span>
+          ${s.dys ? '<span class="badge dys">🧩 DYS</span>' : ''}
+          ${s.modeLivre ? '<span class="badge livre">📖 Livre</span>' : ''}
+          ${nbEchanges >= 5 ? '<span class="badge actif">✅ Actif</span>' : ''}
+        </div>
+      </div>
+      <div class="student-body">
+        <div class="metrics-row">
+          <div class="metric"><div class="mv">${nbEchanges}</div><div class="ml">Échanges total</div></div>
+          <div class="metric"><div class="mv">${difficulties.length}</div><div class="ml">Difficultés détectées</div></div>
+          <div class="metric"><div class="mv">${s.history ? Math.floor(s.history.filter(m=>m.role==='user').length) : 0}</div><div class="ml">Phrases produites</div></div>
+          <div class="metric"><div class="mv">${s.modeLivre ? '📖' : '✍️'}</div><div class="ml">${s.modeLivre ? 'Mode Livre' : 'Mode Atelier'}</div></div>
+        </div>
+        ${diffHtml}
+        ${progHtml}
+        ${livreHtml}
+        <div style="margin-top:14px">
+          <div class="history-title">5 derniers échanges</div>
+          ${logsHtml}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(idx) {
+  document.getElementById('sc-' + idx).classList.toggle('open');
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══ EXPORT CSV ══
+function exportCSV() {
+  const students = getAllStudents();
+  const rows = [['Pseudo','Niveau','DYS','Mode Livre','Nb échanges','Dernière session','Difficultés','Progrès']];
+  for (const s of students) {
+    const { difficulties, progress, nbEchanges, derniereSession } = analyzeStudent(s);
+    rows.push([
+      s.username, s.level, s.dys ? 'Oui' : 'Non', s.modeLivre ? 'Oui' : 'Non',
+      nbEchanges,
+      derniereSession ? new Date(derniereSession).toLocaleDateString('fr-FR') : '—',
+      difficulties.join(' | '),
+      progress.join(' | ')
+    ]);
+  }
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `atelier_rapport_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+</script>
+</body>
+</html>
