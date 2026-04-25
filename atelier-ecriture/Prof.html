@@ -267,6 +267,10 @@ function renderStudents(students) {
           ${s.dys?'<span class="badge bd">🧩 DYS</span>':''}
           ${s.mode_livre?'<span class="badge bl">📖 Livre</span>':''}
           ${(s.nb_echanges||0)>=5?'<span class="badge ba">✅ Actif</span>':''}
+          <button onclick="event.stopPropagation();deleteStudent('${s.username}')"
+            style="background:#fff5f5;border:1.5px solid var(--r);color:var(--r);border-radius:8px;
+            padding:3px 10px;font-size:.72rem;font-weight:700;cursor:pointer;margin-left:4px"
+            title="Supprimer ce profil">🗑️</button>
         </div>
       </div>
       <div class="sbody">
@@ -303,6 +307,35 @@ function exportCSV() {
   a.download = 'atelier_rapport_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
 }
+
+async function deleteStudent(username) {
+  if (!confirm(`Supprimer définitivement le profil de "${username}" ?\nSes rédactions et échanges seront effacés de Supabase.`)) return;
+
+  // Supprime dans Supabase via 3 requêtes DELETE
+  const del = async (table, filter) => {
+    await fetch(SB_URL + '/rest/v1/' + table + '?' + filter, {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+  };
+
+  try {
+    await Promise.all([
+      del('sessions', 'id=eq.' + encodeURIComponent(username)),
+      del('logs', 'username=eq.' + encodeURIComponent(username)),
+      del('redactions', 'username=eq.' + encodeURIComponent(username))
+    ]);
+    // Retire visuellement la carte sans recharger
+    allStudents = allStudents.filter(s => s.username !== username);
+    allLogs = allLogs.filter(l => l.username !== username);
+    applyFilters();
+    renderStats();
+    alert(`Profil de "${username}" supprimé.`);
+  } catch(e) {
+    alert('Erreur lors de la suppression : ' + e.message);
+  }
+}
+
 </script>
 </body>
 </html>
