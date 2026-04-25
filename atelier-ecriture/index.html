@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Atelier d'Écriture ✍️</title>
+<meta name="author" content="Mme Granger">
+<meta name="copyright" content="© 2025 Mme Granger — Atelier d'Écriture. Tous droits réservés.">
+<meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -221,6 +224,10 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
 .stat-mini .smv{font-size:1.4rem;font-weight:900;color:var(--p)}
 .stat-mini .sml{font-size:.72rem;color:var(--s);margin-top:2px}
 .loading-inline{text-align:center;padding:20px;color:var(--s);font-size:.9rem}
+
+/* Protection */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+textarea,input{-webkit-user-select:text!important;-moz-user-select:text!important;user-select:text!important}
 </style>
 </head>
 <body>
@@ -467,6 +474,10 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
   </div>
 </div>
 
+
+<div style="text-align:center;padding:18px 0 4px;font-size:.75rem;color:var(--s)">
+  © 2025 Mme Granger — Atelier d'Écriture · Tous droits réservés · Usage scolaire exclusif
+</div>
 </div><!-- /container -->
 
 <script>
@@ -1188,6 +1199,24 @@ function renderEspaceDialogues(){
 
 function toggleRhi(i){document.getElementById('rhi'+i).classList.toggle('open');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+
+// ════════════════════════════
+// PROTECTION COPYRIGHT
+// ════════════════════════════
+(function(){
+  // Désactive clic droit
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  // Désactive Ctrl+U (view source), Ctrl+S (save), Ctrl+Shift+I (devtools)
+  document.addEventListener('keydown', e => {
+    if(e.ctrlKey && (e.key==='u'||e.key==='U'||e.key==='s'||e.key==='S')) e.preventDefault();
+    if(e.ctrlKey && e.shiftKey && (e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j')) e.preventDefault();
+    if(e.key==='F12') e.preventDefault();
+  });
+  // Message dans la console
+  console.log('%c© 2026 Julie Granger — Atelier d\'Écriture', 'color:#5b4fcf;font-size:16px;font-weight:bold');
+  console.log('%cToute copie ou revente est interdite.', 'color:#ef4444;font-size:12px');
+})();
 
 </script>
 </body>
