@@ -196,6 +196,31 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
   .pill-grid.cols2{grid-template-columns:1fr}
   .note-grid{grid-template-columns:1fr 1fr}
 }
+
+/* ══ ESPACE ÉLÈVE ══ */
+.espace-section{margin-bottom:22px}
+.espace-section h3{font-weight:800;font-size:1rem;color:var(--t);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px}
+.progress-bar-wrap{background:#e5e7eb;border-radius:20px;height:10px;margin-bottom:6px;overflow:hidden}
+.progress-bar{height:10px;border-radius:20px;background:linear-gradient(to right,var(--p),var(--a));transition:width .5s}
+.redac-history-item{background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:10px;
+  border:1.5px solid #e5e7eb;cursor:pointer;transition:border-color .2s}
+.redac-history-item:hover{border-color:var(--p)}
+.rhi-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rhi-type{font-weight:700;font-size:.88rem;color:var(--p)}
+.rhi-date{font-size:.78rem;color:var(--s);margin-left:auto}
+.rhi-note{font-weight:900;font-size:1.05rem}
+.rhi-note.tres-bien{color:var(--g)}.rhi-note.bien{color:var(--a)}
+.rhi-note.moyen{color:var(--o)}.rhi-note.insuffisant{color:var(--r)}
+.rhi-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid #e5e7eb}
+.redac-history-item.open .rhi-body{display:block}
+.remediation-item{background:#eff6ff;border-left:3px solid var(--a);border-radius:6px;
+  padding:8px 12px;font-size:.85rem;margin-bottom:6px;line-height:1.5;color:#1e40af}
+.stat-mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.stat-mini{background:#f8fafc;border-radius:10px;padding:10px 12px;text-align:center;border:1.5px solid #e5e7eb}
+.stat-mini .smv{font-size:1.4rem;font-weight:900;color:var(--p)}
+.stat-mini .sml{font-size:.72rem;color:var(--s);margin-top:2px}
+.loading-inline{text-align:center;padding:20px;color:var(--s);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -295,6 +320,8 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
       <button class="btn btn-green btn-full" onclick="startRedac()">Commencer la rédaction ✍️</button>
     </div>
     <div class="divider"></div>
+    <button class="btn btn-orange btn-full" id="btn-mon-espace" style="display:none;margin-bottom:10px"
+      onclick="showEspaceEleve()">🎓 Mon espace & mes progrès</button>
     <button class="btn btn-ghost btn-full btn-sm" onclick="reset()">↩ Changer de session</button>
   </div>
 </div>
@@ -385,6 +412,61 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
   <button class="btn btn-ghost btn-full btn-sm" onclick="backToMode()">↩ Retour au menu</button>
 </div>
 
+
+<!-- ══ ESPACE ÉLÈVE ══ -->
+<div id="screen-espace" class="screen">
+  <div class="card">
+    <div class="chat-header" style="margin-bottom:0">
+      <div class="avatar">🎓</div>
+      <div class="chat-info">
+        <strong id="espace-username">–</strong>
+        <small id="espace-level">Mon espace personnel</small>
+      </div>
+      <span class="cbadge dys" id="espace-dys-badge" style="display:none">🧩 DYS</span>
+    </div>
+  </div>
+
+  <!-- Stats rapides -->
+  <div class="card">
+    <div class="stat-mini-grid" id="espace-stats"></div>
+
+    <!-- Progression -->
+    <div class="espace-section">
+      <h3>📈 Ma progression</h3>
+      <div id="espace-progression">
+        <div class="loading-inline">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- Remédiations ciblées -->
+    <div class="espace-section" id="espace-remediation-section" style="display:none">
+      <h3>🎯 Points à travailler</h3>
+      <div id="espace-remediations"></div>
+      <button class="btn btn-primary btn-sm" style="margin-top:8px"
+        onclick="startMode('dialogue')">💬 S'entraîner sur ces points</button>
+    </div>
+
+    <!-- Historique rédactions -->
+    <div class="espace-section" id="espace-redac-section" style="display:none">
+      <h3>📝 Mes rédactions</h3>
+      <div id="espace-redactions"></div>
+    </div>
+
+    <!-- Derniers échanges -->
+    <div class="espace-section" id="espace-dialogue-section" style="display:none">
+      <h3>💬 Mes derniers échanges</h3>
+      <div id="espace-dialogues"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" style="flex:1" onclick="showScreen('screen-mode')">
+      ✍️ Continuer à écrire
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="reset()">↩ Changer de session</button>
+  </div>
+</div>
+
 </div><!-- /container -->
 
 <script>
@@ -414,19 +496,61 @@ function toggleDys(){
   state.dys=!state.dys;
   document.getElementById('dysToggle').classList.toggle('active',state.dys);
 }
-function initSession(){
+async function initSession(){
   const user=document.getElementById('username').value.trim();
   const forbidden=["sex","pdp","con","bite","merde","putain"];
   if(!user||forbidden.some(w=>user.toLowerCase().includes(w))){alert("Merci de choisir un pseudo correct ! 😊");return;}
   state.username=user;
-  const saved=loadState(user);
-  if(saved&&saved.history&&saved.history.length>2){
-    if(confirm(`Reprendre là où tu t'étais arrêté(e), ${user} ?`)) Object.assign(state,saved);
+
+  // 1. Charge local d'abord (instantané)
+  const savedLocal=loadState(user);
+  if(savedLocal) Object.assign(state,savedLocal);
+
+  // 2. Charge depuis Supabase (source de vérité)
+  const remote=await loadStateRemote(user);
+  if(remote&&remote.session){
+    const s=remote.session;
+    state.level=s.level||state.level;
+    state.dys=s.dys||state.dys;
+    state.modeLivre=s.mode_livre||false;
+    state.livrePlan=s.livre_plan||'';
+    // Restaure l'historique depuis Supabase
+    if(s.history_json){
+      try{ const h=JSON.parse(s.history_json); if(h&&h.length>0) state.history=h; }catch(e){}
+    }
+    state.remoteRedactions=remote.redactions||[];
+    state.remoteLogs=remote.logs||[];
   }
-  if(state.dys) document.body.classList.add('dys-mode');
+
+  if(state.dys){
+    document.body.classList.add('dys-mode');
+    document.getElementById('dysToggle').classList.add('active');
+  }
+  // Sélectionne le bon niveau dans le setup
+  document.querySelectorAll('.pill[data-value]').forEach(p=>{
+    if(['6eme','5eme','4eme','3eme'].includes(p.dataset.value))
+      p.classList.toggle('selected', p.dataset.value===state.level);
+  });
+
   showScreen('screen-mode');
   document.getElementById('mode-username').textContent=user;
   buildRedacTypeGrid();
+
+  // Affiche le bouton Mon Espace si l'élève a déjà des données
+  const hasData=(state.history&&state.history.length>1)||(state.remoteRedactions&&state.remoteRedactions.length>0);
+  const espaceBtn=document.getElementById('btn-mon-espace');
+  if(espaceBtn) espaceBtn.style.display=hasData?'block':'none';
+}
+
+async function loadStateRemote(username){
+  try{
+    const res=await fetch('/.netlify/functions/supabase-load',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username})
+    });
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ console.warn('Remote load failed:', e.message); return null; }
 }
 
 function buildRedacTypeGrid(){
@@ -721,6 +845,20 @@ function afficherResultat(note,texte){
   `;
   document.getElementById('note-card').innerHTML=html;
 
+  // Sauvegarde rédaction dans Supabase
+  const words=texte.split(/\s+/).filter(w=>w.length>0).length;
+  fetch('/.netlify/functions/supabase-save',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'save_redaction',data:{
+      username:state.username, level:state.level,
+      typeRedac:state.redacType,
+      sujet:(state.currentSubject||{}).sujet||'',
+      texte, note:n, appreciation:appr,
+      pointsPositifs:note.points_positifs||[],
+      axesAmelioration:note.axes_amelioration||[],
+      difficultes:note.difficultes_detectees||[],
+      nbMots:words
+    }})
+  }).catch(()=>{});
   // Log prof
   logProf('[REDAC '+labelType(state.redacType)+']', JSON.stringify({
     note:n, appreciation:appr, difficultes:note.difficultes_detectees||[]
@@ -854,8 +992,11 @@ function saveState(){
   try{localStorage.setItem(STORAGE_PREFIX+state.username,JSON.stringify(state));}catch(e){}
   const nb=state.history.filter(m=>m.role==='user').length;
   fetch('/.netlify/functions/supabase-save',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'save_session',data:{username:state.username,level:state.level,
-      dys:state.dys,modeLivre:state.modeLivre,livrePlan:state.livrePlan,nbEchanges:nb}})
+    body:JSON.stringify({action:'save_session',data:{
+      username:state.username, level:state.level, dys:state.dys,
+      modeLivre:state.modeLivre, livrePlan:state.livrePlan,
+      nbEchanges:nb, history:state.history.slice(-60) // max 60 messages
+    }})
   }).catch(()=>{});
 }
 function loadState(u){
@@ -919,6 +1060,135 @@ function labelType(t){
 function emojiType(t){
   return {recit:"📖",description:"🖼️",dialogue:"💬",suite:"➡️",reflexion:"💡",autre:"🎲"}[t]||"📝";
 }
+
+// ════════════════════════════
+// ESPACE ÉLÈVE
+// ════════════════════════════
+function showEspaceEleve(){
+  showScreen('screen-espace');
+  const lvl={"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+  document.getElementById('espace-username').textContent=state.username;
+  document.getElementById('espace-level').textContent=lvl[state.level]+' · Atelier d\'écriture';
+  if(state.dys) document.getElementById('espace-dys-badge').style.display='inline-flex';
+  renderEspaceStats();
+  renderEspaceProgression();
+  renderEspaceRedactions();
+  renderEspaceDialogues();
+}
+
+function renderEspaceStats(){
+  const redacs=state.remoteRedactions||[];
+  const logs=state.remoteLogs||[];
+  const nbRedacs=redacs.length;
+  const moyNote=nbRedacs>0?Math.round(redacs.reduce((s,r)=>s+(r.note||10),0)/nbRedacs*10)/10:'-';
+  const nbEchanges=state.history?state.history.filter(m=>m.role==='user').length:0;
+  const lastNote=redacs.length>0?(redacs[0].note||'-'):'-';
+  document.getElementById('espace-stats').innerHTML=`
+    <div class="stat-mini"><div class="smv">${nbRedacs}</div><div class="sml">Rédactions</div></div>
+    <div class="stat-mini"><div class="smv">${moyNote!=='-'?moyNote+'/20':'-'}</div><div class="sml">Moyenne</div></div>
+    <div class="stat-mini"><div class="smv">${lastNote!=='-'?lastNote+'/20':'-'}</div><div class="sml">Dernière note</div></div>
+    <div class="stat-mini"><div class="smv">${nbEchanges}</div><div class="sml">Échanges écrits</div></div>
+  `;
+}
+
+function renderEspaceProgression(){
+  const redacs=state.remoteRedactions||[];
+  const el=document.getElementById('espace-progression');
+  if(redacs.length===0){
+    el.innerHTML='<p style="color:var(--s);font-size:.88rem">Aucune rédaction encore — lance une rédaction notée pour voir ta progression !</p>';
+    return;
+  }
+  // Courbe de progression (notes dans le temps)
+  const sorted=[...redacs].reverse(); // du plus ancien au plus récent
+  const max=20;
+  const bars=sorted.map((r,i)=>{
+    const n=r.note||10;
+    const cls=n>=16?'tres-bien':n>=12?'bien':n>=9?'moyen':'insuffisant';
+    const colors={'tres-bien':'var(--g)','bien':'var(--a)','moyen':'var(--o)','insuffisant':'var(--r)'};
+    const pct=Math.round(n/max*100);
+    const date=new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    return `<div style="flex:1;min-width:40px;text-align:center">
+      <div style="font-size:.7rem;color:var(--s);margin-bottom:4px">${n}/20</div>
+      <div style="height:80px;background:#e5e7eb;border-radius:6px;position:relative;overflow:hidden">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${pct}%;background:${colors[cls]};border-radius:6px;transition:height .5s"></div>
+      </div>
+      <div style="font-size:.65rem;color:var(--s);margin-top:4px">${date}</div>
+      <div style="font-size:.65rem;color:var(--p);font-weight:700">${labelType(r.type_redac||'')}</div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div style="display:flex;gap:8px;align-items:flex-end;overflow-x:auto;padding-bottom:4px">${bars}</div>`;
+
+  // Remédiations basées sur les axes d'amélioration récurrents
+  const axes=[];
+  redacs.slice(0,3).forEach(r=>{
+    try{ const a=JSON.parse(r.axes_amelioration||'[]'); axes.push(...a); }catch(e){}
+  });
+  const remSec=document.getElementById('espace-remediation-section');
+  const remEl=document.getElementById('espace-remediations');
+  if(axes.length>0){
+    remSec.style.display='block';
+    // Déduplique en gardant les plus fréquents
+    const unique=[...new Set(axes)].slice(0,4);
+    remEl.innerHTML=unique.map(a=>`<div class="remediation-item">📌 ${esc(a)}</div>`).join('');
+  }
+}
+
+function renderEspaceRedactions(){
+  const redacs=state.remoteRedactions||[];
+  const sec=document.getElementById('espace-redac-section');
+  const el=document.getElementById('espace-redactions');
+  if(redacs.length===0){sec.style.display='none';return;}
+  sec.style.display='block';
+  el.innerHTML=redacs.map((r,i)=>{
+    const n=r.note||10;
+    const cls=n>=16?'tres-bien':n>=12?'bien':n>=9?'moyen':'insuffisant';
+    const date=new Date(r.created_at).toLocaleDateString('fr-FR');
+    let positifs=[], axes=[];
+    try{positifs=JSON.parse(r.points_positifs||'[]');}catch(e){}
+    try{axes=JSON.parse(r.axes_amelioration||'[]');}catch(e){}
+    return `<div class="redac-history-item" id="rhi${i}" onclick="toggleRhi(${i})">
+      <div class="rhi-header">
+        <span class="rhi-type">${emojiType(r.type_redac||'')} ${labelType(r.type_redac||'')}</span>
+        <span style="font-size:.78rem;color:var(--s)">${r.appreciation||''}</span>
+        <span class="rhi-note ${cls}">${n}/20</span>
+        <span class="rhi-date">${date}</span>
+      </div>
+      <div class="rhi-body">
+        <div style="font-size:.82rem;color:var(--s);margin-bottom:8px;font-style:italic">${esc((r.sujet||'').slice(0,120))}...</div>
+        ${positifs.length?'<div style="font-weight:700;font-size:.82rem;color:var(--g);margin-bottom:4px">✅ Points forts</div>'+
+          positifs.map(p=>`<div class="feedback-item pos" style="margin-bottom:4px">${esc(p)}</div>`).join(''):''}
+        ${axes.length?'<div style="font-weight:700;font-size:.82rem;color:var(--r);margin:8px 0 4px">📈 À améliorer</div>'+
+          axes.map(a=>`<div class="feedback-item neg" style="margin-bottom:4px">${esc(a)}</div>`).join(''):''}
+        <div style="margin-top:10px">
+          <div style="font-weight:700;font-size:.78rem;color:var(--s);margin-bottom:6px;text-transform:uppercase">Mon texte</div>
+          <div style="background:#f8fafc;border-radius:8px;padding:10px 14px;font-size:.82rem;line-height:1.7;max-height:150px;overflow-y:auto;white-space:pre-wrap">${esc(r.texte||'')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderEspaceDialogues(){
+  const logs=state.remoteLogs||[];
+  const sec=document.getElementById('espace-dialogue-section');
+  const el=document.getElementById('espace-dialogues');
+  if(logs.length===0){sec.style.display='none';return;}
+  sec.style.display='block';
+  const shown=logs.slice(0,8);
+  el.innerHTML=shown.map(l=>{
+    const date=new Date(l.created_at).toLocaleDateString('fr-FR');
+    return `<div style="display:flex;gap:10px;margin-bottom:10px;font-size:.85rem">
+      <div style="color:var(--s);font-size:.75rem;min-width:60px;padding-top:3px;flex-shrink:0">${date}</div>
+      <div style="background:#d1fae5;border-radius:8px;padding:6px 10px;flex:1;line-height:1.5">${esc(l.user_msg)}</div>
+      <div style="background:var(--pl);border-radius:8px;padding:6px 10px;flex:2;line-height:1.5;font-size:.8rem">${esc((l.ia_msg||'').slice(0,180))}${(l.ia_msg||'').length>180?'…':''}</div>
+    </div>`;
+  }).join('');
+  if(logs.length>8) el.innerHTML+=`<p style="text-align:center;color:var(--s);font-size:.8rem;margin-top:8px">… et ${logs.length-8} échange(s) précédent(s)</p>`;
+}
+
+function toggleRhi(i){document.getElementById('rhi'+i).classList.toggle('open');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 </script>
 </body>
 </html>
