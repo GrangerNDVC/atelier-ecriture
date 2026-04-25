@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Atelier d'Écriture ✍️</title>
-<meta name="author" content="Julie Granger">
-<meta name="copyright" content="© 2026 Julie Granger — Atelier d'Écriture. Tous droits réservés.">
+<meta name="author" content="Mme Granger">
+<meta name="copyright" content="© 2025 Mme Granger — Atelier d'Écriture. Tous droits réservés.">
 <meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
@@ -21,11 +21,30 @@ body{font-family:'Nunito',sans-serif;font-size:17px;background:var(--bg);
 .container{max-width:980px;margin:0 auto}
 
 /* DYS */
-body.dys-mode{font-family:'Comic Sans MS','Comic Sans','Chalkboard SE',cursive!important;font-size:20px;background:#f8f6ee}
-body.dys-mode .card{padding:34px 30px}
-body.dys-mode .msg-bubble{font-family:'Comic Sans MS',cursive!important;font-size:1.05rem;line-height:2.1;padding:16px 22px}
-body.dys-mode textarea{font-family:'Comic Sans MS',cursive!important;font-size:1.1rem;line-height:1.9}
-body.dys-mode #chat{height:460px}
+body.dys-mode{font-family:'Comic Sans MS','Comic Sans','Chalkboard SE',cursive!important;font-size:20px;background:#f5f0e8}
+body.dys-mode .card{padding:34px 30px;background:#fffdf5}
+body.dys-mode .msg-bubble{
+  font-family:'Comic Sans MS',cursive!important;
+  font-size:1.1rem;line-height:2.2;padding:18px 24px;
+  background:transparent!important;
+  /* Lignage crème : ligne crème/gris alternées */
+  background-image:repeating-linear-gradient(
+    to bottom,
+    #fffdf5 0px, #fffdf5 38px,
+    #e8e2d4 38px, #e8e2d4 40px
+  )!important;
+  border-radius:12px;
+}
+/* Chaque phrase sur sa propre ligne en DYS */
+body.dys-mode .msg-bubble br{display:block;margin-bottom:6px}
+body.dys-mode .msg.ia .msg-bubble{border-left:4px solid var(--p);}
+body.dys-mode textarea{font-family:'Comic Sans MS',cursive!important;font-size:1.1rem;line-height:2.0;
+  background:#fffdf5;
+  background-image:repeating-linear-gradient(to bottom,#fffdf5 0px,#fffdf5 38px,#e8e2d4 38px,#e8e2d4 40px);
+}
+body.dys-mode #chat{height:480px;background:#f5f0e8}
+body.dys-mode .card{border-color:#d4c9a8}
+body.dys-mode body{background:#f5f0e8}
 
 /* Paste alert */
 .paste-alert{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#1a2035;color:#fff;
@@ -476,7 +495,7 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
 
 
 <div style="text-align:center;padding:18px 0 4px;font-size:.75rem;color:var(--s)">
-  © 2026 Julie Granger — Atelier d'Écriture · Tous droits réservés · Usage scolaire exclusif
+  © 2025 Mme Granger — Atelier d'Écriture · Tous droits réservés · Usage scolaire exclusif
 </div>
 </div><!-- /container -->
 
@@ -907,7 +926,20 @@ async function sendToIA(){
     "5eme":"EXIGÉ: phrases simples correctes + coordination, relative simple. Imparfait/passé simple. Connecteurs temporels. Majuscule + point.\nINTERDIT: phrases sans verbe, mélange incohérent des temps.\nSUIVANT: description ou dialogue inséré dans le récit.",
     "4eme":"EXIGÉ: phrases complexes (subordonnées relative, conjonctive, circonstancielle). Concordance des temps. Registre soutenu, sans clichés. Paragraphes. Ponctuation complète.\nINTERDIT: phrases sans verbe, subordonnées orphelines, clichés, registre oral.\nSUIVANT: variation du point de vue, vocabulaire des sentiments.",
     "3eme":"EXIGÉ: texte organisé en paragraphes, progression narrative ou argumentative. Style personnel, vocabulaire précis. Temps et modes. Figures de style.\nSUIVANT: combinaison récit+argumentation, gestion du rythme."};
-  const dysP=state.dys?"\nPROTOCOLE DYS: UNE info par message (max 12 mots par phrase). Jamais d'orthographe. Uniquement structure de phrase et idées. Valorise beaucoup.":'';
+  const dysP=state.dys?`
+PROTOCOLE DYS ACTIVÉ — RÈGLES STRICTES :
+1. Chaque phrase de ta réponse doit être sur SA PROPRE LIGNE. Sépare chaque phrase par un saut de ligne.
+2. Tes phrases font maximum 10 mots chacune. Jamais plus.
+3. Pas d'orthographe, pas d'accords. Uniquement la construction des phrases et les idées.
+4. Une seule information par message. Jamais deux.
+5. Valorise toujours avant de corriger.
+6. Exemple de FORMAT CORRECT :
+"Bravo, tu as une bonne idée !
+Mais cette phrase n'a pas de verbe.
+Essaie d'ajouter un verbe d'action.
+Réécris juste cette phrase."
+7. Exemple de FORMAT INCORRECT (à éviter) :
+"Bravo pour ton idée ! Mais cette phrase n'a pas de verbe, essaie d'ajouter un verbe d'action et réécris-la."`:'';
   const livreP=state.modeLivre?`\nMODE LIVRE ACTIF: Tu es éditeur bienveillant. Aide à construire schéma narratif+actantiel, découper en chapitres, écrire. Après 3+ phrases, émets PLAN_UPDATE:[plan] à la fin.`:`\nSi l'élève montre un niveau clairement supérieur 3 échanges consécutifs, émets NIVEAU_LIVRE_OK à la fin.`;
   const systemPrompt=`Tu es un professeur de français de collège expert, exigeant et bienveillant.
 ÉLÈVE: ${state.username} — CLASSE: ${state.level} — THÈME: ${levelThemes[state.level]}
@@ -916,11 +948,44 @@ OBJECTIF: ${objectifNiveau[state.level]}
 ATTENDUS: ${attendus[state.level]}
 ${livreP}
 
-DIAGNOSTIC SYNTAXIQUE (avant tout autre chose):
-Q1: Phrases sans verbe conjugué? Verbe conjugué=tout verbe accordé avec son sujet ("ils se cognent"✓,"elle part"✓). ERREUR RÉELLE: "Dans la forêt pour cueillir." (aucun verbe) ou "Un chevalier qui la sauve." (subordonnée sans principale). NE PAS CONFONDRE avec registre oral: "Pouf, ils se cognent." → verbe OK → problème de registre seulement.
-Q2: Ponctuation de base? (majuscule début, point fin) → si absente sur plusieurs phrases: signaler AVANT tout enrichissement.
-Q3: Temps cohérents? → signale UN problème si non.
-Q4: OK → enrichissement (verbes d'action→sensoriel→comparaison→émotion→connecteurs→paragraphes).
+DIAGNOSTIC SYNTAXIQUE (priorité absolue — dans cet ordre strict) :
+
+Q1 — PHRASES SANS VERBE CONJUGUÉ ?
+Verbe conjugué = tout verbe accordé avec son sujet ("ils se cognent"✓, "elle part"✓, "il est"✓).
+ERREUR BLOQUANTE : "Dans la forêt pour cueillir." / "Un chevalier qui la sauve."
+NE PAS CONFONDRE avec registre oral : "Pouf, ils se cognent." → verbe OK → problème de registre seulement.
+→ Si oui : signale uniquement ça, ne parle de rien d'autre.
+
+Q2 — PONCTUATION (2ème priorité absolue, avant tout enrichissement) :
+CAS A — Deux phrases collées sans point séparateur (ex: "il court dans la forêt il a peur") :
+  → ERREUR BLOQUANTE. TOUJOURS demander de réécrire en séparant les phrases.
+  → Formule type : "Tu as deux idées collées sans point entre elles. Sépare-les en deux phrases : 'Il court dans la forêt. Il a peur.' Réécris tes phrases en les séparant bien."
+CAS B — Une seule phrase sans point final :
+  → ERREUR MINEURE. Fais-en la remarque en UNE phrase courte, sans forcément faire réécrire si le reste est bon.
+  → Formule type : "Pense à mettre un point à la fin de chaque phrase 😊"
+CAS C — Majuscule absente en début de phrase :
+  → Signale en même temps que le point, en une ligne.
+→ RÈGLE : La ponctuation bloque toujours la progression vers l'enrichissement.
+
+Q3 — FAUTES RÉPÉTÉES — APPROCHE LUDIQUE OBLIGATOIRE :
+Si une même erreur revient pour la 2ème fois ou plus (même type : verbe manquant, point absent, même faute d'orthographe) :
+NE PAS répéter la même correction sèche. Utilise UNE de ces approches, en variant à chaque fois :
+  🎯 MÉMO : "Astuce à retenir : chaque phrase est comme une phrase-sandwich 🥪 — majuscule au début, point à la fin !"
+  🎮 DÉFI : "Défi : réécris tes 3 phrases en mettant un point + majuscule partout. Chrono mental : tu as 30 secondes !"
+  🔍 DÉTECTIVE : "Joue au détective 🔍 : trouve toi-même la phrase qui manque de ponctuation et corrige-la."
+  💡 RÈGLE IMAGÉE : "Rappel rigolo : une phrase sans point, c'est comme une voiture sans frein — ça finit mal 😄"
+  📝 AUTO-CORRECTION : "Relis ton texte à voix haute (même dans ta tête) : là où tu fais une pause, il faut un point."
+Varie : ne jamais utiliser la même approche deux fois de suite dans la même conversation.
+
+Q4 — TEMPS COHÉRENTS ? → signale UN seul problème si non.
+
+Q5 — TOUT OK → enrichissement (verbes d'action → sensoriel → comparaison → émotion → connecteurs → paragraphes).
+
+VARIÉTÉ DES APPROCHES — RÈGLE GÉNÉRALE :
+Pour éviter la monotonie, varie systématiquement ta façon d'aborder les corrections et exercices :
+- Alterne entre : question directe / défi / jeu / métaphore / exemple humoristique / auto-correction guidée.
+- Ne commence jamais deux messages consécutifs de la même façon.
+- Si tu as valorisé avec "Bravo" au message précédent, utilise autre chose : "C'est mieux !", "Tu progresses !", "Bien joué !", "Exactement !", "Tu vois la différence ?", etc.
 
 PROTOCOLE ANTI-RÉPÉTITION:
 - Max 2 tentatives sur le même point. Après 2 essais: donne la correction, explique pourquoi en 1 ligne, passe à la suite.
@@ -1043,7 +1108,19 @@ function addMsg(txt,side){
   const av=document.createElement('div'); av.className='msg-avatar';
   av.textContent=side==='ia'?'🤖':'😊';
   const bubble=document.createElement('div'); bubble.className='msg-bubble';
-  bubble.innerHTML=txt;
+  // En mode DYS côté IA : chaque phrase sur sa propre ligne
+  let html=txt;
+  if(document.body.classList.contains('dys-mode') && side==='ia'){
+    // Transforme les points/? /! suivis d'un espace en retour à la ligne
+    html=txt
+      .replace(/([.!?])\s+/g, '$1<br>')
+      .replace(/
+/g,'<br>');
+  } else {
+    html=txt.replace(/
+/g,'<br>');
+  }
+  bubble.innerHTML=html;
   div.appendChild(av); div.appendChild(bubble);
   chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
 }
@@ -1214,7 +1291,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
     if(e.key==='F12') e.preventDefault();
   });
   // Message dans la console
-  console.log('%c© 2026 Julie Granger — Atelier d\'Écriture', 'color:#5b4fcf;font-size:16px;font-weight:bold');
+  console.log('%c© 2025 Mme Granger — Atelier d\'Écriture', 'color:#5b4fcf;font-size:16px;font-weight:bold');
   console.log('%cToute copie ou revente est interdite.', 'color:#ef4444;font-size:12px');
 })();
 
