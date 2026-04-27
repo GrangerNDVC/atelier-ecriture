@@ -1114,11 +1114,9 @@ function addMsg(txt,side){
     // Transforme les points/? /! suivis d'un espace en retour à la ligne
     html=txt
       .replace(/([.!?])\s+/g, '$1<br>')
-      .replace(/
-/g,'<br>');
+      .replace(/\n/g,'<br>');
   } else {
-    html=txt.replace(/
-/g,'<br>');
+    html=txt.replace(/\n/g,'<br>');
   }
   bubble.innerHTML=html;
   div.appendChild(av); div.appendChild(bubble);
