@@ -213,11 +213,140 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
 .livre-panel h3{color:#065f46;font-size:1rem;font-weight:800;margin-bottom:10px}
 .livre-plan-text{font-size:.88rem;color:#065f46;line-height:1.7;white-space:pre-wrap}
 
-@media(max-width:600px){
-  .mode-grid{grid-template-columns:1fr}
+@media(max-width:700px){
+  .mode-grid{grid-template-columns:1fr!important}
   .pill-grid.cols2{grid-template-columns:1fr}
   .note-grid{grid-template-columns:1fr 1fr}
+  .brouillon-plan-grid{grid-template-columns:1fr}
 }
+
+/* ══ ANALYSE D'IMAGE ══ */
+.image-analyse-frame{width:100%;max-height:420px;border-radius:14px;overflow:hidden;
+  border:2px solid #e5e7eb;margin-bottom:16px;position:relative;
+  background:#f1f5f9;display:flex;align-items:center;justify-content:center}
+.image-analyse-frame img{width:100%;max-height:420px;object-fit:contain;display:block;
+  border-radius:12px;cursor:zoom-in;transition:transform .2s}
+.image-analyse-frame img.zoomed{transform:scale(1.6);cursor:zoom-out;z-index:10;position:relative}
+.image-bandeau-propagande{background:#7f1d1d;color:#fff;border-radius:10px;
+  padding:12px 16px;margin-bottom:14px;font-size:.85rem;line-height:1.6;
+  border-left:5px solid #ef4444}
+.image-bandeau-propagande strong{display:block;margin-bottom:4px;font-size:.9rem}
+.image-contexte-box{background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:12px;
+  padding:16px 18px;margin-bottom:16px;font-size:.92rem;line-height:1.8}
+.image-contexte-box .contexte-label{font-size:.75rem;font-weight:800;color:var(--p);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.image-meta-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.image-meta-chip{padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:700;
+  background:#eef0fb;color:var(--p);border:1.5px solid var(--pl)}
+.image-q-bloc{border:1.5px solid #e5e7eb;border-radius:12px;padding:14px 16px;
+  margin-bottom:12px;background:#fafafa}
+.image-q-bloc .q-label{font-size:.75rem;font-weight:800;color:var(--s);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.image-q-bloc .q-text{font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--t)}
+.image-q-bloc .q-aide{font-size:.8rem;color:var(--s);font-style:italic;margin-bottom:8px}
+.image-q-bloc textarea{width:100%;min-height:80px;padding:10px 12px;border:2px solid #e5e7eb;
+  border-radius:10px;font-family:'Nunito',sans-serif;font-size:.92rem;line-height:1.65;
+  resize:vertical;outline:none;background:#fff;transition:border-color .2s}
+.image-q-bloc textarea:focus{border-color:var(--p)}
+.image-fond-bloc{background:var(--pl);border:2px solid var(--p);border-radius:12px;
+  padding:14px 16px;margin-bottom:16px}
+.image-fond-bloc .q-label{font-size:.75rem;font-weight:800;color:var(--p);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.image-fond-bloc .q-text{font-weight:700;font-size:.95rem;margin-bottom:8px}
+.image-fond-bloc .q-aide{font-size:.8rem;color:var(--s);font-style:italic;margin-bottom:8px}
+.image-fond-bloc textarea{width:100%;min-height:100px;padding:10px 12px;
+  border:2px solid var(--p);border-radius:10px;font-family:'Nunito',sans-serif;
+  font-size:.92rem;line-height:1.65;resize:vertical;outline:none;background:#fff}
+.image-correction-item{border-radius:12px;padding:16px 18px;margin-bottom:12px;border:1.5px solid}
+.image-correction-item.ok{background:#f0fdf4;border-color:var(--g)}
+.image-correction-item.moyen{background:#fffbeb;border-color:#f59e0b}
+.image-correction-item.ko{background:#fff5f5;border-color:var(--r)}
+.image-correction-item .q-label{font-size:.78rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.04em;margin-bottom:4px}
+.image-correction-item.ok .q-label{color:#065f46}
+.image-correction-item.moyen .q-label{color:#92400e}
+.image-correction-item.ko .q-label{color:#991b1b}
+.zoom-hint{position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.5);
+  color:#fff;font-size:.7rem;padding:3px 8px;border-radius:8px;pointer-events:none}
+.lien-direct-banner{background:linear-gradient(135deg,var(--p),var(--a));color:#fff;
+  border-radius:12px;padding:12px 18px;margin-bottom:14px;font-size:.85rem;
+  display:flex;align-items:center;gap:10px}
+.lien-direct-banner a{color:#fff;text-decoration:underline;font-weight:700}
+
+/* ══ BROUILLON AVANCÉ ══ */
+.brouillon-advanced{width:100%;margin-bottom:14px}
+.brouillon-tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.brouillon-tab{padding:7px 14px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;
+  font-size:.82rem;font-weight:700;background:#fafafa;color:var(--s);transition:all .18s}
+.brouillon-tab.active{border-color:#f59e0b;background:#fffbeb;color:#92400e}
+.brouillon-pane{display:none}.brouillon-pane.active{display:block}
+.brouillon-plan-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.plan-col{border:2px solid #e5e7eb;border-radius:10px;padding:10px;background:#fafafa}
+.plan-col-title{font-size:.75rem;font-weight:800;color:#92400e;text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:6px;text-align:center}
+.plan-col-title.intro{color:var(--a)}.plan-col-title.devel{color:var(--p)}.plan-col-title.conclu{color:var(--g)}
+.plan-col textarea{width:100%;border:none;background:transparent;resize:none;font-family:'Nunito',sans-serif;
+  font-size:.88rem;line-height:1.6;outline:none;min-height:80px;color:var(--t)}
+.brouillon-notes-area{width:100%;min-height:160px;padding:14px;border:2px solid #fbbf24;
+  border-radius:12px;font-family:'Nunito',sans-serif;font-size:.95rem;line-height:1.8;
+  background:#fffbeb;resize:vertical;outline:none}
+.brouillon-notes-area:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+.brouillon-stats-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  font-size:.78rem;color:var(--s);padding:6px 2px;margin-bottom:4px}
+.mot-repete{background:#fef3c7;border-bottom:2px solid #f59e0b;cursor:help}
+.idee-utilisee{color:#9ca3af;text-decoration:line-through}
+
+/* ══ RELECTURE INLINE ══ */
+.relecture-container{position:relative;margin-bottom:16px}
+#relecture-display{
+  min-height:320px;padding:20px;border:2px solid var(--p);border-radius:14px;
+  font-family:'Nunito',sans-serif;font-size:1.05rem;line-height:1.85;
+  background:#fafffe;white-space:pre-wrap;overflow-y:auto;cursor:text
+}
+.err-orth{border-bottom:2px wavy #ef4444;cursor:pointer;position:relative}
+.err-gram{border-bottom:2px wavy #f97316;cursor:pointer;position:relative}
+.err-vocab{border-bottom:2px solid #8b5cf6;background:rgba(139,92,246,.08);cursor:pointer;position:relative}
+.err-fond{background:rgba(239,68,68,.08);border-bottom:2px dashed #ef4444;cursor:pointer;position:relative}
+.err-ponct{border-bottom:2px solid #3b82f6;cursor:pointer;position:relative}
+.infobulle{display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:200px;max-width:300px;
+  background:#1a2035;color:#fff;font-size:.8rem;line-height:1.5;padding:8px 12px;
+  border-radius:10px;z-index:1000;pointer-events:none;white-space:normal;font-style:normal;
+  box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.infobulle::after{content:'';position:absolute;top:100%;left:16px;border:6px solid transparent;
+  border-top-color:#1a2035}
+[class^="err-"]:hover .infobulle,[class*=" err-"]:hover .infobulle{display:block}
+.relecture-legende{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:.78rem}
+.legende-item{display:flex;align-items:center;gap:5px}
+.relecture-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+
+/* ══ COMPRÉHENSION DE TEXTE ══ */
+.compre-text-box{background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:14px;
+  padding:20px 24px;margin-bottom:18px;line-height:1.9;font-size:.98rem;max-height:380px;
+  overflow-y:auto;position:relative}
+.compre-text-box .text-source{font-size:.75rem;color:var(--s);margin-top:12px;
+  font-style:italic;text-align:right}
+.compre-question{background:var(--pl);border-left:4px solid var(--p);border-radius:0 10px 10px 0;
+  padding:12px 16px;margin-bottom:14px;font-weight:700;font-size:.95rem}
+.compre-question .q-num{color:var(--p);font-size:.78rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.compre-answer-area{width:100%;min-height:90px;padding:12px 14px;border:2px solid #e5e7eb;
+  border-radius:10px;font-family:'Nunito',sans-serif;font-size:.95rem;line-height:1.7;
+  resize:vertical;outline:none;transition:border-color .2s;background:#fafafa}
+.compre-answer-area:focus{border-color:var(--p);background:#fff}
+.compre-aide{font-size:.78rem;color:var(--s);margin-top:4px;font-style:italic}
+.compre-correction-item{border-radius:10px;padding:14px 16px;margin-bottom:10px;border:1.5px solid}
+.compre-correction-item.ok{background:#f0fdf4;border-color:var(--g)}
+.compre-correction-item.moyen{background:#fffbeb;border-color:#f59e0b}
+.compre-correction-item.ko{background:#fff5f5;border-color:var(--r)}
+.compre-score-badge{display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:50%;font-weight:900;font-size:1.1rem;
+  flex-shrink:0;border:3px solid}
+.compre-score-badge.ok{border-color:var(--g);color:#065f46;background:#ecfdf5}
+.compre-score-badge.moyen{border-color:#f59e0b;color:#92400e;background:#fffbeb}
+.compre-score-badge.ko{border-color:var(--r);color:#991b1b;background:#fff5f5}
+.loading-dots::after{content:'';animation:dots 1.5s infinite}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+
 
 /* ══ ESPACE ÉLÈVE ══ */
 .espace-section{margin-bottom:22px}
@@ -298,7 +427,7 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
   <div class="card">
     <h2 style="font-weight:800;margin-bottom:6px">Bonjour <span id="mode-username"></span> ! 👋</h2>
     <p style="color:var(--s);margin-bottom:22px">Que veux-tu faire aujourd'hui ?</p>
-    <div class="mode-grid">
+    <div class="mode-grid" style="grid-template-columns:1fr 1fr">
       <div class="mode-card" onclick="startMode('dialogue')">
         <div class="mc-icon">💬</div>
         <h3>Progression dialoguée</h3>
@@ -308,6 +437,16 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
         <div class="mc-icon">📝</div>
         <h3>Rédaction notée</h3>
         <p>Tu écris un texte complet sur un sujet, je le note et je t'explique.</p>
+      </div>
+      <div class="mode-card" onclick="startComprehension()" style="border-color:#e5e7eb">
+        <div class="mc-icon">🔍</div>
+        <h3>Compréhension de texte</h3>
+        <p>Tu lis un extrait et tu réponds à des questions de type brevet.</p>
+      </div>
+      <div class="mode-card" onclick="startAnalyseImage()" style="border-color:#e5e7eb">
+        <div class="mc-icon">🖼️</div>
+        <h3>Analyse d'image</h3>
+        <p>Tu observes une œuvre et tu réponds à des questions de type brevet.</p>
       </div>
     </div>
     <div id="redac-options" style="display:none">
@@ -408,23 +547,83 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
         <span class="wc-target" id="wc-target"></span>
       </span>
     </div>
-    <!-- Brouillon -->
+    <!-- Brouillon avancé -->
     <div id="brouillon-section" style="display:none;margin-bottom:14px">
-      <span class="brouillon-label">📋 Brouillon (notes / plan)</span>
-      <textarea class="brouillon-area" id="brouillon-text" placeholder="Tes notes, ton plan... Ce brouillon restera visible quand tu passeras au propre."
-        rows="5" oninput="saveBrouillon()"></textarea>
+      <div class="brouillon-advanced">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span class="brouillon-label" style="margin-bottom:0">📋 Brouillon</span>
+          <div class="brouillon-stats-bar" id="brouillon-stats"></div>
+        </div>
+        <div class="brouillon-tabs">
+          <div class="brouillon-tab active" onclick="switchBrouillonTab('plan',this)">🗂️ Plan</div>
+          <div class="brouillon-tab" onclick="switchBrouillonTab('notes',this)">📝 Notes libres</div>
+        </div>
+        <!-- Plan en 3 colonnes -->
+        <div class="brouillon-pane active" id="brouillon-pane-plan">
+          <div class="brouillon-plan-grid">
+            <div class="plan-col">
+              <div class="plan-col-title intro">Introduction</div>
+              <textarea id="plan-intro" placeholder="Accroche, présentation du sujet..." oninput="syncBrouillonToNotes()"></textarea>
+            </div>
+            <div class="plan-col">
+              <div class="plan-col-title devel">Développement</div>
+              <textarea id="plan-devel" placeholder="Idées, exemples, arguments..." oninput="syncBrouillonToNotes()"></textarea>
+            </div>
+            <div class="plan-col">
+              <div class="plan-col-title conclu">Conclusion</div>
+              <textarea id="plan-conclu" placeholder="Résumé, ouverture..." oninput="syncBrouillonToNotes()"></textarea>
+            </div>
+          </div>
+        </div>
+        <!-- Notes libres -->
+        <div class="brouillon-pane" id="brouillon-pane-notes">
+          <div id="brouillon-display-wrap" style="position:relative">
+            <textarea class="brouillon-notes-area" id="brouillon-text"
+              placeholder="Tes idées en vrac, mots-clés, synonymes... Les mots répétés se soulignent. Les idées déjà utilisées dans le propre seront barrées."
+              oninput="saveBrouillon();analyserBrouillon()"></textarea>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- Texte au propre -->
     <div style="margin-bottom:6px;font-weight:700;font-size:.88rem;color:var(--p)">✍️ Texte au propre</div>
     <textarea class="redac-area" id="redac-text"
       placeholder="Écris ton texte ici..."
-      oninput="updateWordCount()" onpaste="blockPaste(event)"></textarea>
+      oninput="updateWordCount();marquerIdeesUtilisees()" onpaste="blockPaste(event)"></textarea>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <button class="btn btn-primary" style="flex:1" onclick="submitRedac()">✅ Soumettre pour correction</button>
+    <button class="btn btn-primary" style="flex:1" onclick="demanderRelecture()">🔎 Relecture avant soumission</button>
+    <button class="btn btn-green" style="flex:1" onclick="submitRedac()">✅ Soumettre pour correction</button>
     <button class="btn btn-ghost btn-sm" onclick="backToMode()">↩ Changer de mode</button>
   </div>
 </div>
+
+<!-- ══ RELECTURE ══ -->
+<div id="screen-relecture" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">🔎</div>
+      <div class="chat-info">
+        <strong>Aide à la relecture</strong>
+        <small>Les passages à améliorer sont soulignés</small>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="relecture-legende">
+      <div class="legende-item"><span style="border-bottom:2px wavy #ef4444;padding:0 4px">Orth.</span></div>
+      <div class="legende-item"><span style="border-bottom:2px wavy #f97316;padding:0 4px">Gram.</span></div>
+      <div class="legende-item"><span style="border-bottom:2px solid #8b5cf6;background:rgba(139,92,246,.08);padding:0 4px">Vocab.</span></div>
+      <div class="legende-item"><span style="border-bottom:2px solid #3b82f6;padding:0 4px">Ponct.</span></div>
+      <div class="legende-item"><span style="background:rgba(239,68,68,.08);border-bottom:2px dashed #ef4444;padding:0 4px">Fond</span></div>
+      <small style="color:var(--s);margin-left:auto">Survole les passages pour voir les commentaires</small>
+    </div>
+    <div id="relecture-display" class="loading-dots">Analyse en cours</div>
+    <div id="relecture-nb-erreurs" style="font-size:.85rem;color:var(--s);margin-top:10px;text-align:center"></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-ghost" style="flex:1" onclick="retournerRedac()">✏️ Corriger mon texte</button>
+    <button class="btn btn-green" style="flex:1" onclick="submitRedacFromRelecture()">✅ Soumettre tel quel</button>
+  </div>
 
 <!-- ══ RÉSULTAT RÉDACTION ══ -->
 <div id="screen-result" class="screen">
@@ -438,6 +637,169 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
   <button class="btn btn-ghost btn-full btn-sm" onclick="backToMode()">↩ Retour au menu</button>
 </div>
 
+
+<!-- ══ COMPRÉHENSION DE TEXTE ══ -->
+<div id="screen-comprehension" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">🔍</div>
+      <div class="chat-info">
+        <strong id="compre-username">–</strong>
+        <small id="compre-meta">–</small>
+      </div>
+      <span class="cbadge dys" id="compre-dys-badge" style="display:none">🧩 DYS</span>
+    </div>
+    <div class="divider"></div>
+    <!-- État chargement -->
+    <div id="compre-loading" style="text-align:center;padding:40px 20px;color:var(--s)">
+      <div style="font-size:2.5rem;margin-bottom:12px">📖</div>
+      <div class="loading-dots" style="font-weight:700">Préparation du texte et des questions</div>
+      <div style="font-size:.85rem;margin-top:8px">Je cherche un texte adapté à ton niveau…</div>
+    </div>
+    <!-- Contenu chargé -->
+    <div id="compre-content" style="display:none">
+      <!-- Texte à lire -->
+      <div style="font-weight:800;font-size:.92rem;color:var(--p);margin-bottom:8px">📖 Lis attentivement ce texte</div>
+      <div class="compre-text-box" id="compre-text-box">
+        <div id="compre-texte"></div>
+        <div class="text-source" id="compre-source"></div>
+      </div>
+      <!-- Questions -->
+      <div id="compre-questions-list"></div>
+      <!-- Bouton soumettre -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-primary" style="flex:1" onclick="soumettreComprehension()">✅ Corriger mes réponses</button>
+        <button class="btn btn-ghost btn-sm" onclick="backToMode()">↩ Retour</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RÉSULTAT COMPRÉHENSION ══ -->
+<div id="screen-compre-result" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">🎯</div>
+      <div class="chat-info">
+        <strong>Correction — Compréhension de texte</strong>
+        <small id="compre-result-meta">–</small>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div id="compre-result-loading" style="text-align:center;padding:30px;color:var(--s)">
+      <div style="font-size:2rem;margin-bottom:10px">⏳</div>
+      <div class="loading-dots">Correction en cours</div>
+    </div>
+    <div id="compre-result-content" style="display:none">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+        <div class="compre-score-badge ok" id="compre-score-badge">–</div>
+        <div>
+          <div style="font-size:1.1rem;font-weight:800" id="compre-score-label">–</div>
+          <div style="color:var(--s);font-size:.88rem" id="compre-score-detail">–</div>
+        </div>
+      </div>
+      <div id="compre-corrections-list"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+    <button class="btn btn-green" style="flex:1" onclick="startComprehension()">🔄 Nouveau texte</button>
+    <button class="btn btn-ghost btn-sm" onclick="backToMode()">↩ Retour au menu</button>
+  </div>
+</div>
+
+<!-- ══ ANALYSE D'IMAGE ══ -->
+<div id="screen-image" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">🖼️</div>
+      <div class="chat-info">
+        <strong id="image-username">–</strong>
+        <small id="image-meta">–</small>
+      </div>
+      <span class="cbadge dys" id="image-dys-badge" style="display:none">🧩 DYS</span>
+    </div>
+    <div class="divider"></div>
+    <div id="image-loading" style="text-align:center;padding:40px 20px;color:var(--s)">
+      <div style="font-size:2.5rem;margin-bottom:12px">🖼️</div>
+      <div class="loading-dots" style="font-weight:700">Sélection d'une œuvre</div>
+      <div style="font-size:.85rem;margin-top:8px">Je cherche une image adaptée à ton niveau…</div>
+    </div>
+    <div id="image-content" style="display:none">
+      <!-- Bandeau propagande (caché par défaut) -->
+      <div id="image-propagande-banner" class="image-bandeau-propagande" style="display:none">
+        <strong>⚠️ Document étudié dans un cadre critique</strong>
+        <span id="image-propagande-text"></span>
+      </div>
+      <!-- Image -->
+      <div class="image-analyse-frame" id="image-frame">
+        <img id="image-oeuvre" src="" alt="Œuvre à analyser" onclick="toggleZoom(this)">
+        <div class="zoom-hint">Clique pour zoomer</div>
+      </div>
+      <!-- Métadonnées -->
+      <div class="image-meta-chips" id="image-chips"></div>
+      <!-- Contexte -->
+      <div class="image-contexte-box">
+        <div class="contexte-label">📖 Contexte de l'œuvre</div>
+        <div id="image-contexte"></div>
+      </div>
+      <!-- Questions de forme -->
+      <div style="font-weight:800;font-size:.9rem;color:var(--s);margin-bottom:10px;
+        text-transform:uppercase;letter-spacing:.05em">Questions sur la forme</div>
+      <div id="image-questions-forme"></div>
+      <!-- Question de fond -->
+      <div style="font-weight:800;font-size:.9rem;color:var(--p);margin-bottom:10px;
+        text-transform:uppercase;letter-spacing:.05em;margin-top:4px">
+        Question sur le fond — forme & sens</div>
+      <div id="image-question-fond"></div>
+      <!-- Actions -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-primary" style="flex:1" onclick="soumettreImage()">✅ Corriger mes réponses</button>
+        <button class="btn btn-ghost btn-sm" onclick="backToMode()">↩ Retour</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RÉSULTAT ANALYSE IMAGE ══ -->
+<div id="screen-image-result" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">🎯</div>
+      <div class="chat-info">
+        <strong>Correction — Analyse d'image</strong>
+        <small id="image-result-titre">–</small>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div id="image-result-loading" style="text-align:center;padding:30px;color:var(--s)">
+      <div style="font-size:2rem;margin-bottom:10px">⏳</div>
+      <div class="loading-dots">Correction en cours</div>
+    </div>
+    <div id="image-result-content" style="display:none">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap">
+        <div class="compre-score-badge ok" id="image-score-badge">–</div>
+        <div>
+          <div style="font-size:1.05rem;font-weight:800" id="image-score-label">–</div>
+          <div style="color:var(--s);font-size:.88rem" id="image-score-detail">–</div>
+        </div>
+      </div>
+      <!-- Rappel de l'image en petit -->
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px">
+        <img id="image-result-thumb" src="" alt="" style="width:90px;height:70px;object-fit:cover;
+          border-radius:8px;border:1.5px solid #e5e7eb;flex-shrink:0">
+        <div>
+          <div style="font-weight:800;font-size:.92rem" id="image-result-titre2">–</div>
+          <div style="color:var(--s);font-size:.82rem" id="image-result-auteur">–</div>
+        </div>
+      </div>
+      <div id="image-corrections-list"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+    <button class="btn btn-green" style="flex:1" onclick="startAnalyseImage()">🔄 Nouvelle œuvre</button>
+    <button class="btn btn-ghost btn-sm" onclick="backToMode()">↩ Retour au menu</button>
+  </div>
+</div>
 
 <!-- ══ ESPACE ÉLÈVE ══ -->
 <div id="screen-espace" class="screen">
@@ -565,6 +927,9 @@ async function initSession(){
   showScreen('screen-mode');
   document.getElementById('mode-username').textContent=user;
   buildRedacTypeGrid();
+
+  // Gestion lien direct URL
+  handleUrlModeAfterLogin();
 
   // Affiche le bouton Mon Espace si l'élève a déjà des données
   const hasData=(state.history&&state.history.length>1)||(state.remoteRedactions&&state.remoteRedactions.length>0);
@@ -714,6 +1079,44 @@ async function genererSujet(){
   };
   const type=typeMap[state.redacType]||state.redacType;
   const mots={"6eme":"100 à 200","5eme":"200 à 300","4eme":"300 à 400","3eme":"400 à 500"};
+
+  // Sujet "réflexion" de 3ème : format brevet authentique
+  if(state.level==='3eme' && state.redacType==='reflexion'){
+    const themesBrevet=[
+      {th:"la liberté individuelle face aux règles collectives",ex:"En vous appuyant sur votre expérience personnelle, vos lectures et vos observations, vous vous demanderez si les règles sont nécessaires à la liberté ou si elles la limitent."},
+      {th:"la place du numérique dans nos vies",ex:"Les réseaux sociaux permettent-ils vraiment de mieux communiquer ? Vous développerez votre point de vue en vous appuyant sur des exemples précis tirés de votre expérience et de vos lectures."},
+      {th:"l'engagement pour une cause",ex:"Peut-on changer le monde à son échelle ? En vous appuyant sur des exemples empruntés à la vie quotidienne, à l'actualité ou à vos lectures, vous développerez votre point de vue."},
+      {th:"la différence et l'exclusion",ex:"Le regard des autres influence-t-il la façon dont on se voit ? Vous développerez votre réflexion en vous appuyant sur des exemples précis."},
+      {th:"le rapport entre image et réalité",ex:"Les images que nous voyons tous les jours nous donnent-elles une représentation fidèle du monde ? Développez votre point de vue en vous appuyant sur des exemples variés."},
+      {th:"la transmission entre générations",ex:"Qu'avons-nous à apprendre des générations précédentes ? Vous défendrez votre point de vue en vous appuyant sur des exemples précis."}
+    ];
+    const t=themesBrevet[Math.floor(Math.random()*themesBrevet.length)];
+    const prompt=`Tu prépares un sujet de brevet des collèges (DNB) pour un élève de 3ème, partie "Expression écrite — sujet de réflexion".
+Thème imposé : "${t.th}"
+Modèle de sujet existant (pour l'esprit) : "${t.ex}"
+
+Génère UN sujet de réflexion argumentée ORIGINAL et DIFFÉRENT du modèle, mais de même format et difficulté.
+Contraintes STRICTES du brevet :
+- La question principale doit être formulée clairement en 1 phrase interrogative.
+- Le sujet doit inviter à défendre un point de vue personnel argumenté.
+- Mentionner explicitement : "En vous appuyant sur vos lectures, votre expérience personnelle et vos observations."
+- Ne pas donner la réponse dans la question.
+- Longueur du texte attendu : 300 à 500 mots, texte organisé en paragraphes (introduction, développement avec au moins 2 arguments illustrés, conclusion).
+- La notation au brevet prend en compte : la qualité de l'argumentation, la richesse des exemples, la cohérence du plan, la maîtrise de la langue.
+
+Réponds UNIQUEMENT en JSON valide, sans markdown :
+{"sujet":"[question principale en 1 phrase + contexte en 1-2 phrases]","consigne":"[rappel des attentes brevet : plan, arguments, exemples, 300-500 mots, soigné orthographiquement]"}`;
+    try{
+      const res=await fetch('/.netlify/functions/gemini',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
+      const d=await res.json();
+      const txt=(d.answer||'').replace(/```json|```/g,'').trim();
+      return JSON.parse(txt);
+    }catch(e){
+      return {sujet:t.ex,
+        consigne:"Organise ton texte en paragraphes : introduction (présentation du sujet), développement (au moins 2 arguments avec exemples), conclusion. 300 à 500 mots. Soigne l'orthographe et la ponctuation."};
+    }
+  }
 
   const prompt=`Tu es un professeur de français. Génère UN sujet de ${type} pour un élève de ${state.level} sur le thème : "${levelThemes[state.level]}".
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans explication :
@@ -1275,6 +1678,668 @@ function renderEspaceDialogues(){
 function toggleRhi(i){document.getElementById('rhi'+i).classList.toggle('open');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+
+// ════════════════════════════
+// BROUILLON AVANCÉ
+// ════════════════════════════
+function switchBrouillonTab(tab, el){
+  document.querySelectorAll('.brouillon-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.brouillon-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('brouillon-pane-'+tab).classList.add('active');
+}
+
+function syncBrouillonToNotes(){
+  const intro=document.getElementById('plan-intro')?.value||'';
+  const devel=document.getElementById('plan-devel')?.value||'';
+  const conclu=document.getElementById('plan-conclu')?.value||'';
+  const combined=[intro&&'[Introduction]\n'+intro,devel&&'[Développement]\n'+devel,conclu&&'[Conclusion]\n'+conclu].filter(Boolean).join('\n\n');
+  saveBrouillon();
+  analyserBrouillon();
+}
+
+function saveBrouillon(){
+  const t=document.getElementById('brouillon-text')?.value||'';
+  const plan={
+    intro:document.getElementById('plan-intro')?.value||'',
+    devel:document.getElementById('plan-devel')?.value||'',
+    conclu:document.getElementById('plan-conclu')?.value||''
+  };
+  try{localStorage.setItem('brouillon_'+state.username,t);
+      localStorage.setItem('brouillon_plan_'+state.username,JSON.stringify(plan));}catch(e){}
+}
+
+function analyserBrouillon(){
+  const txt=document.getElementById('brouillon-text')?.value||'';
+  if(!txt.trim()) return;
+  // Détection mots répétés (>2 lettres, >1 occurrence)
+  const words=txt.toLowerCase().match(/\b[a-zàâäéèêëîïôùûüç']{3,}\b/g)||[];
+  const stop=new Set(['les','des','une','que','qui','dans','pour','avec','sur','par','mais','aussi','comme','plus','cette','tout','très','bien','être','avoir','faire','dire','aller','voir','vouloir','pouvoir','même','dont','leur','leurs','elle','ils','elles','nous','vous','ils','eux']);
+  const freq={};
+  words.forEach(w=>{if(!stop.has(w)) freq[w]=(freq[w]||0)+1;});
+  const repetes=Object.keys(freq).filter(w=>freq[w]>1);
+  const statsEl=document.getElementById('brouillon-stats');
+  if(statsEl) statsEl.innerHTML=repetes.length>0?`<span style="color:#92400e">🔄 Mots répétés : <b>${repetes.slice(0,4).join(', ')}</b>${repetes.length>4?'…':''}</span>`:'';
+  // Souligner les répétitions dans le textarea (indicatif dans les stats seulement, car textarea ne supporte pas le markup inline)
+}
+
+function marquerIdeesUtilisees(){
+  // Compare brouillon notes et propre : affiche stats
+  const brouillon=document.getElementById('brouillon-text')?.value||'';
+  const propre=document.getElementById('redac-text')?.value||'';
+  if(!brouillon||!propre) return;
+  const motsBrouillon=(brouillon.match(/\b[a-zàâäéèêëîïôùûüç']{4,}\b/gi)||[]).map(w=>w.toLowerCase());
+  const motsPropre=new Set((propre.match(/\b[a-zàâäéèêëîïôùûüç']{4,}\b/gi)||[]).map(w=>w.toLowerCase()));
+  const utilises=motsBrouillon.filter(w=>motsPropre.has(w));
+  const pct=motsBrouillon.length>0?Math.round(utilises.length/motsBrouillon.length*100):0;
+  const statsEl=document.getElementById('brouillon-stats');
+  if(statsEl){
+    const existant=statsEl.innerHTML;
+    // Ne remplace pas le texte des répétitions, ajoute
+    const moteur=`<span style="color:var(--g);margin-left:8px">✅ ~${pct}% d'idées utilisées</span>`;
+    if(!statsEl.innerHTML.includes('utilisées')) statsEl.innerHTML+=moteur;
+    else{const match=statsEl.innerHTML.replace(/✅.*?<\/span>/,'✅ ~'+pct+'% d\'idées utilisées</span>');statsEl.innerHTML=match;}
+  }
+}
+
+// ════════════════════════════
+// RELECTURE INLINE
+// ════════════════════════════
+async function demanderRelecture(){
+  const texte=document.getElementById('redac-text').value.trim();
+  if(texte.length<30){alert("Écris au moins quelques phrases pour la relecture !");return;}
+  showScreen('screen-relecture');
+  document.getElementById('relecture-display').textContent='';
+  document.getElementById('relecture-display').className='loading-dots';
+  document.getElementById('relecture-display').textContent='Analyse en cours';
+  document.getElementById('relecture-nb-erreurs').textContent='';
+
+  const mots={"6eme":"100 à 200","5eme":"200 à 300","4eme":"300 à 400","3eme":"400 à 500"};
+  const prompt=`Tu es un professeur de français. Analyse ce texte d'élève de ${state.level} et identifie les erreurs.
+Profil DYS: ${state.dys?'OUI — signale uniquement syntaxe et fond, PAS l\'orthographe':'NON'}
+Type de rédaction: ${labelType(state.redacType)}
+Sujet: "${(state.currentSubject||{}).sujet||'sujet libre'}"
+
+Réponds UNIQUEMENT en JSON valide, sans markdown :
+{
+  "annotations": [
+    {
+      "texte_original": "<passage exact du texte à annoter, max 6 mots consécutifs>",
+      "type": "<orth|gram|vocab|ponct|fond>",
+      "commentaire": "<explication courte et bienveillante>"
+    }
+  ],
+  "nb_erreurs": <number>,
+  "conseil_global": "<1 phrase de conseil général>"
+}
+Types : orth=orthographe, gram=grammaire/syntaxe, vocab=vocabulaire à améliorer, ponct=ponctuation, fond=problème de sens/progression/exemple manquant.
+Identifie 3 à 8 passages MAX, par ordre de priorité pédagogique. Choisis des passages qui existent EXACTEMENT dans le texte.
+
+TEXTE DE L'ÉLÈVE :
+${texte}`;
+
+  try{
+    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
+    const d=await res.json();
+    const txt=(d.answer||'').replace(/```json|```/g,'').trim();
+    const data=JSON.parse(txt);
+    afficherRelecture(texte, data);
+  }catch(e){
+    document.getElementById('relecture-display').className='';
+    document.getElementById('relecture-display').textContent='Impossible d\'analyser pour l\'instant. Tu peux corriger toi-même ou soumettre directement.';
+    document.getElementById('relecture-nb-erreurs').textContent='';
+  }
+}
+
+function afficherRelecture(texte, data){
+  const annotations=data.annotations||[];
+  const typeClass={orth:'err-orth',gram:'err-gram',vocab:'err-vocab',ponct:'err-ponct',fond:'err-fond'};
+  
+  // Remplace les passages annotés dans le texte par des spans cliquables
+  let html=escHtml(texte);
+  // Tri par longueur décroissante pour éviter les remplacements partiels
+  const sorted=[...annotations].sort((a,b)=>(b.texte_original||'').length-(a.texte_original||'').length);
+  sorted.forEach(ann=>{
+    const orig=ann.texte_original||'';
+    if(!orig) return;
+    const cls=typeClass[ann.type]||'err-orth';
+    const escaped=orig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const regex=new RegExp(escaped.replace(/\s+/g,'\\s+'));
+    const span=`<span class="${cls}" style="position:relative">${escHtml(orig)}<span class="infobulle">${escHtml(ann.commentaire||'')}</span></span>`;
+    html=html.replace(regex,span);
+  });
+  html=html.replace(/\n/g,'<br>');
+
+  const display=document.getElementById('relecture-display');
+  display.className='';
+  display.innerHTML=html;
+  const nb=data.nb_erreurs||annotations.length;
+  document.getElementById('relecture-nb-erreurs').innerHTML=
+    `<b>${nb} passage(s) à revoir</b>${data.conseil_global?` · 💡 ${esc(data.conseil_global)}`:''}`;
+}
+
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function retournerRedac(){showScreen('screen-redaction');}
+
+function submitRedacFromRelecture(){submitRedac();}
+
+// ════════════════════════════
+// COMPRÉHENSION DE TEXTE
+// ════════════════════════════
+let compreData=null;
+
+async function startComprehension(){
+  state.mode='comprehension';
+  showScreen('screen-comprehension');
+  const lvl={"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+  document.getElementById('compre-username').textContent=state.username;
+  document.getElementById('compre-meta').textContent=lvl[state.level]+' · Compréhension de texte';
+  if(state.dys) document.getElementById('compre-dys-badge').style.display='inline-flex';
+  document.getElementById('compre-loading').style.display='block';
+  document.getElementById('compre-content').style.display='none';
+  compreData=null;
+
+  const configs={
+    "6eme":{
+      theme:"extraits de récits de fantasy, de contes merveilleux ou de textes sur les monstres et créatures fantastiques, adaptés à des élèves de 11-12 ans",
+      nbQ:3, longueur:"20 à 30 lignes",
+      typeQ:"questions simples sur la compréhension littérale, l'identification du narrateur, la description d'un personnage"
+    },
+    "5eme":{
+      theme:"extraits de récits d'aventure, de voyages ou de textes documentaires sur des explorations, adaptés à des élèves de 12-13 ans",
+      nbQ:4, longueur:"25 à 35 lignes",
+      typeQ:"questions sur la compréhension globale, les intentions d'un personnage, un procédé d'écriture simple (champ lexical, comparaison)"
+    },
+    "4eme":{
+      theme:"extraits de romans épistolaires, de récits d'amour ou de textes traitant de l'imaginaire et du réel, adaptés à des élèves de 13-14 ans",
+      nbQ:4, longueur:"30 à 40 lignes",
+      typeQ:"questions sur la compréhension fine, les registres, les figures de style (métaphore, ironie), le point de vue narratif"
+    },
+    "3eme":{
+      theme:"extraits d'autobiographies, de romans engagés ou de textes dénonçant des injustices sociales, adaptés à des élèves de 14-15 ans, dans l'esprit des sujets du brevet des collèges",
+      nbQ:5, longueur:"35 à 45 lignes",
+      typeQ:"questions de type brevet : compréhension globale, analyse d'un procédé stylistique avec citation justifiée, question de grammaire, question sur le sens d'un mot en contexte, question de réflexion personnelle"
+    }
+  };
+  const cfg=configs[state.level];
+
+  const prompt=`Tu es un professeur de français préparant un exercice de compréhension de texte pour un élève de ${state.level}.
+L'exercice doit être STRICTEMENT calibré sur les épreuves du Brevet des collèges (DNB) français.
+
+Génère un texte ORIGINAL (pas une copie d'un texte existant, mais écrit dans le style de : ${cfg.theme}).
+Longueur : ${cfg.longueur}.
+Le texte doit être fluide, littéraire, adapté au niveau.
+
+Génère aussi ${cfg.nbQ} questions de compréhension.
+Types de questions attendus pour ce niveau : ${cfg.typeQ}
+IMPORTANT : chaque question doit attendre une réponse qui reprend les termes de la question + une citation du texte entre guillemets + une explication de pourquoi cette citation répond à la question.
+
+Réponds UNIQUEMENT en JSON valide, sans markdown :
+{
+  "texte": "<texte littéraire, avec des sauts de ligne \\n aux changements de paragraphe>",
+  "source": "<auteur fictif ou style : ex. 'D'après un récit fantastique contemporain'>",
+  "questions": [
+    {
+      "num": 1,
+      "question": "<question>",
+      "aide": "<rappel de la méthode : réponse + citation + commentaire>",
+      "reponse_attendue": "<réponse modèle complète avec citation et commentaire>",
+      "points": <1 ou 2>
+    }
+  ],
+  "total_points": <nombre>
+}`;
+
+  try{
+    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
+    const d=await res.json();
+    const txt=(d.answer||'').replace(/```json|```/g,'').trim();
+    compreData=JSON.parse(txt);
+    afficherComprehension(compreData);
+  }catch(e){
+    document.getElementById('compre-loading').innerHTML='<p style="color:var(--r)">Erreur lors de la génération. Réessaie !</p><button class="btn btn-ghost btn-sm" onclick="backToMode()">↩ Retour</button>';
+  }
+}
+
+function afficherComprehension(data){
+  document.getElementById('compre-loading').style.display='none';
+  document.getElementById('compre-content').style.display='block';
+  document.getElementById('compre-texte').innerHTML=(data.texte||'').replace(/\n/g,'<br>');
+  document.getElementById('compre-source').textContent=data.source||'';
+  const ql=document.getElementById('compre-questions-list');
+  ql.innerHTML=(data.questions||[]).map((q,i)=>`
+    <div class="compre-question">
+      <div class="q-num">Question ${q.num||i+1} · ${q.points||1} point${q.points>1?'s':''}</div>
+      ${esc(q.question||'')}
+    </div>
+    <div style="margin-bottom:4px">
+      <textarea class="compre-answer-area" id="compre-rep-${i}" 
+        placeholder="Écris ta réponse ici..."></textarea>
+      <div class="compre-aide">${esc(q.aide||'Méthode : ta réponse + citation entre guillemets + explication de la citation.')}</div>
+    </div>
+  `).join('');
+}
+
+async function soumettreComprehension(){
+  if(!compreData) return;
+  const reponses=(compreData.questions||[]).map((q,i)=>({
+    question:q.question||'',
+    reponse_eleve:document.getElementById('compre-rep-'+i)?.value.trim()||'',
+    reponse_attendue:q.reponse_attendue||'',
+    points:q.points||1
+  }));
+  const nonRepondu=reponses.filter(r=>!r.reponse_eleve).length;
+  if(nonRepondu===reponses.length){alert("Réponds à au moins une question !");return;}
+
+  showScreen('screen-compre-result');
+  document.getElementById('compre-result-loading').style.display='block';
+  document.getElementById('compre-result-content').style.display='none';
+  const lvl={"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+  document.getElementById('compre-result-meta').textContent=lvl[state.level];
+
+  const prompt=`Tu corriges un exercice de compréhension de texte de type brevet des collèges pour un élève de ${state.level}.
+Profil DYS: ${state.dys?'OUI — ne pénalise PAS l\'orthographe':'NON'}
+
+TEXTE LU :
+${compreData.texte||''}
+
+QUESTIONS ET RÉPONSES :
+${reponses.map((r,i)=>`Q${i+1} (${r.points}pt${r.points>1?'s':''}) : ${r.question}
+Réponse de l'élève : "${r.reponse_eleve||'[non répondu]'}"
+Réponse attendue : "${r.reponse_attendue}"`).join('\n\n')}
+
+Pour chaque question, évalue : (1) si la réponse reprend les termes de la question, (2) si une citation est présente et correcte, (3) si le commentaire de la citation est pertinent.
+Sois bienveillant mais honnête. Adapte le niveau d'exigence au niveau ${state.level}.
+
+Réponds UNIQUEMENT en JSON valide, sans markdown :
+{
+  "corrections": [
+    {
+      "num": 1,
+      "statut": "<ok|moyen|ko>",
+      "points_obtenus": <number>,
+      "points_max": <number>,
+      "appreciation": "<Très bien|Bien|À améliorer|Insuffisant>",
+      "commentaire": "<feedback précis et bienveillant>",
+      "ce_qui_manque": "<ce qui aurait amélioré la réponse, si statut != ok>"
+    }
+  ],
+  "score_total": <number>,
+  "score_max": <number>,
+  "bilan": "<2 phrases de bilan général>"
+}`;
+
+  try{
+    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
+    const d=await res.json();
+    const txt=(d.answer||'').replace(/```json|```/g,'').trim();
+    const result=JSON.parse(txt);
+    afficherResultatComprehension(result);
+  }catch(e){
+    document.getElementById('compre-result-loading').innerHTML='<p style="color:var(--r)">Erreur lors de la correction. Réessaie !</p>';
+  }
+}
+
+function afficherResultatComprehension(result){
+  document.getElementById('compre-result-loading').style.display='none';
+  document.getElementById('compre-result-content').style.display='block';
+  const score=result.score_total||0;
+  const max=result.score_max||10;
+  const pct=Math.round(score/max*100);
+  const cls=pct>=80?'ok':pct>=50?'moyen':'ko';
+  const labels={ok:'Très bien !',moyen:'Peut mieux faire',ko:'À retravailler'};
+  const badge=document.getElementById('compre-score-badge');
+  badge.textContent=score+'/'+max;
+  badge.className='compre-score-badge '+cls;
+  document.getElementById('compre-score-label').textContent=labels[cls];
+  document.getElementById('compre-score-detail').textContent=result.bilan||'';
+  const cl=document.getElementById('compre-corrections-list');
+  cl.innerHTML=(result.corrections||[]).map(c=>`
+    <div class="compre-correction-item ${c.statut||'moyen'}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="compre-score-badge ${c.statut||'moyen'}" style="width:40px;height:40px;font-size:.9rem">
+          ${c.points_obtenus||0}/${c.points_max||1}
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:.9rem">Question ${c.num} · ${esc(c.appreciation||'')}</div>
+        </div>
+      </div>
+      <div style="font-size:.88rem;line-height:1.6;color:var(--t)">${esc(c.commentaire||'')}</div>
+      ${c.ce_qui_manque?`<div style="margin-top:6px;font-size:.82rem;color:var(--s);font-style:italic">💡 ${esc(c.ce_qui_manque)}</div>`:''}
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════
+// BANQUE D'IMAGES
+// ════════════════════════════
+const IMAGE_BANK = [
+  {id:"6-01",niveau:"6eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Sandro_Botticelli_046.jpg/960px-Sandro_Botticelli_046.jpg",titre:"Pallas et le Centaure",auteur:"Sandro Botticelli",date:"vers 1482",type:"peinture",theme:"monstre-humain",propagande:false,
+  contexte:"Cette peinture a été réalisée par Botticelli, un peintre italien de la Renaissance (XVe siècle). Elle représente Pallas Athéna, déesse grecque de la sagesse, qui saisit par les cheveux un centaure — créature mi-homme, mi-cheval issue de la mythologie grecque. Athéna est reconnaissable à sa lance et à sa couronne d'olivier. Le centaure baisse la tête dans une attitude de soumission.",
+  questions_forme:[{question:"Observez la composition : où se trouvent les deux personnages l'un par rapport à l'autre ? Quelle impression cette disposition crée-t-elle ?",aide:"Décrivez la position de chaque personnage (debout, penché, à gauche, à droite…), puis dites ce que cela suggère sur leur rapport de force.",reponse_attendue:"Athéna se tient droite, dominant la composition, tandis que le centaure est penché vers elle, la tête baissée. Cette verticalité face à la posture courbée du centaure suggère une relation de domination : la déesse a l'autorité, le centaure est soumis."},{question:"Quels éléments visuels distinguent Athéna du centaure ? Relevez au moins deux différences.",aide:"Comparez leurs attributs (vêtements, armes, apparence physique) et réfléchissez à ce que ces différences symbolisent.",reponse_attendue:"Athéna est habillée d'une robe ornée et porte une lance, symboles de civilisation. Le centaure est nu dans sa partie animale et sans arme. Ces contrastes opposent la culture et la raison à la nature sauvage et instinctive."}],
+  question_fond:{question:"En vous appuyant sur la forme de l'image, expliquez ce que Botticelli veut dire sur le rapport entre la raison et les instincts animaux.",aide:"Reliez ce que vous avez observé (postures, attributs, composition) au sens profond : que représente chaque personnage symboliquement ?",reponse_attendue:"Botticelli oppose deux forces : la raison (Athéna) et les instincts (le centaure). La domination physique d'Athéna et la soumission du centaure disent que la sagesse doit gouverner nos instincts. La forme sert directement ce message philosophique."}},
+
+  {id:"6-02",niveau:"6eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/44_-Mus%C3%A9e_d%27Art_de_Nantes_-_Ulysse_et_les_sir%C3%A8nes_-_Victor_Mottez_-_Joconde07430004040.jpg/960px-44_-Mus%C3%A9e_d%27Art_de_Nantes_-_Ulysse_et_les_sir%C3%A8nes_-_Victor_Mottez_-_Joconde07430004040.jpg",titre:"Ulysse et les Sirènes",auteur:"Victor Mottez",date:"XIXe siècle",type:"peinture",theme:"monstre-humain",propagande:false,
+  contexte:"Cette peinture illustre un épisode de L'Odyssée d'Homère. Ulysse rentre chez lui par mer depuis dix ans. Pour passer sans danger près des Sirènes — créatures mi-femmes, mi-oiseaux dont le chant envoûtant noie les marins — il se fait attacher au mât et bouche les oreilles de ses marins avec de la cire. Ainsi, il peut entendre le chant sans y succomber.",
+  questions_forme:[{question:"Comment le peintre a-t-il représenté les Sirènes pour qu'elles paraissent à la fois attirantes et dangereuses ?",aide:"Regardez leur apparence physique : qu'ont-elles d'humain ? Qu'ont-elles d'animal ou d'inquiétant ?",reponse_attendue:"Les Sirènes ont un visage et un buste de femme séduisants, mais des ailes ou une queue qui les rendent non-humaines. Cette hybridité est intentionnelle : le côté humain attire, le côté animal inquiète. Le danger vient précisément de ce qui séduit."},{question:"Décrivez la position d'Ulysse sur le bateau. Que révèle cette posture sur son état intérieur ?",aide:"Est-il calme ? Tendu ? Vers quoi se tourne-t-il ? Comment son corps exprime-t-il le combat entre désir et raison ?",reponse_attendue:"Ulysse est attaché, le corps tendu vers les Sirènes, la tête tournée dans leur direction. Ses liens l'empêchent de suivre son désir. Cette tension entre l'élan du corps et l'immobilité imposée traduit visuellement le conflit entre fascination et raison."}],
+  question_fond:{question:"Comment la forme de cette peinture illustre-t-elle l'idée que la force d'un héros n'est pas seulement physique, mais aussi une victoire sur soi-même ?",aide:"Reliez la posture d'Ulysse (attaché, tendu) et la représentation des Sirènes (séduisantes) au sens profond de l'épisode.",reponse_attendue:"L'héroïsme d'Ulysse n'est pas de vaincre un monstre à l'épée mais de résister à la tentation. Il n'est pas libre et triomphant, il est ligoté et en tension. Sa victoire est intérieure. La forme traduit cette idée : un héros qui choisit de se contraindre pour ne pas céder à ce qui le détruirait."}},
+
+  {id:"6-03",niveau:"6eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Mosaico_de_Medusa_%2837834879306%29_%282%29.jpg/960px-Mosaico_de_Medusa_%2837834879306%29_%282%29.jpg",titre:"Mosaïque de Méduse",auteur:"Artisan romain anonyme",date:"IIe siècle ap. J.-C.",type:"mosaïque",theme:"monstre-humain",propagande:false,
+  contexte:"Cette mosaïque romaine représente Méduse, l'une des Gorgones de la mythologie grecque. Méduse avait le visage d'une femme entouré de serpents en guise de cheveux. Son regard pétrifiait (transformait en pierre) quiconque la regardait. Le héros Persée réussit à la tuer en ne regardant que son reflet dans un bouclier. Les Romains utilisaient l'image de Méduse comme talisman pour protéger leurs maisons et effrayer les ennemis.",
+  questions_forme:[{question:"Observez le visage de Méduse. Comment l'artiste a-t-il réussi à le rendre à la fois humain et monstrueux ?",aide:"Regardez les traits du visage (bouche, yeux, expressions) puis les éléments non-humains. Comment les deux coexistent-ils ?",reponse_attendue:"Le visage a des traits humains reconnaissables mais l'expression est figée dans une grimace agressive, et les cheveux sont remplacés par des serpents. Cette hybridité crée un malaise : on reconnaît un visage humain mais quelque chose cloche, ce qui le rend plus perturbant qu'un monstre purement imaginaire."},{question:"Pourquoi l'artiste a-t-il choisi de représenter Méduse de face, regardant directement le spectateur ?",aide:"Pensez à la légende : que se passe-t-il quand on regarde Méduse dans les yeux ? Comment ce choix implique-t-il le spectateur ?",reponse_attendue:"En regardant Méduse de face, le spectateur est mis dans la position de celui qui la regarde dans les yeux — la position de la victime potentielle. Ce choix rend l'image immédiatement menaçante et implique émotionnellement le regardeur."}],
+  question_fond:{question:"Les Romains plaçaient cette image à l'entrée de leurs maisons pour se protéger. Comment la représentation visuelle de Méduse peut-elle simultanément effrayer et protéger ?",aide:"Réfléchissez au paradoxe : ce qui est dangereux dans la légende devient protecteur dans l'usage. Comment la forme soutient-elle cette double fonction ?",reponse_attendue:"Méduse effraie parce que son regard pétrifie dans la légende. Retournée contre les ennemis, cette même puissance devient protection. La représentation frontale, agressive, les serpents, la grimace : tous ces éléments qui inspirent la peur chez le spectateur inspireraient la même peur chez un ennemi. La forme monstrueuse sert un usage protecteur."}},
+
+  {id:"6-04",niveau:"6eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/1-2_Le-corbeau-et-le-renard.jpg/960px-1-2_Le-corbeau-et-le-renard.jpg",titre:"Le Corbeau et le Renard",auteur:"Illustration de fable (XIXe siècle)",date:"XIXe siècle",type:"illustration",theme:"fable-animaux",propagande:false,
+  contexte:"Cette illustration accompagne la célèbre fable de Jean de La Fontaine, Le Corbeau et le Renard (1668). Un corbeau perché sur un arbre tient un fromage dans son bec. Un renard, voulant s'en emparer, lui fait des compliments sur sa beauté et lui demande de chanter. Le corbeau, flatté, ouvre le bec, laisse tomber le fromage, et le renard l'emporte. La morale : la flatterie est une arme de manipulation.",
+  questions_forme:[{question:"Observez les positions du corbeau et du renard. Que suggère cette disposition sur leur rapport de force ?",aide:"Qui est en haut, qui est en bas ? Qui regarde qui ? Ces positions expriment-elles la réalité du pouvoir ?",reponse_attendue:"Le corbeau est en haut (perché), ce qui devrait signifier une position de force. Le renard est en bas, le regard levé avec une attitude flatteuse. Mais l'image souligne l'ironie : c'est celui d'en bas qui va gagner, car le vrai pouvoir n'est pas physique mais intellectuel."},{question:"Comment l'illustrateur a-t-il représenté le renard pour montrer qu'il est rusé et manipulateur ?",aide:"Regardez la posture du corps, l'expression du visage, le regard vers le corbeau.",reponse_attendue:"Le renard est représenté avec une posture détendue et sûre de lui, le regard levé, l'air bienveillant et flatteur. Cette attitude de fausse déférence — sembler inférieur tout en manipulant — est traduite par la posture non-menaçante mais le regard calculateur de l'animal."}],
+  question_fond:{question:"Comment l'illustration aide-t-elle à comprendre la morale de la fable, c'est-à-dire que les flatteries sont trompeuses ?",aide:"Reliez ce que vous voyez (positions, attitudes) au sens de la fable. Comment la forme visuelle renforce-t-elle le message ?",reponse_attendue:"L'image joue sur le contraste entre la position haute du corbeau (qui devrait signifier la puissance) et sa future défaite. La posture humble du renard cache sa vraie domination. Visuellement, l'illustration dit la même chose que la fable en mots : celui qui semble s'abaisser est en réalité le maître de la situation."}},
+
+  {id:"5-01",niveau:"5eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Hovhannes_Aivazovsky_-_The_Ninth_Wave_-_Google_Art_Project.jpg/960px-Hovhannes_Aivazovsky_-_The_Ninth_Wave_-_Google_Art_Project.jpg",titre:"La Neuvième Vague",auteur:"Ivan Aivazovsky",date:"1850",type:"peinture",theme:"voyage-nature",propagande:false,
+  contexte:"Ce tableau du peintre russe Aivazovsky est l'une des œuvres les plus célèbres de la peinture maritime. Il représente le lendemain d'une tempête en mer : des survivants s'accrochent à un mât brisé au milieu de vagues gigantesques. La 'neuvième vague' est une expression de marins selon laquelle la neuvième vague d'une tempête est toujours la plus haute et la plus destructrice. Aivazovsky a lui-même survécu à une tempête, ce qui donne à cette œuvre une dimension autobiographique.",
+  questions_forme:[{question:"Décrivez les couleurs utilisées. Qu'est-ce qui est éclairé ? Qu'est-ce qui est sombre ? Quel sentiment cette opposition crée-t-elle ?",aide:"Regardez l'horizon, le ciel, la vague, les personnages. La lumière n'est pas répartie au hasard.",reponse_attendue:"Le ciel à l'horizon est lumineux, doré, presque solaire, tandis que les vagues au premier plan sont sombres et menaçantes. Cette opposition lumière/ombre traduit simultanément le danger immédiat et l'espoir lointain. Les survivants sont baignés d'une lumière dorée qui les distingue de la noirceur des flots."},{question:"Comment le peintre a-t-il représenté les vagues pour exprimer leur puissance ? Relevez des éléments précis.",aide:"Regardez la taille des vagues par rapport aux personnages, leur forme, leur mouvement suggéré.",reponse_attendue:"Les vagues sont représentées démesurément grandes par rapport aux personnages, qui paraissent minuscules. Leurs formes arquées, leur écume blanche, la transparence de la vague au premier plan : tout concourt à exprimer une puissance écrasante face à la fragilité humaine."}],
+  question_fond:{question:"Comment ce tableau exprime-t-il à la fois la terreur de la nature et l'espoir de survie ? Montrez que la forme sert ces deux émotions simultanément.",aide:"Identifiez les éléments qui expriment la terreur et ceux qui expriment l'espoir. Comment coexistent-ils ?",reponse_attendue:"La terreur est exprimée par les vagues gigantesques, les couleurs sombres, la petitesse des survivants. L'espoir est exprimé par la lumière dorée à l'horizon et par la posture active des survivants qui s'accrochent et résistent. La composition place l'espoir loin mais visible, disant que la survie est possible mais incertaine."}},
+
+  {id:"5-02",niveau:"5eme",url:"https://upload.wikimedia.org/wikipedia/commons/a/a6/La_Grande_Vague_invers%C3%A9e.jpg",titre:"La Grande Vague de Kanagawa",auteur:"Katsushika Hokusai",date:"1831",type:"estampe",theme:"voyage-nature",propagande:false,
+  contexte:"Cette estampe (impression sur bois) de l'artiste japonais Hokusai est l'œuvre d'art japonaise la plus connue dans le monde. Elle représente une vague géante avec le mont Fuji visible en arrière-plan. Au pied de la vague, on distingue trois bateaux de pêcheurs. L'estampe appartient à la série 'Trente-six vues du mont Fuji'. L'art de l'estampe japonaise a énormément influencé les peintres impressionnistes européens.",
+  questions_forme:[{question:"Observez la forme de la vague. Comment Hokusai l'a-t-il représentée pour qu'elle paraisse à la fois belle et menaçante ?",aide:"Regardez les lignes qui forment la vague, les griffes d'écume au sommet, la courbe générale.",reponse_attendue:"La vague est représentée avec une courbe élégante, presque décorative, aux contours précis. Mais les crêtes se terminent en griffes comme des serres d'oiseau de proie, évoquant une menace. Cette association beauté/danger est typique de l'esthétique japonaise du sublime terrifiant."},{question:"Le mont Fuji est visible en arrière-plan, minuscule. Que signifie ce choix de composition ?",aide:"Habituellement, le mont Fuji est le sujet principal de cette série. Ici, que dit sa petitesse ?",reponse_attendue:"Le mont Fuji, symbole de permanence au Japon, est représenté minuscule sous la vague qui le domine. Ce renversement de proportion dit que même ce qui semble éternel est écrasé par la force momentanée de la nature — la nature est plus grande que tout monument."}],
+  question_fond:{question:"Comment cette estampe illustre-t-elle le rapport entre l'être humain et la nature ? Appuyez-vous sur des éléments visuels précis.",aide:"Trouvez les humains dans l'image. Quelle est leur taille par rapport à la vague ? Que font-ils ?",reponse_attendue:"Les pêcheurs dans leurs bateaux sont microscopiques sous la vague colossale. Ils ne fuient pas, ils rament — ils travaillent malgré le danger. La composition dit que l'homme est infime face à la nature mais qu'il y vit quotidiennement. Ce n'est pas une image de défaite mais d'une coexistence entre fragilité humaine et puissance naturelle."}},
+
+  {id:"5-03",niveau:"5eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Marie-%C3%89l%C3%A9onore_Godefroid_-_Scheherazade_and_Shahryar_%28One_Thousand_and_One_Nights%29.jpg/960px-Marie-%C3%89l%C3%A9onore_Godefroid_-_Scheherazade_and_Shahryar_%28One_Thousand_and_One_Nights%29.jpg",titre:"Shéhérazade et Shahryar",auteur:"Marie-Éléonore Godefroid",date:"XIXe siècle",type:"peinture",theme:"voyage-recit",propagande:false,
+  contexte:"Cette peinture représente la scène d'ouverture des Mille et Une Nuits, recueil de contes orientaux compilé entre le VIIIe et le XIIIe siècle. Le roi Shahryar, trahi par sa femme, fait exécuter chaque femme qu'il épouse au matin. Shéhérazade se porte volontaire et imagine un stratagème : chaque nuit, elle raconte une histoire si captivante qu'elle s'interrompt sur un suspense à l'aube, forçant le roi à la garder en vie pour entendre la suite. Elle raconte ainsi mille et une histoires.",
+  questions_forme:[{question:"Observez les expressions et postures des deux personnages. Comment le peintre a-t-il traduit visuellement le rapport de pouvoir entre Shéhérazade et le roi ?",aide:"Qui paraît être en position de force ? Lequel tient l'autre sous son charme ? Comment la forme traduit-elle ce paradoxe ?",reponse_attendue:"Le roi est assis dans une posture d'écoute attentive, presque subjugué. Shéhérazade, malgré sa position de prisonnière, rayonne — son visage est lumineux, son geste expressif. Le peintre inverse la domination : c'est la conteuse qui semble tenir le pouvoir, même si officiellement elle est la plus vulnérable."},{question:"Comment la lumière est-elle utilisée pour mettre en valeur Shéhérazade ?",aide:"D'où vient la lumière ? Qui est éclairé en priorité ? Que dit ce choix sur l'importance du personnage ?",reponse_attendue:"Shéhérazade est la principale bénéficiaire de la lumière dans la composition. Cette mise en lumière la désigne comme le vrai centre de la scène, celui qui a le pouvoir de fasciner. La lumière souligne que c'est elle qui domine vraiment la situation, et non le roi armé."}],
+  question_fond:{question:"Comment cette peinture illustre-t-elle le pouvoir des mots et du récit face à la violence et au pouvoir politique ?",aide:"Shéhérazade n'a ni arme ni armée. Quel est son seul outil ? Comment la forme montre-t-elle que cet outil est puissant ?",reponse_attendue:"Shéhérazade n'a que sa voix et son imagination. La peinture le dit visuellement en lui donnant la lumière, le regard du roi, la position centrale. Elle tient en vie par la seule puissance du récit. L'œuvre dit que les mots peuvent être plus forts que les armes — un message sur la valeur de la littérature face à la brutalité."}},
+
+  {id:"5-04",niveau:"5eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Arthur-Pyle_King_Arthur_of_Britain.JPG/960px-Arthur-Pyle_King_Arthur_of_Britain.JPG",titre:"Le Roi Arthur",auteur:"Howard Pyle",date:"1903",type:"illustration",theme:"voyage-chevalerie",propagande:false,
+  contexte:"Howard Pyle était un illustrateur américain célèbre pour ses représentations des légendes médiévales, notamment les aventures du Roi Arthur et des Chevaliers de la Table Ronde. Ces légendes, d'origine galloise et française (XIIe-XIIIe siècles), racontent les aventures d'Arthur, roi légendaire de Bretagne, et la quête du Graal (une coupe sacrée). Pyle a fortement contribué à la vision romantique et idéalisée du Moyen Âge dans la culture populaire.",
+  questions_forme:[{question:"Comment le dessinateur a-t-il représenté Arthur pour qu'il paraisse à la fois puissant et idéal ? Décrivez sa posture, ses vêtements, son expression.",aide:"Un héros se voit souvent à sa façon d'occuper l'espace. Comment Arthur est-il positionné ? Que dit son équipement de son statut ?",reponse_attendue:"Arthur est représenté debout, droit, en armure brillante, l'épée à la ceinture. Sa posture est royale et assurée. Les détails de l'armure et du manteau signalent la richesse et la noblesse. Son expression sérieuse et déterminée fait de lui une image idéale de la chevalerie : courage, noblesse, dignité."},{question:"Quels éléments du décor contribuent à créer une atmosphère médiévale et légendaire ?",aide:"Regardez l'arrière-plan, les éléments visibles. Que dit ce cadre sur l'univers dans lequel évolue Arthur ?",reponse_attendue:"L'illustration place Arthur dans un cadre solennel avec des éléments évoquant le Moyen Âge. Ce décor n'est pas réaliste mais romantique — il crée une atmosphère de légende, de temps lointain et héroïque, cohérente avec le registre épique des récits arthuriens."}],
+  question_fond:{question:"Les légendes arthuriennes parlent d'un idéal de chevalerie : courage, loyauté, justice. Comment l'illustration de Pyle traduit-elle visuellement cet idéal ?",aide:"Reliez chaque choix visuel (posture, lumière, armure, expression) aux valeurs chevaleresques.",reponse_attendue:"Chaque élément visuel construit un héros idéal : la posture droite dit la droiture morale, l'armure brillante dit la pureté et la vertu, l'expression sérieuse dit la responsabilité. Pyle ne représente pas un homme réel mais un modèle, une incarnation de ce que devrait être un chevalier."}},
+
+  {id:"4-01",niveau:"4eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/960px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",titre:"Le Baiser",auteur:"Gustav Klimt",date:"1907-1908",type:"peinture",theme:"amour",propagande:false,
+  contexte:"Gustav Klimt (1862-1918) était un peintre autrichien, figure majeure du mouvement Art Nouveau. Le Baiser est son œuvre la plus célèbre. Elle représente un couple enlacé sur un fond doré, dans des vêtements ornés de motifs géométriques et floraux. Klimt utilisait de vraies feuilles d'or dans ses peintures, d'où cet aspect luxueux et presque irréel. Cette œuvre est souvent interprétée comme une représentation de l'amour total et fusionnel qui dissout les individualités dans un élan commun.",
+  questions_forme:[{question:"Observez les vêtements des deux personnages. Quels motifs les ornent ? En quoi sont-ils différents pour l'homme et pour la femme ?",aide:"Regardez les formes géométriques sur le vêtement de l'homme et les formes florales sur celui de la femme. Ces différences sont-elles symboliques ?",reponse_attendue:"Le vêtement de l'homme est orné de rectangles et de motifs géométriques noirs et blancs, évoquant la structure et la rationalité. Celui de la femme est couvert de motifs floraux ronds et colorés, évoquant la nature et la sensibilité. Mais les deux vêtements se fondent l'un dans l'autre, symbolisant la complémentarité des deux êtres."},{question:"Comment Klimt a-t-il utilisé le fond doré ? Quel effet produit cette absence de décor réaliste ?",aide:"Que se passe-t-il quand il n'y a pas de lieu précis ? L'or renvoie à quelles idées dans l'art ?",reponse_attendue:"L'or est la couleur du sacré et de l'éternel dans l'art occidental. En plaçant le couple sur un fond doré sans décor réaliste, Klimt sort la scène du quotidien et l'élève au rang du mythe. L'amour représenté n'est pas ordinaire mais un idéal, une expérience hors du temps et de l'espace."}],
+  question_fond:{question:"Comment cette peinture représente-t-elle l'idée que l'amour peut abolir les frontières entre deux individus ? Appuyez-vous sur des éléments visuels précis.",aide:"Regardez comment les corps et les vêtements des deux personnages se fondent l'un dans l'autre. Peut-on clairement distinguer où l'un finit et où l'autre commence ?",reponse_attendue:"Les vêtements des deux personnages se mélangent au point qu'il est difficile de distinguer où l'un finit et où l'autre commence. Leurs corps fusionnent dans une masse dorée commune. Klimt traduit visuellement l'idée romantique de la fusion amoureuse — deux êtres qui se perdent l'un dans l'autre."}},
+
+  {id:"4-02",niveau:"4eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Rodin_-_Le_Baiser_06.jpg/500px-Rodin_-_Le_Baiser_06.jpg",titre:"Le Baiser",auteur:"Auguste Rodin",date:"1882",type:"sculpture",theme:"amour",propagande:false,
+  contexte:"Cette sculpture en marbre blanc du sculpteur français Auguste Rodin (1840-1917) représente Paolo et Francesca, deux personnages de La Divine Comédie de Dante (XIVe siècle). Dans ce récit, Paolo et Francesca sont deux amants condamnés en enfer pour avoir cédé à leur amour adultère. Rodin a représenté le moment du premier baiser, celui qui précède la découverte et la condamnation. La sculpture a d'abord été jugée trop sensuelle avant de devenir un symbole universel de l'amour romantique.",
+  questions_forme:[{question:"Décrivez la façon dont Rodin a représenté les deux corps. Comment la sculpture traduit-elle le mouvement et l'élan amoureux dans un matériau aussi figé que le marbre ?",aide:"Regardez les courbes, les lignes, les inclinaisons des corps. Comment Rodin a-t-il insufflé du mouvement dans la pierre ?",reponse_attendue:"Rodin a joué sur les courbes et les lignes diagonales pour créer une impression de mouvement : les corps penchés l'un vers l'autre, les bras qui s'enlacent, les têtes qui se rapprochent. Cette dynamique dans un matériau statique comme le marbre dit la nature irrésistible de l'élan amoureux."},{question:"Observez le livre que l'homme tient encore dans sa main. Pourquoi Rodin a-t-il choisi de conserver ce détail ?",aide:"Quel rôle joue la lecture dans la légende ? Que signifie le fait que le livre est toujours là, que la lecture s'est interrompue ?",reponse_attendue:"Dans la légende, c'est en lisant ensemble une histoire d'amour que Paolo et Francesca ont cédé à leur propre amour. Le livre tenu distraitement dit que la lecture s'est interrompue pour laisser place au baiser — que la fiction a déclenché la réalité. C'est un détail narratif qui ancre la sculpture dans son histoire littéraire."}],
+  question_fond:{question:"Sachant que Paolo et Francesca sont des damnés de l'enfer dans l'œuvre de Dante, comment la beauté de la sculpture crée-t-elle un effet paradoxal sur le spectateur ?",aide:"La sculpture est belle, les corps sont harmonieux — mais ce moment précède la condamnation éternelle. Comment ce paradoxe beauté/damnation fonctionne-t-il ?",reponse_attendue:"La beauté formelle de la sculpture rend le spectateur complice : on ne peut que trouver ce moment magnifique. Pourtant c'est le moment qui condamne ces deux êtres pour l'éternité. Rodin crée une tension entre la forme (belle, désirable) et le fond (tragique, condamnable) qui pose une vraie question morale : peut-on condamner ce qui est si beau ?"}},
+
+  {id:"4-03",niveau:"4eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Caricature_loi_sur_la_presse_1850_par_Cham_%281819-1879%29.jpg/960px-Caricature_loi_sur_la_presse_1850_par_Cham_%281819-1879%29.jpg",titre:"Caricature sur la loi de la presse",auteur:"Cham (Amédée de Noé)",date:"1850",type:"caricature",theme:"liberte-presse",propagande:false,
+  contexte:"Cham (pseudonyme d'Amédée de Noé, 1819-1879) était l'un des caricaturistes les plus populaires du XIXe siècle français, publié dans Le Charivari. En 1850, une loi restrictive sur la presse fut adoptée en France après la révolution de 1848, limitant fortement la liberté d'expression des journaux. Cette caricature réagit à cette censure. La caricature utilise l'exagération des traits et des situations pour critiquer le pouvoir de façon humoristique mais incisive.",
+  questions_forme:[{question:"La caricature exagère et déforme la réalité. Identifiez des éléments volontairement exagérés. Quel effet cette exagération produit-elle ?",aide:"Les caricaturistes amplifient les défauts ou les traits caractéristiques pour les rendre ridicules. Que voit-on ici d'excessif ou de déformé ?",reponse_attendue:"Les traits physiques des personnages sont grossis et déformés pour les rendre grotesques. Cette exagération a une fonction critique : rendre ridicule ce qui est présenté comme puissant, désacraliser l'autorité en la faisant paraître absurde. L'humour naît de l'écart entre la prétention au sérieux du pouvoir et l'image comique qui en est donnée."},{question:"Repérez les symboles présents dans cette caricature (objets, gestes, vêtements). Que représentent-ils ?",aide:"Les caricaturistes utilisent des symboles conventionnels que le public reconnaît immédiatement.",reponse_attendue:"Les symboles permettent une lecture rapide du message politique sans long discours. La caricature fonctionne comme un langage visuel codé que le lecteur du journal déchiffre instantanément. Ces symboles condensent une critique complexe en une image simple et percutante."}],
+  question_fond:{question:"En quoi la caricature est-elle une arme politique particulièrement efficace ? Comment la forme (exagération, humour) sert-elle le fond (critique du pouvoir) ?",aide:"Pourquoi le rire est-il dangereux pour le pouvoir ? Que peut une image que ne peut pas un article sérieux ?",reponse_attendue:"La caricature ridiculise ce qu'elle critique, et le ridicule est dévastateur pour une autorité qui veut être respectée. L'image touche immédiatement et émotionnellement — elle fait rire avant de faire réfléchir. Elle contourne aussi la censure : une image est plus difficile à interdire qu'un texte explicite."}},
+
+  {id:"4-04",niveau:"4eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Caricature_presse_Napol%C3%A9on_III.jpg/960px-Caricature_presse_Napol%C3%A9on_III.jpg",titre:"Caricature de Napoléon III",auteur:"Presse satirique française",date:"XIXe siècle",type:"caricature",theme:"liberte-presse",propagande:false,
+  contexte:"Sous le Second Empire de Napoléon III (1852-1870), la presse française était soumise à une censure stricte. Les journaux satiriques, comme Le Charivari ou L'Eclipse, trouvaient des moyens détournés pour critiquer le régime : allégories, symboles, humour apparemment innocent mais au sous-texte politique très clair. Napoléon III est devenu l'une des cibles favorites des caricaturistes de l'époque, qui le raillaient pour ses prétentions impériales et ses ambitions personnelles.",
+  questions_forme:[{question:"Comment le caricaturiste a-t-il représenté Napoléon III pour le rendre ridicule sans pour autant l'attaquer frontalement ?",aide:"Repérez les exagérations physiques et les détails symboliques qui signalent une critique indirecte.",reponse_attendue:"Le caricaturiste exagère certains traits physiques associés à Napoléon III (moustaches, silhouette) et le place dans une situation ou une posture qui contraste avec sa prétention à la grandeur impériale. Cette représentation grotesque dit sans le dire explicitement que l'Empereur est plus comique que grandiose."},{question:"Quels symboles ou attributs du pouvoir impérial sont présents dans cette caricature ? Comment sont-ils traités ?",aide:"Les caricaturistes reprennent les symboles officiels du pouvoir (couronne, aigle, sceptre) pour les détourner ou les rendre dérisoires.",reponse_attendue:"Les attributs du pouvoir impérial sont présents mais mis en scène de façon à en souligner l'absurdité plutôt que la grandeur. Ce détournement des symboles officiels est une technique classique de la caricature politique : retourner contre le pouvoir ses propres insignes de gloire."}],
+  question_fond:{question:"Sous un régime de censure, comment la caricature permettait-elle aux journalistes de critiquer le pouvoir tout en se protégeant juridiquement ?",aide:"La caricature n'affirme pas explicitement : elle suggère, exagère, symbolise. En quoi cette indirection est-elle une protection ?",reponse_attendue:"La caricature ne dit pas 'le gouvernement est injuste' — elle le montre de façon allégorique ou grotesque. Cette distance entre l'image et son sens littéral rend la censure plus difficile : peut-on interdire une image simplement parce qu'elle fait rire ? L'humour et le symbole créent une ambiguïté protectrice. La forme indirecte et humoristique est elle-même une stratégie de résistance politique."}},
+
+  {id:"3-01",niveau:"3eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg/960px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg",titre:"Autoportrait",auteur:"Vincent van Gogh",date:"1889",type:"peinture",theme:"se-raconter",propagande:false,
+  contexte:"Van Gogh (1853-1890) a peint plus de 35 autoportraits. Celui-ci a été réalisé en 1889 à l'asile de Saint-Rémy-de-Provence, où il s'était lui-même fait interner après une crise. Van Gogh était incompris de son vivant, vendant à peine quelques tableaux. Il mourut à 37 ans. Ses lettres à son frère Théo constituent un autoportrait littéraire parallèle à ses autoportraits peints.",
+  questions_forme:[{question:"Décrivez les coups de pinceau de Van Gogh dans cet autoportrait. Comment leur direction et leur rythme contribuent-ils à l'atmosphère générale ?",aide:"Regardez comment la peinture est posée : est-elle lisse et régulière, ou agitée et tournoyante ? Que dit cette façon de peindre sur l'état intérieur du peintre ?",reponse_attendue:"Les coups de pinceau sont visibles, agités, tourbillonnants dans le fond et les vêtements. Cette gestuelle picturale énergique traduit une tension intérieure. Contrairement à un portrait lisse qui cache la technique, Van Gogh laisse visible le mouvement de sa main — comme si le processus de peinture exprimait son agitation psychologique."},{question:"Van Gogh s'est représenté avec le regard légèrement de côté. Quel effet produit ce regard sur le spectateur ?",aide:"Comparez avec un regard droit dans les yeux ou un regard fuyant. Que dit ce regard 'presque face à nous' ?",reponse_attendue:"Le regard légèrement dévié crée une ambiguïté : Van Gogh nous regarde sans nous regarder vraiment, présent mais comme absent. Ce regard traduit une forme de retrait ou de distance intérieure. Le spectateur est invité à observer sans être vraiment reconnu — il y a une mélancolie dans cette présence partielle."}],
+  question_fond:{question:"Un autoportrait est une façon de se raconter sans mots. Comment Van Gogh utilise-t-il la forme picturale pour dire quelque chose sur son identité et son état intérieur ?",aide:"Reliez les choix formels (coups de pinceau, couleurs, regard) au contexte de la vie de Van Gogh. Que dit la forme sur l'homme ?",reponse_attendue:"Van Gogh ne se représente pas de façon idéalisée. Les coups de pinceau agités, les couleurs intenses (bleus profonds), le regard mélancolique : tout dit l'état d'un homme tourmenté mais lucide, qui se regarde sans complaisance. La forme picturale elle-même est une signature identitaire : Van Gogh dit 'je suis un homme qui ressent violemment et qui peint comme il ressent'."}},
+
+  {id:"3-02",niveau:"3eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Sargent%2C_John_Singer_%28RA%29_-_Gassed_-_Google_Art_Project.jpg/960px-Sargent%2C_John_Singer_%28RA%29_-_Gassed_-_Google_Art_Project.jpg",titre:"Gassed (Les Gazés)",auteur:"John Singer Sargent",date:"1919",type:"peinture",theme:"guerre-denonciation",propagande:false,
+  contexte:"John Singer Sargent (1856-1925) était un peintre américain très reconnu. En 1918, le gouvernement britannique l'envoya comme peintre officiel de guerre sur le front. Cette immense toile (presque 6 mètres de large) représente des soldats britanniques victimes d'une attaque au gaz moutarde (ypérite) sur le front de la Somme durant la Première Guerre mondiale (1914-1918). Le gaz moutarde brûle les yeux et les poumons ; les soldats atteints deviennent temporairement ou définitivement aveugles.",
+  questions_forme:[{question:"Décrivez la composition de ce tableau : comment les soldats sont-ils disposés ? Quel effet produit cette organisation des corps dans l'espace ?",aide:"Comptez les personnages, regardez leur disposition. Que dit cette composition sur la nature de cette guerre ?",reponse_attendue:"Les soldats forment une longue file de corps semi-aveugles, chacun posant la main sur l'épaule du précédent pour ne pas se perdre. Cette répétition des corps — une chaîne humaine de victimes — crée un effet d'accumulation qui dit l'ampleur du désastre. Ce ne sont pas des héros individuels mais une masse anonyme de blessés."},{question:"Comment la lumière est-elle utilisée dans ce tableau ? Qu'éclaire-t-elle ? Qu'est-ce qui reste dans l'ombre ?",aide:"La lumière est un outil de composition puissant. Ici, elle ne met pas en valeur la gloire ou la victoire — que met-elle en valeur ?",reponse_attendue:"La lumière baigne les corps des soldats blessés d'une clarté froide et impitoyable, les exposant dans leur souffrance. Il n'y a pas de lumière héroïque ou glorieuse — juste la lumière plate et froide qui révèle des corps épuisés et meurtris. Cette lumière ne magnifie pas, elle témoigne."}],
+  question_fond:{question:"En quoi ce tableau s'oppose-t-il aux représentations traditionnelles de la guerre qui glorifient les héros et les batailles ? Montrez comment la forme sert le message.",aide:"Comparez avec un tableau de bataille classique (chevaux, drapeaux, héros triomphants). Qu'est-ce que Sargent montre à la place ?",reponse_attendue:"Là où les tableaux de bataille traditionnels montrent des héros triomphants, des charges victorieuses, Sargent montre des hommes aveugles qui se soutiennent mutuellement, victimes d'une arme invisible et lâche. Il n'y a pas de gloire ici — seulement la souffrance ordinaire des corps. La forme (composition horizontale, accumulation de victimes, lumière froide) dit que cette guerre n'est pas glorieuse mais tragique."}},
+
+  {id:"3-03",niveau:"3eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Affiche_rouge.jpg/960px-Affiche_rouge.jpg",titre:"L'Affiche Rouge",auteur:"Propagande nazie (Occupation)",date:"1944",type:"affiche",theme:"resistance-guerre",propagande:true,avertissement:"Ce document est un outil de propagande nazie utilisé pendant l'Occupation pour appeler à la délation contre des résistants étrangers. Il est étudié ici dans un cadre historique et critique pour comprendre les mécanismes de manipulation visuelle et idéologique.",
+  contexte:"L'Affiche Rouge est une affiche de propagande nazie placardée à Paris en février 1944. Elle présente les photos de 10 membres du groupe Manouchian (résistants communistes, pour la plupart étrangers et juifs), condamnés à mort et fusillés. L'affiche les désigne comme des 'terroristes' et des 'criminels étrangers' pour discréditer la Résistance française. Ces hommes sont aujourd'hui reconnus comme des héros, et Missak Manouchian a été panthéonisé en 2024.",
+  questions_forme:[{question:"Observez la mise en page de cette affiche : comment les photos des résistants sont-elles présentées ? Qu'est-ce que ce choix graphique cherche à suggérer ?",aide:"Les photos de type 'fichier de police', la disposition en grille, les couleurs choisies — ces éléments construisent une image. Laquelle ? Dans quel but ?",reponse_attendue:"Les photos sont présentées comme des photos de fichier de police (identité), ce qui associe immédiatement ces hommes à des criminels. La mise en page froide et administrative déshumanise les résistants en les réduisant à des 'cas' dans un dossier. C'est un choix graphique délibéré pour faire oublier qu'il s'agit d'êtres humains avec une histoire."},{question:"La couleur dominante de l'affiche est le rouge. Quels mots ou images apparaissent en rouge ? Pourquoi ce choix ?",aide:"Le rouge est associé à plusieurs idées : le danger, le sang, le communisme en France dans les années 1940.",reponse_attendue:"Le rouge dominant renvoie à la fois au danger et au communisme, permettant d'associer les résistants à une menace double : criminelle et politique. Ce choix de couleur n'est pas esthétique mais rhétorique — il programme une réaction émotionnelle de peur et de rejet avant même que le spectateur lise le texte."}],
+  question_fond:{question:"Comment cette affiche tente-t-elle de manipuler l'opinion publique française contre des résistants qui luttaient pour la libération de la France ? Identifiez les mécanismes de manipulation.",aide:"Quels préjugés l'affiche exploite-t-elle ? Comment détourne-t-elle le sens des mots 'terroriste' et 'étranger' ?",reponse_attendue:"L'affiche exploite la xénophobie en insistant sur les origines non-françaises des résistants. Elle les nomme 'terroristes' alors qu'ils combattent une occupation illégale. Elle utilise des procédés visuels (photos de fichier, rouge) pour associer ces combattants à des criminels dangereux. C'est une manipulation qui retourne la réalité : ceux qui défendent la France sont présentés comme ses ennemis. Comprendre ces mécanismes est essentiel pour résister à la propagande."}},
+
+  {id:"3-04",niveau:"3eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Anti_Hitler_Egpytian_cartoon_2.png/500px-Anti_Hitler_Egpytian_cartoon_2.png",titre:"Caricature anti-Hitler (presse égyptienne)",auteur:"Presse égyptienne",date:"années 1930-1940",type:"caricature",theme:"resistance-denonciation",propagande:false,
+  contexte:"Cette caricature est issue de la presse égyptienne des années 1930-1940, période durant laquelle Hitler et le régime nazi menacent l'Europe et le monde. Des dessinateurs du monde entier utilisent l'image pour dénoncer les dictateurs et alerter l'opinion. Contrairement à la propagande nazie qui cherche à séduire et manipuler, ces caricatures cherchent à révéler et critiquer. La caricature a une longue tradition dans la presse arabe et constitue un mode d'expression politique reconnu.",
+  questions_forme:[{question:"Comment le dessinateur a-t-il représenté Hitler ? Quels traits physiques ou attributs sont exagérés, et dans quel but ?",aide:"La caricature amplifie certains traits pour rendre ridicule ce qu'elle représente. Quels choix graphiques visent à désacraliser Hitler ?",reponse_attendue:"La caricature grossit certains traits associés à Hitler (moustache carrée, uniforme, geste) pour en faire une figure ridicule ou monstrueuse. L'exagération physique est une arme : elle dit que ce qui se prend au sérieux, qui se veut grandiose, est en réalité grotesque et absurde. Rendre Hitler risible, c'est lui retirer le pouvoir de la peur."},{question:"Quels symboles visuels le dessinateur utilise-t-il pour représenter les victimes ou le danger du nazisme ?",aide:"Cherchez des symboles universels (mort, oppression, violence) ou des éléments spécifiques au contexte nazi.",reponse_attendue:"Les symboles nazis (croix gammée, uniformes) sont détournés ou mis en scène de façon critique — associés à la mort, à la menace, à la violence injuste. Ces symboles que la propagande nazie voulait glorieux sont ici présentés comme les marqueurs d'un régime oppresseur et meurtrier."}],
+  question_fond:{question:"En quoi cette caricature est-elle une forme de résistance ? Comment l'image peut-elle être une arme contre un régime totalitaire ?",aide:"Un régime totalitaire contrôle les mots et les images. Que peut la caricature que ne peut pas un discours officiel ? Pourquoi les dictateurs craignent-ils le rire ?",reponse_attendue:"La caricature résiste en ridiculisant ce qui veut s'imposer par la terreur. Un régime totalitaire ne peut pas tout interdire, et l'image humoristique circule facilement. Elle dit ce que les discours officiels ne peuvent pas dire : que le dictateur est ridicule, que la peur n'est pas la seule réponse. Le rire est subversif parce qu'il brise le sérieux dont le pouvoir a besoin pour s'imposer."}},
+
+  {id:"3-05",niveau:"3eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Nazi_Germany_NSDAP_poster.jpg/500px-Nazi_Germany_NSDAP_poster.jpg",titre:"Affiche de propagande nazie (NSDAP)",auteur:"Parti nazi (NSDAP)",date:"années 1930",type:"affiche",theme:"propagande-critique",propagande:true,avertissement:"Cette affiche est un document de propagande nazie. Elle est étudiée ici dans un cadre critique et historique, non pour valider son message, mais pour comprendre et reconnaître les mécanismes de manipulation visuelle utilisés par les régimes totalitaires.",
+  contexte:"Le Parti national-socialiste (NSDAP) d'Adolf Hitler a été l'un des premiers à utiliser systématiquement la propagande visuelle de masse. Joseph Goebbels, ministre de la Propagande, a organisé une production massive d'affiches, de films et de discours pour séduire et endoctriner la population allemande. Ces affiches utilisent des codes visuels précis : figures héroïques idéalisées, couleurs symboliques, slogans courts et répétitifs. Étudier leur fonctionnement permet de développer un regard critique face à toute forme de manipulation par l'image.",
+  questions_forme:[{question:"Décrivez comment les personnages sont représentés dans cette affiche. Quels choix visuels visent à les rendre admirables, forts, idéaux ?",aide:"Regardez la posture, la taille, l'expression, les couleurs associées aux figures humaines. Ces choix sont calculés pour provoquer une réaction précise.",reponse_attendue:"Les figures humaines sont représentées de façon idéalisée : corps athlétiques, postures droites et héroïques, regards déterminés vers l'horizon. Cette représentation du 'corps parfait' aryen est une construction idéologique — elle dit que certains corps sont 'beaux' et 'bons', excluant implicitement tous ceux qui ne correspondent pas à cet idéal."},{question:"Analysez les couleurs et les symboles utilisés. Quelle atmosphère créent-ils ? À quelles émotions cherchent-ils à faire appel ?",aide:"Les couleurs de la propagande nazie (rouge, noir, blanc) ne sont pas choisies par hasard.",reponse_attendue:"Le rouge (force, énergie, urgence), le noir (puissance, autorité) et le blanc (pureté) forment une palette volontairement agressive et impérieuse. Les symboles cherchent à ancrer le mouvement dans une tradition de puissance. L'ensemble vise à provoquer des émotions fortes (admiration, appartenance) plutôt qu'une réflexion critique."}],
+  question_fond:{question:"Comment cette affiche cherche-t-elle à séduire plutôt qu'à convaincre ? En quoi la forme visuelle est-elle plus dangereuse qu'un argument raisonné ?",aide:"Un argument peut être réfuté par un contre-argument. Une image belle ou impressionnante peut-elle être réfutée de la même façon ?",reponse_attendue:"Cette affiche ne présente pas de raisonnement — elle impose une émotion. La beauté des formes, la force des couleurs, l'héroïsme des figures créent une réaction affective immédiate. On ne réfute pas une belle image avec un argument. C'est précisément pourquoi la propagande préfère l'image au discours : elle court-circuite la raison pour toucher directement l'émotion. Reconnaître ce mécanisme est la première étape pour s'en protéger."}},
+
+  {id:"3-06",niveau:"3eme",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Hitler_and_Stalin._Wonder_how_long_the_honeymoon_will_last%3F.jpg/960px-Hitler_and_Stalin._Wonder_how_long_the_honeymoon_will_last%3F.jpg",titre:"Hitler et Staline — La Lune de miel",auteur:"Caricature de presse britannique",date:"1939",type:"caricature",theme:"resistance-denonciation",propagande:false,
+  contexte:"Cette caricature britannique réagit au Pacte germano-soviétique signé le 23 août 1939 entre Hitler (Allemagne nazie) et Staline (URSS). Ce pacte de non-agression a stupéfié le monde : deux idéologies supposément ennemies s'alliaient secrètement pour se partager la Pologne. Le titre 'Wonder how long the honeymoon will last?' (Je me demande combien de temps durera la lune de miel ?) est rhétorique. L'Allemagne a effectivement envahi l'URSS en juin 1941.",
+  questions_forme:[{question:"Cette caricature représente Hitler et Staline comme un couple en lune de miel. Expliquez le mécanisme de l'analogie utilisée et ce qu'elle dit de l'alliance entre les deux dictateurs.",aide:"Une lune de miel, c'est quoi ? Qu'est-ce que cela implique sur la durée et la sincérité du sentiment ?",reponse_attendue:"La lune de miel est la période idyllique mais courte qui suit un mariage — tout le monde sait qu'elle ne dure pas. En comparant le pacte Hitler-Staline à une lune de miel, la caricature dit d'emblée que cette alliance est artificielle, temporaire et destinée à se briser. L'analogie est percutante parce qu'elle s'appuie sur une expérience universelle."},{question:"Comment le dessinateur a-t-il représenté les deux dictateurs pour les rendre à la fois reconnaissables et ridicules ?",aide:"Quels attributs visuels permettent d'identifier immédiatement Hitler ? Staline ? Comment la mise en scène les ridiculise-t-elle ?",reponse_attendue:"Hitler est reconnaissable à sa moustache carrée et à l'uniforme nazi, Staline à sa moustache fournie et à son uniforme soviétique. Habillés en couple ou mis en scène comme des amoureux, leurs attributs officiels (symboles de puissance) contrastent comiquement avec la situation sentimentale. Ce décalage entre la gravité de leur pouvoir et la trivialité de la mise en scène crée le ridicule."}],
+  question_fond:{question:"Comment cette caricature exprime-t-elle un jugement politique sur le Pacte germano-soviétique tout en faisant appel à l'humour ? En quoi ce choix est-il efficace ?",aide:"Comparez deux façons de critiquer ce pacte : un éditorial sérieux et solennel, ou cette caricature humoristique. Laquelle touche davantage ?",reponse_attendue:"L'humour désacralise ce qui veut paraître sérieux et puissant. En traitant un pacte géopolitique comme une comédie sentimentale, la caricature dit que derrière la grande politique des dictateurs se cachent des intérêts cyniques. L'image reste en mémoire parce qu'elle provoque un sourire — et le sourire fixe le message bien mieux qu'un argument abstrait."}}
+];
+
+// ════════════════════════════
+// ANALYSE D'IMAGE
+// ════════════════════════════
+let currentImage = null;
+
+function startAnalyseImage(){
+  state.mode = 'image';
+  showScreen('screen-image');
+  const lvl = {"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+  document.getElementById('image-username').textContent = state.username;
+  document.getElementById('image-meta').textContent = lvl[state.level] + ' · Analyse d\'image';
+  if(state.dys) document.getElementById('image-dys-badge').style.display = 'inline-flex';
+  document.getElementById('image-loading').style.display = 'block';
+  document.getElementById('image-content').style.display = 'none';
+  currentImage = null;
+
+  // Sélectionne une image au hasard du bon niveau
+  const pool = IMAGE_BANK.filter(img => img.niveau === state.level);
+  if(pool.length === 0){
+    document.getElementById('image-loading').innerHTML =
+      '<p style="color:var(--r)">Aucune image disponible pour ce niveau pour l\'instant.</p>';
+    return;
+  }
+  // Évite de retomber sur la même image deux fois de suite
+  let candidates = pool.filter(img => img.id !== (state.lastImageId || ''));
+  if(candidates.length === 0) candidates = pool;
+  currentImage = candidates[Math.floor(Math.random() * candidates.length)];
+  state.lastImageId = currentImage.id;
+
+  afficherImage(currentImage);
+}
+
+function afficherImage(img){
+  // Bandeau propagande
+  const banner = document.getElementById('image-propagande-banner');
+  if(img.propagande && img.avertissement){
+    banner.style.display = 'block';
+    document.getElementById('image-propagande-text').textContent = img.avertissement;
+  } else {
+    banner.style.display = 'none';
+  }
+
+  // Image
+  const imgEl = document.getElementById('image-oeuvre');
+  imgEl.src = img.url;
+  imgEl.alt = img.titre + ' — ' + img.auteur;
+  imgEl.classList.remove('zoomed');
+
+  // Chips métadonnées
+  const chips = document.getElementById('image-chips');
+  chips.innerHTML = [
+    img.auteur, img.date, img.type,
+    img.propagande ? '⚠️ Propagande (étude critique)' : null
+  ].filter(Boolean).map(c =>
+    `<span class="image-meta-chip">${esc(c)}</span>`
+  ).join('');
+
+  // Contexte
+  document.getElementById('image-contexte').textContent = img.contexte || '';
+
+  // Questions de forme
+  const qf = document.getElementById('image-questions-forme');
+  qf.innerHTML = (img.questions_forme || []).map((q, i) => `
+    <div class="image-q-bloc">
+      <div class="q-label">Question ${i+1} — Forme</div>
+      <div class="q-text">${esc(q.question)}</div>
+      <div class="q-aide">💡 ${esc(q.aide)}</div>
+      <textarea id="img-rep-forme-${i}" placeholder="Décris ce que tu observes…"></textarea>
+    </div>
+  `).join('');
+
+  // Question de fond
+  const qfond = img.question_fond || {};
+  document.getElementById('image-question-fond').innerHTML = `
+    <div class="image-fond-bloc">
+      <div class="q-label">Question — Forme & Sens</div>
+      <div class="q-text">${esc(qfond.question || '')}</div>
+      <div class="q-aide">💡 ${esc(qfond.aide || '')}</div>
+      <textarea id="img-rep-fond" placeholder="Explique comment la forme sert le sens de l'œuvre…"></textarea>
+    </div>
+  `;
+
+  document.getElementById('image-loading').style.display = 'none';
+  document.getElementById('image-content').style.display = 'block';
+}
+
+function toggleZoom(el){
+  el.classList.toggle('zoomed');
+}
+
+async function soumettreImage(){
+  if(!currentImage) return;
+  const repForme = (currentImage.questions_forme || []).map((q,i) => ({
+    question: q.question,
+    reponse_eleve: document.getElementById('img-rep-forme-'+i)?.value.trim() || '',
+    reponse_attendue: q.reponse_attendue,
+    type: 'forme'
+  }));
+  const qfond = currentImage.question_fond || {};
+  const repFond = {
+    question: qfond.question || '',
+    reponse_eleve: document.getElementById('img-rep-fond')?.value.trim() || '',
+    reponse_attendue: qfond.reponse_attendue || '',
+    type: 'fond'
+  };
+  const toutesRep = [...repForme, repFond];
+  const nonRepondu = toutesRep.filter(r => !r.reponse_eleve).length;
+  if(nonRepondu === toutesRep.length){ alert('Réponds à au moins une question !'); return; }
+
+  showScreen('screen-image-result');
+  document.getElementById('image-result-loading').style.display = 'block';
+  document.getElementById('image-result-content').style.display = 'none';
+  document.getElementById('image-result-titre').textContent = currentImage.titre + ' — ' + currentImage.auteur;
+  document.getElementById('image-result-titre2').textContent = currentImage.titre;
+  document.getElementById('image-result-auteur').textContent = currentImage.auteur + ', ' + currentImage.date;
+  document.getElementById('image-result-thumb').src = currentImage.url;
+
+  const dysTxt = state.dys ? 'Profil DYS : ne pénalise PAS l\'orthographe.' : '';
+  const prompt = `Tu corriges un exercice d'analyse d'image de type brevet des collèges pour un élève de ${state.level}. ${dysTxt}
+
+ŒUVRE : "${currentImage.titre}" par ${currentImage.auteur} (${currentImage.date}) — ${currentImage.type}
+${currentImage.propagande ? 'ATTENTION : cette œuvre est un document de propagande, étudié dans un cadre critique.' : ''}
+
+QUESTIONS ET RÉPONSES DE L'ÉLÈVE :
+${toutesRep.map((r,i) => `Q${i+1} [${r.type}] : ${r.question}
+Réponse élève : "${r.reponse_eleve || '[non répondu]'}"
+Réponse attendue : "${r.reponse_attendue}"`).join('\n\n')}
+
+Évalue chaque réponse avec bienveillance et précision. Pour les questions de FORME, vérifie : observation précise des éléments visuels (couleurs, lignes, composition, postures), vocabulaire adapté à l'analyse d'image. Pour la question de FOND, vérifie en plus : lien explicite entre la forme et le sens de l'œuvre.
+Adapte le niveau d'exigence à ${state.level}.
+
+Réponds UNIQUEMENT en JSON valide, sans markdown :
+{
+  "corrections": [
+    {
+      "num": 1,
+      "type": "forme|fond",
+      "statut": "ok|moyen|ko",
+      "points_obtenus": <0, 1 ou 2>,
+      "points_max": 2,
+      "appreciation": "Très bien|Bien|À améliorer|Insuffisant",
+      "commentaire": "<feedback précis et bienveillant>",
+      "ce_qui_manque": "<ce qui aurait amélioré la réponse, si statut != ok — peut être vide si ok>"
+    }
+  ],
+  "score_total": <number>,
+  "score_max": ${toutesRep.length * 2},
+  "bilan": "<2 phrases de bilan général>"
+}`;
+
+  try{
+    const res = await fetch('/.netlify/functions/gemini', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({_messages:[{role:'user', content:prompt}]})
+    });
+    const d = await res.json();
+    const txt = (d.answer||'').replace(/```json|```/g,'').trim();
+    const result = JSON.parse(txt);
+    afficherResultatImage(result);
+  }catch(e){
+    document.getElementById('image-result-loading').innerHTML =
+      '<p style="color:var(--r)">Erreur lors de la correction. Réessaie !</p>';
+  }
+}
+
+function afficherResultatImage(result){
+  document.getElementById('image-result-loading').style.display = 'none';
+  document.getElementById('image-result-content').style.display = 'block';
+  const score = result.score_total || 0;
+  const max = result.score_max || 6;
+  const pct = Math.round(score/max*100);
+  const cls = pct>=80?'ok':pct>=50?'moyen':'ko';
+  const labels = {ok:'Très bien !', moyen:'Peut mieux faire', ko:'À retravailler'};
+  const badge = document.getElementById('image-score-badge');
+  badge.textContent = score+'/'+max;
+  badge.className = 'compre-score-badge '+cls;
+  document.getElementById('image-score-label').textContent = labels[cls];
+  document.getElementById('image-score-detail').textContent = result.bilan || '';
+  const cl = document.getElementById('image-corrections-list');
+  cl.innerHTML = (result.corrections||[]).map(c => `
+    <div class="image-correction-item ${c.statut||'moyen'}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="compre-score-badge ${c.statut||'moyen'}" style="width:38px;height:38px;font-size:.85rem">
+          ${c.points_obtenus||0}/${c.points_max||2}
+        </div>
+        <div>
+          <div class="q-label">${c.type==='fond'?'Question forme & sens':'Question forme'} — ${esc(c.appreciation||'')}</div>
+        </div>
+      </div>
+      <div style="font-size:.88rem;line-height:1.6;color:var(--t)">${esc(c.commentaire||'')}</div>
+      ${c.ce_qui_manque?`<div style="margin-top:6px;font-size:.82rem;color:var(--s);font-style:italic">💡 ${esc(c.ce_qui_manque)}</div>`:''}
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════
+// GESTION PARAMÈTRES URL
+// ════════════════════════════
+function checkUrlParams(){
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get('mode');
+  if(!mode) return;
+  // Si un mode est demandé, on pré-sélectionne après la connexion
+  state.urlMode = mode;
+  // Affiche un bandeau d'info sur l'écran de connexion
+  const banner = document.createElement('div');
+  banner.className = 'lien-direct-banner';
+  const labels = {
+    'comprehension-texte':'🔍 Accès direct : Compréhension de texte',
+    'comprehension-image':'🖼️ Accès direct : Analyse d\'image',
+    'redaction':'📝 Accès direct : Rédaction notée',
+    'dialogue':'💬 Accès direct : Progression dialoguée'
+  };
+  banner.innerHTML = `<span>${labels[mode]||'🔗 Accès direct'}</span>
+    <small style="opacity:.8">Connecte-toi pour commencer</small>`;
+  const card = document.querySelector('#screen-setup .card');
+  if(card) card.insertBefore(banner, card.firstChild);
+}
+
+function handleUrlModeAfterLogin(){
+  if(!state.urlMode) return;
+  const mode = state.urlMode;
+  state.urlMode = null;
+  if(mode === 'comprehension-texte') startComprehension();
+  else if(mode === 'comprehension-image') startAnalyseImage();
+  else if(mode === 'redaction') showRedacOptions();
+  else if(mode === 'dialogue') startMode('dialogue');
+}
+
+// Appel au démarrage
+checkUrlParams();
 
 // ════════════════════════════
 // PROTECTION COPYRIGHT
