@@ -445,6 +445,7 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
 /* Protection */
 body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 textarea,input{-webkit-user-select:text!important;-moz-user-select:text!important;user-select:text!important}
+body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!important;-ms-user-select:text!important;user-select:text!important}
 </style>
 </head>
 <body>
@@ -1036,6 +1037,8 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
 
 <div style="text-align:center;padding:18px 0 4px;font-size:.75rem;color:var(--s)">
   © 2025 Mme Granger — Atelier d'Écriture · Tous droits réservés · Usage scolaire exclusif
+  <span onclick="toggleTeacherDebug()" style="cursor:pointer;margin-left:8px;opacity:.35" title="Mode debug enseignant">🛠️</span>
+  <span id="teacher-debug-badge" style="display:none;color:var(--r);font-weight:800;margin-left:8px">🛠️ Mode debug actif — copier/coller autorisé</span>
 </div>
 </div><!-- /container -->
 
@@ -1783,6 +1786,7 @@ function removeThinking(id){const el=document.getElementById(id);if(el)el.remove
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToIA();}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px';}
 function blockPaste(e){
+  if(teacherDebugMode) return; // copier-coller autorisé en mode debug enseignant
   e.preventDefault();
   const al=document.createElement('div'); al.className='paste-alert';
   al.textContent='✋ Pas de copier-coller — réécris toi-même !';
@@ -2839,13 +2843,50 @@ function handleUrlModeAfterLogin(){
 checkUrlParams();
 
 // ════════════════════════════
+// MODE DEBUG ENSEIGNANT (copier/coller + inspection autorisés)
+// ════════════════════════════
+const TEACHER_DEBUG_PWD = "granger-debug"; // ← changez ce mot de passe si besoin
+let teacherDebugMode = false;
+function toggleTeacherDebug(){
+  if(teacherDebugMode){
+    teacherDebugMode=false;
+    document.body.classList.remove('teacher-debug');
+    document.getElementById('teacher-debug-badge').style.display='none';
+    try{sessionStorage.removeItem('teacherDebugMode');}catch(e){}
+    return;
+  }
+  const pwd=prompt("Mot de passe du mode debug enseignant :");
+  if(pwd===null) return;
+  if(pwd===TEACHER_DEBUG_PWD){
+    teacherDebugMode=true;
+    document.body.classList.add('teacher-debug');
+    document.getElementById('teacher-debug-badge').style.display='inline';
+    try{sessionStorage.setItem('teacherDebugMode','1');}catch(e){}
+  } else {
+    alert("Mot de passe incorrect.");
+  }
+}
+// Réactive automatiquement le mode si déjà activé plus tôt dans cet onglet
+(function(){
+  try{
+    if(sessionStorage.getItem('teacherDebugMode')==='1'){
+      teacherDebugMode=true;
+      document.body.classList.add('teacher-debug');
+      const b=document.getElementById('teacher-debug-badge');
+      if(b) b.style.display='inline';
+    }
+  }catch(e){}
+})();
+
+// ════════════════════════════
 // PROTECTION COPYRIGHT
 // ════════════════════════════
 (function(){
-  // Désactive clic droit
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  // Désactive Ctrl+U (view source), Ctrl+S (save), Ctrl+Shift+I (devtools)
+  // Désactive clic droit (sauf en mode debug enseignant)
+  document.addEventListener('contextmenu', e => { if(!teacherDebugMode) e.preventDefault(); });
+  // Désactive Ctrl+U (view source), Ctrl+S (save), Ctrl+Shift+I (devtools) — sauf en mode debug
   document.addEventListener('keydown', e => {
+    if(teacherDebugMode) return;
     if(e.ctrlKey && (e.key==='u'||e.key==='U'||e.key==='s'||e.key==='S')) e.preventDefault();
     if(e.ctrlKey && e.shiftKey && (e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j')) e.preventDefault();
     if(e.key==='F12') e.preventDefault();
