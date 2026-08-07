@@ -373,6 +373,75 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
 .stat-mini .sml{font-size:.72rem;color:var(--s);margin-top:2px}
 .loading-inline{text-align:center;padding:20px;color:var(--s);font-size:.9rem}
 
+/* ══ ANNOTATIONS AVANCÉES (texte annoté) ══ */
+.annotated-toggle-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.annotated-panel{display:none;margin-bottom:16px}
+.annotated-panel.open{display:block}
+.annot-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.annot-tab{padding:6px 13px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;
+  border:2px solid #e5e7eb;background:#fafafa;color:var(--s);transition:all .15s}
+.annot-tab.active{color:#fff}
+.annot-tab[data-type="orth"].active{background:#ef4444;border-color:#ef4444}
+.annot-tab[data-type="conj"].active{background:#8b5cf6;border-color:#8b5cf6}
+.annot-tab[data-type="gram"].active{background:#f97316;border-color:#f97316}
+.annot-tab[data-type="ponct"].active{background:#3b82f6;border-color:#3b82f6}
+.annot-tab[data-type="style"].active{background:#ec4899;border-color:#ec4899}
+.annot-tab[data-type="repet"].active{background:#eab308;border-color:#eab308}
+.annot-legend{font-size:.75rem;color:var(--s);margin-bottom:10px}
+.annotated-text{padding:20px;border:2px solid #e5e7eb;border-radius:14px;background:#fafffe;
+  line-height:2.1;font-size:1rem;white-space:pre-wrap}
+.a-orth{border-bottom:2.5px wavy #ef4444;cursor:help;position:relative}
+.a-conj{border-bottom:2.5px wavy #8b5cf6;cursor:help;position:relative}
+.a-gram{border-bottom:2.5px wavy #f97316;cursor:help;position:relative}
+.a-ponct{border-bottom:2.5px solid #3b82f6;cursor:help;position:relative}
+.a-style{background:rgba(236,72,153,.1);border-bottom:2px dashed #ec4899;cursor:help;position:relative}
+.a-repet{background:rgba(234,179,8,.22);border-bottom:2px solid #eab308;cursor:help;position:relative}
+.a-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:220px;max-width:320px;
+  background:#1a2035;color:#fff;font-size:.78rem;line-height:1.5;padding:9px 12px;border-radius:10px;
+  z-index:1000;pointer-events:none;white-space:normal;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.a-tip b{color:#fbbf24}
+[class^="a-"]:hover .a-tip,[class*=" a-"]:hover .a-tip{display:block}
+
+/* Version améliorée */
+.improved-text{padding:20px;border:2px solid var(--g);border-radius:14px;background:#f0fdf9;
+  line-height:2.1;font-size:1rem;white-space:pre-wrap}
+.imp-change{background:rgba(16,185,129,.16);border-bottom:2px solid var(--g);cursor:help;
+  position:relative;border-radius:3px;padding:0 2px}
+.imp-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:240px;max-width:340px;
+  background:#065f46;color:#fff;font-size:.78rem;line-height:1.55;padding:10px 13px;border-radius:10px;
+  z-index:1000;pointer-events:none;white-space:normal;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.imp-tip .old{color:#fca5a5;text-decoration:line-through}
+.imp-tip .new{color:#86efac;font-weight:700;display:block;margin-top:2px}
+.imp-change:hover .imp-tip{display:block}
+
+/* Brouillon repensé */
+.brouillon-wrapper{border:2px solid #fbbf24;border-radius:14px;background:#fffbeb;overflow:hidden;
+  margin-bottom:14px}
+.brouillon-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;
+  cursor:pointer;user-select:none;flex-wrap:wrap;gap:8px}
+.brouillon-head strong{color:#92400e;font-size:.92rem}
+.brouillon-body-wrap{resize:vertical;overflow:auto;min-height:380px;max-height:1000px;padding:0 16px 16px}
+.brouillon-wrapper.collapsed .brouillon-body-wrap{display:none;resize:none;min-height:0}
+.brouillon-chevron{transition:transform .2s;display:inline-block}
+.brouillon-wrapper.collapsed .brouillon-chevron{transform:rotate(-90deg)}
+.brouillon-avis-box{margin-top:10px;background:#eff6ff;border-left:3px solid var(--a);border-radius:8px;
+  padding:10px 14px;font-size:.85rem;line-height:1.6;color:#1e40af;display:none}
+
+/* Format d'écriture */
+.libre-fields{display:none;margin-top:10px;background:#f8fafc;border-radius:10px;padding:12px 14px}
+.libre-fields.show{display:block}
+
+/* Livre — écriture longue */
+.livre-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.livre-tab{padding:9px 16px;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;
+  border:2px solid #e5e7eb;background:#fafafa;color:var(--s)}
+.livre-tab.active{border-color:var(--g);background:#ecfdf5;color:#065f46}
+.livre-pane{display:none}
+.livre-pane.active{display:block}
+.livre-textarea{width:100%;min-height:380px;padding:18px;border:2px solid #e5e7eb;border-radius:14px;
+  font-family:'Nunito',sans-serif;font-size:1rem;line-height:1.8;resize:vertical;outline:none}
+.livre-textarea:focus{border-color:var(--g)}
+
 /* Protection */
 body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 textarea,input{-webkit-user-select:text!important;-moz-user-select:text!important;user-select:text!important}
@@ -448,12 +517,35 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
         <h3>Analyse d'image</h3>
         <p>Tu observes une œuvre et tu réponds à des questions de type brevet.</p>
       </div>
+      <div class="mode-card" onclick="startLivreProjet()" style="border-color:#e5e7eb">
+        <div class="mc-icon">📚</div>
+        <h3>J'écris mon livre</h3>
+        <p>Roman, nouvelle, conte, pièce de théâtre : construis ton projet étape par étape.</p>
+      </div>
     </div>
     <div id="redac-options" style="display:none">
       <div class="divider"></div>
       <div class="field-group">
         <label class="field-label">📋 Type de rédaction</label>
         <div class="pill-grid cols3" id="redac-type-grid"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">📏 Format</label>
+        <div class="pill-grid cols3" id="format-grid">
+          <div class="pill selected" data-value="standard" onclick="selectFormat(this)">Standard</div>
+          <div class="pill" data-value="court" onclick="selectFormat(this)">✏️ Écriture courte</div>
+          <div class="pill" data-value="libre" onclick="selectFormat(this)">🕊️ Écriture libre</div>
+        </div>
+        <div class="libre-fields" id="libre-fields">
+          <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:.86rem;cursor:pointer">
+            <input type="checkbox" id="libre-sujet-check" onchange="toggleLibreSujet()"> Je choisis mon propre sujet
+          </label>
+          <input type="text" id="libre-sujet-input" placeholder="Ton sujet..."
+            style="display:none;width:100%;padding:10px 12px;border:2px solid #e5e7eb;border-radius:10px;margin-bottom:10px;font-family:'Nunito',sans-serif">
+          <label style="display:flex;align-items:center;gap:8px;font-size:.86rem;cursor:pointer">
+            <input type="checkbox" id="libre-longueur-check"> Longueur libre (pas d'objectif de mots)
+          </label>
+        </div>
       </div>
       <div class="field-group">
         <label class="field-label">⏱️ Chronomètre</label>
@@ -549,39 +641,51 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
     </div>
     <!-- Brouillon avancé -->
     <div id="brouillon-section" style="display:none;margin-bottom:14px">
-      <div class="brouillon-advanced">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span class="brouillon-label" style="margin-bottom:0">📋 Brouillon</span>
-          <div class="brouillon-stats-bar" id="brouillon-stats"></div>
+      <div class="brouillon-wrapper" id="brouillon-wrapper">
+        <div class="brouillon-head" onclick="toggleBrouillonCollapse()">
+          <strong>📋 Espace brouillon</strong>
+          <span style="display:flex;align-items:center;gap:10px" onclick="event.stopPropagation()">
+            <button class="btn btn-primary btn-sm" onclick="demanderAvisBrouillon()">🤖 Avis de l'IA sur mon brouillon</button>
+            <span class="brouillon-chevron" onclick="toggleBrouillonCollapse()">▾</span>
+          </span>
         </div>
-        <div class="brouillon-tabs">
-          <div class="brouillon-tab active" onclick="switchBrouillonTab('plan',this)">🗂️ Plan</div>
-          <div class="brouillon-tab" onclick="switchBrouillonTab('notes',this)">📝 Notes libres</div>
-        </div>
-        <!-- Plan en 3 colonnes -->
-        <div class="brouillon-pane active" id="brouillon-pane-plan">
-          <div class="brouillon-plan-grid">
-            <div class="plan-col">
-              <div class="plan-col-title intro">Introduction</div>
-              <textarea id="plan-intro" placeholder="Accroche, présentation du sujet..." oninput="syncBrouillonToNotes()"></textarea>
+        <div class="brouillon-body-wrap">
+          <div class="brouillon-advanced">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span class="brouillon-label" style="margin-bottom:0">Glisse le coin bas de ce cadre pour l'agrandir ↘️</span>
+              <div class="brouillon-stats-bar" id="brouillon-stats"></div>
             </div>
-            <div class="plan-col">
-              <div class="plan-col-title devel">Développement</div>
-              <textarea id="plan-devel" placeholder="Idées, exemples, arguments..." oninput="syncBrouillonToNotes()"></textarea>
+            <div class="brouillon-tabs">
+              <div class="brouillon-tab active" onclick="switchBrouillonTab('plan',this)">🗂️ Plan</div>
+              <div class="brouillon-tab" onclick="switchBrouillonTab('notes',this)">📝 Notes libres</div>
             </div>
-            <div class="plan-col">
-              <div class="plan-col-title conclu">Conclusion</div>
-              <textarea id="plan-conclu" placeholder="Résumé, ouverture..." oninput="syncBrouillonToNotes()"></textarea>
+            <!-- Plan en 3 colonnes -->
+            <div class="brouillon-pane active" id="brouillon-pane-plan">
+              <div class="brouillon-plan-grid">
+                <div class="plan-col">
+                  <div class="plan-col-title intro">Introduction</div>
+                  <textarea id="plan-intro" placeholder="Accroche, présentation du sujet..." oninput="syncBrouillonToNotes()"></textarea>
+                </div>
+                <div class="plan-col">
+                  <div class="plan-col-title devel">Développement</div>
+                  <textarea id="plan-devel" placeholder="Idées, exemples, arguments..." oninput="syncBrouillonToNotes()"></textarea>
+                </div>
+                <div class="plan-col">
+                  <div class="plan-col-title conclu">Conclusion</div>
+                  <textarea id="plan-conclu" placeholder="Résumé, ouverture..." oninput="syncBrouillonToNotes()"></textarea>
+                </div>
+              </div>
+            </div>
+            <!-- Notes libres -->
+            <div class="brouillon-pane" id="brouillon-pane-notes">
+              <div id="brouillon-display-wrap" style="position:relative">
+                <textarea class="brouillon-notes-area" id="brouillon-text" style="min-height:260px"
+                  placeholder="Tes idées en vrac, mots-clés, synonymes... Les mots répétés se soulignent. Les idées déjà utilisées dans le propre seront barrées."
+                  oninput="saveBrouillon();analyserBrouillon()"></textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Notes libres -->
-        <div class="brouillon-pane" id="brouillon-pane-notes">
-          <div id="brouillon-display-wrap" style="position:relative">
-            <textarea class="brouillon-notes-area" id="brouillon-text"
-              placeholder="Tes idées en vrac, mots-clés, synonymes... Les mots répétés se soulignent. Les idées déjà utilisées dans le propre seront barrées."
-              oninput="saveBrouillon();analyserBrouillon()"></textarea>
-          </div>
+          <div class="brouillon-avis-box" id="brouillon-avis-box"></div>
         </div>
       </div>
     </div>
@@ -630,6 +734,21 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
 <div id="screen-result" class="screen">
   <div class="note-card" id="note-card">
     <!-- rempli dynamiquement -->
+  </div>
+  <div class="card" style="padding:18px 20px">
+    <div class="annotated-toggle-row">
+      <button class="btn btn-ghost btn-sm" onclick="toggleAnnotPanel('annot')">🔍 Voir le texte annoté</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleAnnotPanel('improved')">✨ Voir la version améliorée</button>
+    </div>
+    <div class="annotated-panel" id="annot-panel">
+      <div class="annot-tabs" id="annot-tabs"></div>
+      <div class="annot-legend">Clique sur un type pour l'afficher/le masquer · survole un passage souligné pour voir l'explication</div>
+      <div class="annotated-text" id="annotated-text"></div>
+    </div>
+    <div class="annotated-panel" id="improved-panel">
+      <div class="annot-legend">Les passages en vert sont des suggestions d'amélioration · survole-les pour voir ta version et la proposition</div>
+      <div class="improved-text" id="improved-text"></div>
+    </div>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
     <button class="btn btn-green" style="flex:1" onclick="recommencerRedac()">🔄 Nouvelle rédaction</button>
@@ -802,6 +921,61 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
   </div>
 </div>
 
+<!-- ══ J'ÉCRIS MON LIVRE ══ -->
+<div id="screen-livre-projet" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">📚</div>
+      <div class="chat-info">
+        <strong id="lp-username">–</strong>
+        <small id="lp-level">Mon projet d'écriture longue</small>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="field-group" style="max-width:280px">
+      <label class="field-label">✒️ Type de projet</label>
+      <select id="lp-type" onchange="saveLivreProjet()">
+        <option value="roman">Roman</option>
+        <option value="nouvelle">Nouvelle</option>
+        <option value="conte">Conte</option>
+        <option value="theatre">Pièce de théâtre</option>
+      </select>
+    </div>
+    <div class="livre-tabs">
+      <div class="livre-tab active" data-tab="idees" onclick="switchLivreTab('idees')">💡 Idées</div>
+      <div class="livre-tab" data-tab="narratif" onclick="switchLivreTab('narratif')">🗺️ Schéma narratif</div>
+      <div class="livre-tab" data-tab="perso" onclick="switchLivreTab('perso')">🎭 Personnages & actants</div>
+      <div class="livre-tab" data-tab="texte" onclick="switchLivreTab('texte')">📝 Texte</div>
+      <div class="livre-tab" data-tab="avis" onclick="switchLivreTab('avis')">🤖 Avis de l'IA</div>
+    </div>
+    <div class="livre-pane active" id="livre-pane-idees">
+      <p style="color:var(--s);font-size:.85rem;margin-bottom:8px">Note ici toutes tes idées en vrac : univers, thèmes, ambiance, inspirations…</p>
+      <textarea class="livre-textarea" id="lp-idees" oninput="saveLivreProjet()" placeholder="Mes idées..."></textarea>
+    </div>
+    <div class="livre-pane" id="livre-pane-narratif">
+      <p style="color:var(--s);font-size:.85rem;margin-bottom:8px">Situation initiale, élément perturbateur, péripéties, résolution, situation finale…</p>
+      <textarea class="livre-textarea" id="lp-narratif" oninput="saveLivreProjet()" placeholder="Mon schéma narratif..."></textarea>
+    </div>
+    <div class="livre-pane" id="livre-pane-perso">
+      <p style="color:var(--s);font-size:.85rem;margin-bottom:8px">Décris tes personnages et leur rôle (héros, adjuvants, opposants, quête, objet de la quête...).</p>
+      <textarea class="livre-textarea" id="lp-perso" oninput="saveLivreProjet()" placeholder="Mes personnages et le schéma actantiel..."></textarea>
+    </div>
+    <div class="livre-pane" id="livre-pane-texte">
+      <textarea class="livre-textarea" id="lp-texte" style="min-height:460px" oninput="saveLivreProjet()" placeholder="Mon texte..."></textarea>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn btn-ghost btn-sm" onclick="exportLivrePDF()">📄 Exporter en PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportLivreDoc()">📃 Exporter en Word</button>
+      </div>
+    </div>
+    <div class="livre-pane" id="livre-pane-avis">
+      <p style="color:var(--s);font-size:.85rem;margin-bottom:10px">L'IA relit ton projet comme un éditeur : elle signale les incohérences et les erreurs, sans proposer de suite à l'histoire.</p>
+      <button class="btn btn-primary" onclick="demanderAvisLivre()">🤖 Demander l'avis de l'IA</button>
+      <div class="brouillon-avis-box" id="lp-avis-result" style="margin-top:14px"></div>
+    </div>
+  </div>
+  <button class="btn btn-ghost btn-full btn-sm" onclick="backToMode()">↩ Retour au menu</button>
+</div>
+
 <!-- ══ ESPACE ÉLÈVE ══ -->
 <div id="screen-espace" class="screen">
   <div class="card">
@@ -873,7 +1047,9 @@ let state = {
   mode:"", // 'dialogue' | 'redac'
   redacType:"", notation:"note",
   useTimer:false, timerMinutes:45,
-  useBrouillon:false
+  useBrouillon:false,
+  format:"standard", wordTarget:[100,200],
+  livreProjet:null
 };
 
 // ════════════════════════════
@@ -987,6 +1163,15 @@ function selectNotation(el){
   el.closest('.pill-grid').querySelectorAll('.pill').forEach(p=>p.classList.remove('selected'));
   el.classList.add('selected'); state.notation=el.dataset.value;
 }
+function selectFormat(el){
+  el.closest('.pill-grid').querySelectorAll('.pill').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected'); state.format=el.dataset.value;
+  document.getElementById('libre-fields').classList.toggle('show', state.format==='libre');
+}
+function toggleLibreSujet(){
+  document.getElementById('libre-sujet-input').style.display=
+    document.getElementById('libre-sujet-check').checked?'block':'none';
+}
 
 // ════════════════════════════
 // MODE DIALOGUE
@@ -1006,7 +1191,7 @@ function startMode(mode){
     }
     if(state.history.length>1){replayHistory();}
     else{
-      const introText=`Salut ${state.username} ! 👋 Bienvenue dans ton atelier d'écriture. On va travailler ensemble, tranquillement. Pas de panique — je suis là pour t'aider, pas pour te noter ! 😊 Pour commencer, dis-moi en une phrase complète : est-ce que tu aimes lire ou écrire des histoires ?`;
+      const introText=`Salut ${state.username} ! 👋 Qu'allons-nous écrire aujourd'hui ? Un conte, une nouvelle, un roman, un poème... ou encore autre chose ? Dis-moi ce qui te tente, même une toute petite idée, et on la fait grandir ensemble. 😊`;
       addMsg(introText.replace(/\n/g,'<br>'),'ia');
       state.history.push({role:"assistant",content:introText});
     }
@@ -1039,14 +1224,27 @@ async function startRedac(){
   const saved=localStorage.getItem('brouillon_'+state.username);
   if(saved) document.getElementById('brouillon-text').value=saved;
 
-  const mots={"6eme":"100 à 200","5eme":"200 à 300","4eme":"300 à 400","3eme":"400 à 500"};
-  document.getElementById('wc-target').textContent='· objectif : '+mots[state.level]+' mots';
+  const motsStandard={"6eme":[100,200],"5eme":[200,300],"4eme":[300,400],"3eme":[400,500]};
+  let [min,max]=motsStandard[state.level];
+  const longueurLibre = state.format==='libre' && document.getElementById('libre-longueur-check')?.checked;
+  if(state.format==='court'){ min=Math.round(min*0.4); max=Math.round(max*0.55); }
+  state.wordTarget=[min,max];
+  state.longueurLibre=!!longueurLibre;
+  document.getElementById('wc-target').textContent = longueurLibre ? '· longueur libre' : ('· objectif : '+min+' à '+max+' mots');
   document.getElementById('redac-type-label').textContent=emojiType(state.redacType)+' '+labelType(state.redacType);
   document.getElementById('redac-subject-text').textContent='Génération du sujet...';
+  document.getElementById('redac-consigne').textContent='';
   document.getElementById('redac-text').value='';
 
-  // Génère le sujet via l'IA
-  const sujet=await genererSujet();
+  // Génère le sujet via l'IA, sauf si l'élève a choisi son propre sujet
+  const sujetLibreCheck = state.format==='libre' && document.getElementById('libre-sujet-check')?.checked;
+  const sujetPerso = document.getElementById('libre-sujet-input')?.value.trim();
+  let sujet;
+  if(sujetLibreCheck && sujetPerso){
+    sujet = {sujet: sujetPerso, consigne: longueurLibre ? "Écris librement, en soignant la cohérence et la qualité de la langue." : `Vise ${min} à ${max} mots environ.`};
+  } else {
+    sujet = await genererSujet(min,max);
+  }
   document.getElementById('redac-subject-text').textContent=sujet.sujet;
   document.getElementById('redac-consigne').textContent=sujet.consigne;
   state.currentSubject=sujet;
@@ -1070,7 +1268,7 @@ async function startRedac(){
   }
 }
 
-async function genererSujet(){
+async function genererSujet(minOverride,maxOverride){
   const levelThemes={"6eme":"Le monstre, aux limites de l'humain","5eme":"Le voyage et l'aventure",
     "4eme":"Dire l'amour / La fiction pour interroger le réel","3eme":"Se raconter / Dénoncer les travers de la société"};
   const typeMap={
@@ -1079,7 +1277,9 @@ async function genererSujet(){
     reflexion:"texte de réflexion argumentée"
   };
   const type=typeMap[state.redacType]||state.redacType;
-  const mots={"6eme":"100 à 200","5eme":"200 à 300","4eme":"300 à 400","3eme":"400 à 500"};
+  const motsDefaut={"6eme":"100 à 200","5eme":"200 à 300","4eme":"300 à 400","3eme":"400 à 500"};
+  const mots={"6eme":motsDefaut["6eme"],"5eme":motsDefaut["5eme"],"4eme":motsDefaut["4eme"],"3eme":motsDefaut["3eme"]};
+  if(minOverride&&maxOverride) mots[state.level]=minOverride+' à '+maxOverride;
 
   // Sujet "réflexion" de 3ème : format brevet authentique
   if(state.level==='3eme' && state.redacType==='reflexion'){
@@ -1138,11 +1338,10 @@ Réponds UNIQUEMENT en JSON valide, sans markdown, sans explication :
 function updateWordCount(){
   const txt=document.getElementById('redac-text').value.trim();
   const words=txt?txt.split(/\s+/).filter(w=>w.length>0).length:0;
-  const targets={"6eme":[100,200],"5eme":[200,300],"4eme":[300,400],"3eme":[400,500]};
-  const [min,max]=targets[state.level];
+  const [min,max]=state.wordTarget||[100,200];
   document.getElementById('wc-num').textContent=words;
   const wcel=document.getElementById('wordcount');
-  wcel.classList.toggle('ok',words>=min&&words<=max);
+  wcel.classList.toggle('ok', state.longueurLibre ? words>=30 : (words>=min&&words<=max));
 }
 
 function saveBrouillon(){
@@ -1201,8 +1400,18 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
   "points_positifs": ["<point 1>","<point 2>"],
   "axes_amelioration": ["<axe 1>","<axe 2>","<axe 3>"],
   "conseil_final": "<1-2 phrases d'encouragement et de conseil>",
-  "difficultes_detectees": ["<difficulté pour le prof>"]
+  "difficultes_detectees": ["<difficulté pour le prof>"],
+  "annotations": [
+    {"texte_original":"<passage EXACT du texte, max 8 mots consécutifs>","type":"<orth|conj|gram|ponct|style|repet>","explication":"<explication courte et bienveillante de l'erreur ou de la maladresse>"}
+  ],
+  "version_amelioree": [
+    {"texte_original":"<passage EXACT du texte, max 10 mots>","proposition":"<reformulation améliorée de ce passage>","justification":"<en 1 phrase, pourquoi c'est mieux>"}
+  ]
 }
+
+Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer, en couvrant si possible plusieurs types parmi : orth=orthographe, conj=conjugaison, gram=grammaire/syntaxe, ponct=ponctuation, style=maladresse ou registre inadapté, repet=répétition gênante. Choisis des passages qui existent EXACTEMENT dans le texte de l'élève (copie-les tels quels).
+Pour "version_amelioree" : propose entre 5 et 12 reformulations concrètes qui rendent le texte plus riche, plus précis ou plus correct (pas seulement des corrections d'erreurs : aussi du vocabulaire plus juste, des tournures plus fluides). Chaque "texte_original" doit exister EXACTEMENT dans le texte de l'élève.
+Si le texte est trop court ou trop fautif pour permettre 5 annotations ou 5 reformulations, donne-en le maximum possible sans jamais inventer un passage absent du texte.
 
 TEXTE DE L'ÉLÈVE :
 ${texte}`;
@@ -1279,6 +1488,13 @@ function afficherResultat(note,texte){
   `;
   document.getElementById('note-card').innerHTML=html;
 
+  // Construit les panneaux "texte annoté" et "version améliorée"
+  state.lastCorrection={note, texte};
+  document.getElementById('annot-panel').classList.remove('open');
+  document.getElementById('improved-panel').classList.remove('open');
+  buildAnnotatedPanel(texte, note.annotations||[]);
+  buildImprovedPanel(texte, note.version_amelioree||[]);
+
   // Sauvegarde rédaction dans Supabase
   const words=texte.split(/\s+/).filter(w=>w.length>0).length;
   fetch('/.netlify/functions/supabase-save',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -1353,6 +1569,11 @@ ATTENDUS: ${attendus[state.level]}
 ${livreP}
 
 DIAGNOSTIC SYNTAXIQUE (priorité absolue — dans cet ordre strict) :
+${!state.dys?`
+Q0 — ORTHOGRAPHE DU DERNIER MESSAGE DE L'ÉLÈVE (priorité maximale) :
+Vérifie l'orthographe du dernier message de l'élève.
+S'il contient au moins un mot mal orthographié : NE TRAITE RIEN D'AUTRE. Indique clairement le ou les mot(s) mal orthographiés avec leur orthographe correcte (ex: "'aimerais' s'écrit avec deux 'm' : a-i-m-e-r-a-i-s"), puis demande-lui de reformuler sa phrase correctement avant de continuer. Reste bienveillant, pas de liste, une ou deux lignes.
+Si le message est bien orthographié : passe directement à la suite (Q1).`:''}
 
 Q1 — PHRASES SANS VERBE CONJUGUÉ ?
 Verbe conjugué = tout verbe accordé avec son sujet ("ils se cognent"✓, "elle part"✓, "il est"✓).
@@ -1825,6 +2046,197 @@ function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt
 function retournerRedac(){showScreen('screen-redaction');}
 
 function submitRedacFromRelecture(){submitRedac();}
+
+// ════════════════════════════
+// TEXTE ANNOTÉ & VERSION AMÉLIORÉE (résultat de rédaction)
+// ════════════════════════════
+const ANNOT_TYPES={
+  orth:{label:'Orthographe',cls:'a-orth'}, conj:{label:'Conjugaison',cls:'a-conj'},
+  gram:{label:'Grammaire',cls:'a-gram'}, ponct:{label:'Ponctuation',cls:'a-ponct'},
+  style:{label:'Style',cls:'a-style'}, repet:{label:'Répétition',cls:'a-repet'}
+};
+let activeAnnotTypes=new Set(Object.keys(ANNOT_TYPES));
+
+function toggleAnnotPanel(which){
+  const ids={annot:'annot-panel',improved:'improved-panel'};
+  Object.entries(ids).forEach(([k,id])=>{
+    if(k===which) document.getElementById(id).classList.toggle('open');
+    else document.getElementById(id).classList.remove('open');
+  });
+}
+
+function buildAnnotatedPanel(texte, annotations){
+  const tabsEl=document.getElementById('annot-tabs');
+  const present=[...new Set((annotations||[]).map(a=>a.type).filter(t=>ANNOT_TYPES[t]))];
+  activeAnnotTypes=new Set(present);
+  tabsEl.innerHTML=present.length?present.map(t=>
+    `<span class="annot-tab active" data-type="${t}" onclick="toggleAnnotType('${t}',this)">${ANNOT_TYPES[t].label}</span>`
+  ).join(''):'<span style="color:var(--s);font-size:.85rem">Aucune annotation disponible pour ce texte.</span>';
+  renderAnnotatedText(texte, annotations||[]);
+}
+function toggleAnnotType(t, el){
+  el.classList.toggle('active');
+  if(activeAnnotTypes.has(t)) activeAnnotTypes.delete(t); else activeAnnotTypes.add(t);
+  renderAnnotatedText(state.lastCorrection.texte, state.lastCorrection.note.annotations||[]);
+}
+function renderAnnotatedText(texte, annotations){
+  let html=escHtml(texte);
+  const sorted=[...annotations].filter(a=>activeAnnotTypes.has(a.type))
+    .sort((a,b)=>(b.texte_original||'').length-(a.texte_original||'').length);
+  sorted.forEach(a=>{
+    const orig=a.texte_original||''; if(!orig) return;
+    const cls=(ANNOT_TYPES[a.type]||{}).cls||'a-style';
+    const escaped=orig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const regex=new RegExp(escaped.replace(/\s+/g,'\\s+'));
+    const span=`<span class="${cls}">${escHtml(orig)}<span class="a-tip"><b>${(ANNOT_TYPES[a.type]||{}).label||a.type}</b><br>${escHtml(a.explication||'')}</span></span>`;
+    html=html.replace(regex, span);
+  });
+  document.getElementById('annotated-text').innerHTML=html.replace(/\n/g,'<br>');
+}
+function buildImprovedPanel(texte, changes){
+  let html=escHtml(texte);
+  const sorted=[...(changes||[])].sort((a,b)=>(b.texte_original||'').length-(a.texte_original||'').length);
+  sorted.forEach(c=>{
+    const orig=c.texte_original||''; if(!orig) return;
+    const escaped=orig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const regex=new RegExp(escaped.replace(/\s+/g,'\\s+'));
+    const span=`<span class="imp-change">${escHtml(c.proposition||orig)}<span class="imp-tip">`+
+      `<span class="old">${escHtml(orig)}</span><span class="new">→ ${escHtml(c.proposition||'')}</span>${escHtml(c.justification||'')}</span></span>`;
+    html=html.replace(regex, span);
+  });
+  document.getElementById('improved-text').innerHTML=(changes&&changes.length)
+    ? html.replace(/\n/g,'<br>')
+    : '<span style="color:var(--s)">Aucune amélioration proposée pour ce texte.</span>';
+}
+
+// ════════════════════════════
+// BROUILLON — repliable / redimensionnable / avis IA
+// ════════════════════════════
+function toggleBrouillonCollapse(){
+  document.getElementById('brouillon-wrapper').classList.toggle('collapsed');
+}
+async function demanderAvisBrouillon(){
+  const intro=document.getElementById('plan-intro')?.value||'';
+  const devel=document.getElementById('plan-devel')?.value||'';
+  const conclu=document.getElementById('plan-conclu')?.value||'';
+  const notes=document.getElementById('brouillon-text')?.value||'';
+  const box=document.getElementById('brouillon-avis-box');
+  if(!intro.trim()&&!devel.trim()&&!conclu.trim()&&!notes.trim()){
+    alert("Écris quelques idées dans le brouillon avant de demander un avis !"); return;
+  }
+  box.style.display='block';
+  box.innerHTML='<span class="loading-dots">L\'IA relit ton brouillon</span>';
+  const prompt=`Tu es un professeur de français qui relit le BROUILLON (pas le texte final) d'un élève de ${state.level}, avant qu'il ne rédige son texte au propre.
+Sujet donné : "${(state.currentSubject||{}).sujet||'sujet libre'}"
+Plan — Introduction : ${intro||'(vide)'}
+Plan — Développement : ${devel||'(vide)'}
+Plan — Conclusion : ${conclu||'(vide)'}
+Notes libres : ${notes||'(vide)'}
+
+Dis en 3 à 5 lignes maximum si tu vois des incohérences, des oublis, ou si le brouillon te semble incomplet avant de commencer la rédaction. Sois concret et bienveillant. Ne rédige rien à sa place, ne propose pas de suite : donne seulement un avis critique constructif.`;
+  try{
+    const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    box.innerHTML=(d.answer||'Pas de retour disponible.').replace(/\n/g,'<br>');
+  }catch(e){ box.innerHTML='Erreur de connexion, réessaie plus tard.'; }
+}
+
+// ════════════════════════════
+// J'ÉCRIS MON LIVRE
+// ════════════════════════════
+function startLivreProjet(){
+  state.mode='livre-projet';
+  showScreen('screen-livre-projet');
+  const lvl={"6eme":"6ème","5eme":"5ème","4eme":"4ème","3eme":"3ème"};
+  document.getElementById('lp-username').textContent=state.username;
+  document.getElementById('lp-level').textContent=lvl[state.level]+' · Mon projet d\'écriture longue';
+
+  if(!state.livreProjet){
+    try{
+      const saved=localStorage.getItem('livreprojet_'+state.username);
+      if(saved) state.livreProjet=JSON.parse(saved);
+    }catch(e){}
+  }
+  if(!state.livreProjet) state.livreProjet={type:'roman',idees:'',schemaNarratif:'',personnages:'',texte:''};
+
+  document.getElementById('lp-type').value=state.livreProjet.type||'roman';
+  document.getElementById('lp-idees').value=state.livreProjet.idees||'';
+  document.getElementById('lp-narratif').value=state.livreProjet.schemaNarratif||'';
+  document.getElementById('lp-perso').value=state.livreProjet.personnages||'';
+  document.getElementById('lp-texte').value=state.livreProjet.texte||'';
+  document.getElementById('lp-avis-result').style.display='none';
+  switchLivreTab('idees');
+}
+function switchLivreTab(tab){
+  document.querySelectorAll('.livre-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.livre-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`.livre-tab[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('livre-pane-'+tab).classList.add('active');
+}
+function saveLivreProjet(){
+  state.livreProjet={
+    type:document.getElementById('lp-type').value,
+    idees:document.getElementById('lp-idees').value,
+    schemaNarratif:document.getElementById('lp-narratif').value,
+    personnages:document.getElementById('lp-perso').value,
+    texte:document.getElementById('lp-texte').value
+  };
+  try{localStorage.setItem('livreprojet_'+state.username,JSON.stringify(state.livreProjet));}catch(e){}
+}
+async function demanderAvisLivre(){
+  saveLivreProjet();
+  const p=state.livreProjet;
+  const box=document.getElementById('lp-avis-result');
+  box.style.display='block';
+  box.innerHTML='<span class="loading-dots">Lecture en cours</span>';
+  const prompt=`Tu es un éditeur professionnel. Tu ne dois PAS proposer de suite à l'histoire ni d'idées d'écriture nouvelles.
+Ton unique rôle : relever les incohérences, contradictions, oublis et erreurs de langue (orthographe, grammaire, syntaxe) dans le projet ci-dessous, exactement comme le ferait un correcteur éditorial avant publication.
+
+TYPE DE PROJET : ${p.type}
+IDÉES : ${p.idees||'(vide)'}
+SCHÉMA NARRATIF : ${p.schemaNarratif||'(vide)'}
+PERSONNAGES / SCHÉMA ACTANTIEL : ${p.personnages||'(vide)'}
+TEXTE RÉDIGÉ (extrait) : ${(p.texte||'(vide)').slice(0,6000)}
+
+Réponds en français, en 5 à 10 lignes maximum, de façon structurée :
+1. Incohérences repérées (ou "aucune incohérence relevée" si rien à signaler)
+2. Éléments manquants ou incomplets dans le projet
+3. Erreurs de langue relevées dans le texte rédigé (si le texte n'est pas vide)
+Sois direct, précis, sans complaisance mais bienveillant. Ne propose aucune suite narrative.`;
+  try{
+    const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    box.innerHTML=(d.answer||'Pas de retour disponible.').replace(/\n/g,'<br>');
+  }catch(e){ box.innerHTML='Erreur de connexion, réessaie plus tard.'; }
+}
+function exportLivrePDF(){
+  const p=state.livreProjet||{};
+  const w=window.open('','_blank');
+  if(!w){ alert("Autorise les fenêtres pop-up pour exporter en PDF."); return; }
+  w.document.write(`<html><head><title>${esc(state.username)}</title>
+    <style>body{font-family:Georgia,'Times New Roman',serif;line-height:1.8;padding:40px;max-width:700px;margin:auto;white-space:pre-wrap}
+    h1{font-family:Arial,sans-serif;font-size:1.4rem}</style></head><body>
+    <h1>${esc(state.username)} — ${esc(p.type||'')}</h1>
+    <div>${esc(p.texte||'(texte vide)')}</div></body></html>`);
+  w.document.close();
+  setTimeout(()=>{ w.focus(); w.print(); }, 350);
+}
+function exportLivreDoc(){
+  const p=state.livreProjet||{};
+  const html=`<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head><meta charset="utf-8"><title>${esc(state.username)}</title></head>
+  <body style="font-family:Calibri,Arial,sans-serif;line-height:1.6">
+  <h1>${esc(state.username)} — ${esc(p.type||'')}</h1>
+  <p>${esc(p.texte||'(texte vide)')}</p>
+  </body></html>`;
+  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${state.username}_${p.type||'texte'}.doc`;
+  a.click();
+}
 
 // ════════════════════════════
 // COMPRÉHENSION DE TEXTE
