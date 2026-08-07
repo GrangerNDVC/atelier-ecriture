@@ -744,10 +744,12 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
       <div class="annot-tabs" id="annot-tabs"></div>
       <div class="annot-legend">Clique sur un type pour l'afficher/le masquer · survole un passage souligné pour voir l'explication</div>
       <div class="annotated-text" id="annotated-text"></div>
+      <div id="annotated-unmatched" style="display:none"></div>
     </div>
     <div class="annotated-panel" id="improved-panel">
       <div class="annot-legend">Les passages en vert sont des suggestions d'amélioration · survole-les pour voir ta version et la proposition</div>
       <div class="improved-text" id="improved-text"></div>
+      <div id="improved-unmatched" style="display:none"></div>
     </div>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
@@ -939,6 +941,7 @@ textarea,input{-webkit-user-select:text!important;-moz-user-select:text!importan
         <option value="nouvelle">Nouvelle</option>
         <option value="conte">Conte</option>
         <option value="theatre">Pièce de théâtre</option>
+        <option value="poesie">Poésie</option>
       </select>
     </div>
     <div class="livre-tabs">
@@ -1082,7 +1085,19 @@ async function initSession(){
     state.level=s.level||state.level;
     state.dys=s.dys||state.dys;
     state.modeLivre=s.mode_livre||false;
-    state.livrePlan=s.livre_plan||'';
+    state.livrePlan='';
+    state.livreProjet=null;
+    if(s.livre_plan){
+      let parsed=null;
+      try{ parsed=JSON.parse(s.livre_plan); }catch(e){ parsed=null; }
+      if(parsed && typeof parsed==='object' && ('legacy' in parsed || 'projet' in parsed)){
+        state.livrePlan=parsed.legacy||'';
+        state.livreProjet=parsed.projet||null;
+      } else {
+        // Ancien format : texte brut du plan de "Mode Livre" (chat)
+        state.livrePlan=s.livre_plan;
+      }
+    }
     // Restaure l'historique depuis Supabase
     if(s.history_json){
       try{ const h=JSON.parse(s.history_json); if(h&&h.length>0) state.history=h; }catch(e){}
@@ -1409,8 +1424,10 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
   ]
 }
 
-Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer, en couvrant si possible plusieurs types parmi : orth=orthographe, conj=conjugaison, gram=grammaire/syntaxe, ponct=ponctuation, style=maladresse ou registre inadapté, repet=répétition gênante. Choisis des passages qui existent EXACTEMENT dans le texte de l'élève (copie-les tels quels).
-Pour "version_amelioree" : propose entre 5 et 12 reformulations concrètes qui rendent le texte plus riche, plus précis ou plus correct (pas seulement des corrections d'erreurs : aussi du vocabulaire plus juste, des tournures plus fluides). Chaque "texte_original" doit exister EXACTEMENT dans le texte de l'élève.
+Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer, en couvrant si possible plusieurs types parmi : orth=orthographe, conj=conjugaison, gram=grammaire/syntaxe, ponct=ponctuation, style=maladresse ou registre inadapté, repet=répétition gênante. Choisis des passages qui existent EXACTEMENT dans le texte de l'élève (copie-les tels quels, sans reformuler).
+RÈGLE DE COHÉRENCE STRICTE : si tu mentionnes une faute d'orthographe, de conjugaison ou de ponctuation dans les commentaires des critères, les axes d'amélioration ou la pénalité orthographe, cette même faute DOIT obligatoirement apparaître aussi dans le tableau "annotations", avec le "texte_original" exact et le bon "type". N'omets aucune faute que tu as toi-même repérée ailleurs dans ta réponse.
+RÈGLE ANTI FAUX-POSITIFS : ne signale JAMAIS comme une erreur (type "style" ou autre) une licence poétique, une image inventive, une tournure stylistique originale, une répétition volontaire à effet (anaphore, refrain) ou tout autre choix d'écriture volontaire et réussi, même s'il est inhabituel ou peu académique. Seule une maladresse involontaire (syntaxe bancale, mot impropre, registre incohérent avec le reste du texte) doit être signalée en "style".
+Pour "version_amelioree" : propose entre 5 et 12 reformulations concrètes qui rendent le texte plus riche, plus précis ou plus correct (pas seulement des corrections d'erreurs : aussi du vocabulaire plus juste, des tournures plus fluides). Chaque "texte_original" doit exister EXACTEMENT dans le texte de l'élève. Ne propose JAMAIS de reformulation pour un passage qui relève d'un choix stylistique volontaire et réussi (licence poétique, image forte, tournure originale) : laisse-le tel quel.
 Si le texte est trop court ou trop fautif pour permettre 5 annotations ou 5 reformulations, donne-en le maximum possible sans jamais inventer un passage absent du texte.
 
 TEXTE DE L'ÉLÈVE :
@@ -1689,13 +1706,18 @@ function exportLivre(){
 // ════════════════════════════
 // PERSISTANCE
 // ════════════════════════════
+function buildLivrePlanPayload(){
+  // Combine l'ancien plan de "Mode Livre" (chat) et le nouveau projet de livre structuré
+  // dans un seul JSON, pour les stocker dans la colonne existante 'livre_plan' sans migration.
+  return JSON.stringify({legacy:state.livrePlan||'', projet:state.livreProjet||null});
+}
 function saveState(){
   try{localStorage.setItem(STORAGE_PREFIX+state.username,JSON.stringify(state));}catch(e){}
   const nb=state.history.filter(m=>m.role==='user').length;
   fetch('/.netlify/functions/supabase-save',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({action:'save_session',data:{
       username:state.username, level:state.level, dys:state.dys,
-      modeLivre:state.modeLivre, livrePlan:state.livrePlan,
+      modeLivre:state.modeLivre, livrePlan:buildLivrePlanPayload(),
       nbEchanges:nb, history:state.history.slice(-60) // max 60 messages
     }})
   }).catch(()=>{});
@@ -1726,7 +1748,10 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
-function backToMode(){showScreen('screen-mode');}
+function backToMode(){
+  if(state.mode==='livre-projet'){ clearTimeout(livreProjetSaveTimer); saveLivreProjet(); saveState(); }
+  showScreen('screen-mode');
+}
 function addMsg(txt,side){
   const chat=document.getElementById('chat');
   const div=document.createElement('div'); div.className='msg '+side;
@@ -2065,48 +2090,100 @@ function toggleAnnotPanel(which){
   });
 }
 
+function normalizeAnnotType(raw){
+  // Les modèles gratuits (OpenRouter) ne respectent pas toujours l'énumération demandée
+  // (ex: "orthographe" au lieu de "orth") — on normalise pour ne rien perdre à l'affichage.
+  const t=(raw||'').toString().trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,''); // enlève les accents
+  if(['orth','orthographe','ortho','spelling','faute'].includes(t)) return 'orth';
+  if(['conj','conjugaison','conjugation','verbe','temps','accord verbal'].includes(t)) return 'conj';
+  if(['gram','grammaire','syntaxe','syntax','grammar','construction'].includes(t)) return 'gram';
+  if(['ponct','ponctuation','punctuation'].includes(t)) return 'ponct';
+  if(['repet','repetition','repetitions'].includes(t)) return 'repet';
+  if(['style','maladresse','registre','vocab','vocabulaire','lexique'].includes(t)) return 'style';
+  return 'style'; // repli : on n'écarte jamais une annotation, on la classe par défaut
+}
+
 function buildAnnotatedPanel(texte, annotations){
+  const norm=(annotations||[]).map(a=>({...a, type:normalizeAnnotType(a.type)}));
   const tabsEl=document.getElementById('annot-tabs');
-  const present=[...new Set((annotations||[]).map(a=>a.type).filter(t=>ANNOT_TYPES[t]))];
+  const present=[...new Set(norm.map(a=>a.type))];
   activeAnnotTypes=new Set(present);
   tabsEl.innerHTML=present.length?present.map(t=>
     `<span class="annot-tab active" data-type="${t}" onclick="toggleAnnotType('${t}',this)">${ANNOT_TYPES[t].label}</span>`
   ).join(''):'<span style="color:var(--s);font-size:.85rem">Aucune annotation disponible pour ce texte.</span>';
-  renderAnnotatedText(texte, annotations||[]);
+  if(state.lastCorrection) state.lastCorrection.note.annotations=norm; // normalisées une fois pour toutes
+  renderAnnotatedText(texte, norm);
 }
 function toggleAnnotType(t, el){
   el.classList.toggle('active');
   if(activeAnnotTypes.has(t)) activeAnnotTypes.delete(t); else activeAnnotTypes.add(t);
   renderAnnotatedText(state.lastCorrection.texte, state.lastCorrection.note.annotations||[]);
 }
-function renderAnnotatedText(texte, annotations){
-  let html=escHtml(texte);
-  const sorted=[...annotations].filter(a=>activeAnnotTypes.has(a.type))
-    .sort((a,b)=>(b.texte_original||'').length-(a.texte_original||'').length);
-  sorted.forEach(a=>{
-    const orig=a.texte_original||''; if(!orig) return;
-    const cls=(ANNOT_TYPES[a.type]||{}).cls||'a-style';
-    const escaped=orig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const regex=new RegExp(escaped.replace(/\s+/g,'\\s+'));
-    const span=`<span class="${cls}">${escHtml(orig)}<span class="a-tip"><b>${(ANNOT_TYPES[a.type]||{}).label||a.type}</b><br>${escHtml(a.explication||'')}</span></span>`;
-    html=html.replace(regex, span);
+// Cherche chaque annotation par POSITION dans le texte brut (une seule passe, pas de
+// remplacements successifs qui se marchaient dessus et faisaient disparaître des erreurs).
+function localiserPassages(texte, items){
+  const found=[], unmatched=[];
+  items.forEach(item=>{
+    const orig=item.texte_original||'';
+    if(!orig){ unmatched.push(item); return; }
+    let idx=texte.indexOf(orig);
+    if(idx===-1){
+      const li=texte.toLowerCase().indexOf(orig.toLowerCase());
+      if(li!==-1) idx=li;
+    }
+    if(idx===-1){ unmatched.push(item); return; }
+    found.push({start:idx, end:idx+orig.length, item});
   });
-  document.getElementById('annotated-text').innerHTML=html.replace(/\n/g,'<br>');
+  // Trie par position, puis conserve en priorité les passages les plus longs en cas de chevauchement
+  found.sort((a,b)=> a.start-b.start || (b.end-b.start)-(a.end-a.start));
+  const kept=[]; let lastEnd=-1;
+  found.forEach(f=>{
+    if(f.start>=lastEnd){ kept.push(f); lastEnd=f.end; }
+    else unmatched.push(f.item);
+  });
+  return {kept, unmatched};
+}
+function renderAnnotatedText(texte, annotations){
+  const filtered=(annotations||[]).filter(a=>activeAnnotTypes.has(a.type));
+  const {kept, unmatched}=localiserPassages(texte, filtered);
+  let out=''; let cursor=0;
+  kept.forEach(({start,end,item})=>{
+    out+=escHtml(texte.slice(cursor,start));
+    const cls=(ANNOT_TYPES[item.type]||{}).cls||'a-style';
+    out+=`<span class="${cls}">${escHtml(texte.slice(start,end))}<span class="a-tip"><b>${(ANNOT_TYPES[item.type]||{}).label||item.type}</b><br>${escHtml(item.explication||'')}</span></span>`;
+    cursor=end;
+  });
+  out+=escHtml(texte.slice(cursor));
+  document.getElementById('annotated-text').innerHTML=out.replace(/\n/g,'<br>');
+  renderUnmatchedList('annotated-unmatched', unmatched, 'annot');
 }
 function buildImprovedPanel(texte, changes){
-  let html=escHtml(texte);
-  const sorted=[...(changes||[])].sort((a,b)=>(b.texte_original||'').length-(a.texte_original||'').length);
-  sorted.forEach(c=>{
-    const orig=c.texte_original||''; if(!orig) return;
-    const escaped=orig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const regex=new RegExp(escaped.replace(/\s+/g,'\\s+'));
-    const span=`<span class="imp-change">${escHtml(c.proposition||orig)}<span class="imp-tip">`+
-      `<span class="old">${escHtml(orig)}</span><span class="new">→ ${escHtml(c.proposition||'')}</span>${escHtml(c.justification||'')}</span></span>`;
-    html=html.replace(regex, span);
+  const filtered=(changes||[]).filter(c=>c.texte_original);
+  const {kept, unmatched}=localiserPassages(texte, filtered);
+  let out=''; let cursor=0;
+  kept.forEach(({start,end,item})=>{
+    out+=escHtml(texte.slice(cursor,start));
+    out+=`<span class="imp-change">${escHtml(item.proposition||texte.slice(start,end))}<span class="imp-tip">`+
+      `<span class="old">${escHtml(texte.slice(start,end))}</span><span class="new">→ ${escHtml(item.proposition||'')}</span>${escHtml(item.justification||'')}</span></span>`;
+    cursor=end;
   });
-  document.getElementById('improved-text').innerHTML=(changes&&changes.length)
-    ? html.replace(/\n/g,'<br>')
+  out+=escHtml(texte.slice(cursor));
+  document.getElementById('improved-text').innerHTML=(kept.length||unmatched.length)
+    ? out.replace(/\n/g,'<br>')
     : '<span style="color:var(--s)">Aucune amélioration proposée pour ce texte.</span>';
+  renderUnmatchedList('improved-unmatched', unmatched, 'improved');
+}
+function renderUnmatchedList(elId, list, kind){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  if(!list || !list.length){ el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display='block';
+  const rows=list.map(a=> kind==='improved'
+    ? `<div style="background:#f0fdf9;border-left:3px solid var(--g);border-radius:6px;padding:7px 11px;margin-bottom:6px;font-size:.82rem">« ${escHtml(a.texte_original||'')} » → <b>${escHtml(a.proposition||'')}</b><br><span style="color:var(--s);font-style:italic">${escHtml(a.justification||'')}</span></div>`
+    : `<div style="background:#f8fafc;border-left:3px solid #cbd5e1;border-radius:6px;padding:7px 11px;margin-bottom:6px;font-size:.82rem"><b>${(ANNOT_TYPES[a.type]||{}).label||a.type}</b> — « ${escHtml(a.texte_original||'')} » : ${escHtml(a.explication||'')}</div>`
+  ).join('');
+  el.innerHTML=`<div style="font-weight:700;font-size:.78rem;color:var(--s);margin:12px 0 6px">Autres remarques (passage non retrouvé mot pour mot dans le texte) :</div>${rows}`;
 }
 
 // ════════════════════════════
@@ -2153,6 +2230,7 @@ function startLivreProjet(){
   document.getElementById('lp-level').textContent=lvl[state.level]+' · Mon projet d\'écriture longue';
 
   if(!state.livreProjet){
+    // Repli localStorage seulement si rien n'a été chargé depuis Supabase à la connexion
     try{
       const saved=localStorage.getItem('livreprojet_'+state.username);
       if(saved) state.livreProjet=JSON.parse(saved);
@@ -2174,6 +2252,7 @@ function switchLivreTab(tab){
   document.querySelector(`.livre-tab[data-tab="${tab}"]`).classList.add('active');
   document.getElementById('livre-pane-'+tab).classList.add('active');
 }
+let livreProjetSaveTimer=null;
 function saveLivreProjet(){
   state.livreProjet={
     type:document.getElementById('lp-type').value,
@@ -2183,6 +2262,9 @@ function saveLivreProjet(){
     texte:document.getElementById('lp-texte').value
   };
   try{localStorage.setItem('livreprojet_'+state.username,JSON.stringify(state.livreProjet));}catch(e){}
+  // Sauvegarde distante (Supabase) avec un léger différé pour ne pas spammer le serveur à chaque frappe
+  clearTimeout(livreProjetSaveTimer);
+  livreProjetSaveTimer=setTimeout(()=>{ saveState(); }, 1200);
 }
 async function demanderAvisLivre(){
   saveLivreProjet();
@@ -2203,7 +2285,9 @@ Réponds en français, en 5 à 10 lignes maximum, de façon structurée :
 1. Incohérences repérées (ou "aucune incohérence relevée" si rien à signaler)
 2. Éléments manquants ou incomplets dans le projet
 3. Erreurs de langue relevées dans le texte rédigé (si le texte n'est pas vide)
-Sois direct, précis, sans complaisance mais bienveillant. Ne propose aucune suite narrative.`;
+Sois direct, précis, sans complaisance mais bienveillant. Ne propose aucune suite narrative.
+${p.type==='poesie'?"IMPORTANT : ce projet est un texte poétique. Ne signale JAMAIS comme une erreur une liberté rythmique, une rime approximative, une inversion, une ellipse ou une image inventive : ce sont des choix d'écriture légitimes en poésie. Ne relève que les véritables incohérences de sens et les fautes de langue non voulues.":""}
+Plus généralement, ne confonds jamais une licence stylistique volontaire et réussie (même inhabituelle) avec une erreur : ne la signale pas.`;
   try{
     const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
