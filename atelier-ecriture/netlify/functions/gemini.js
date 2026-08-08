@@ -70,7 +70,7 @@ exports.handler = async (event) => {
 
 function tryOpenRouter(key, model, messages) {
   return new Promise((resolve) => {
-    const postData = JSON.stringify({ model, messages });
+    const postData = JSON.stringify({ model, messages, max_tokens: 3000 });
     const options = {
       hostname: 'openrouter.ai',
       path: '/api/v1/chat/completions',
@@ -109,7 +109,7 @@ function tryOpenRouter(key, model, messages) {
 function tryMistral(key, messages) {
   return new Promise((resolve) => {
     const msgs = messages.map(m => m.role === 'system' ? { ...m, role: 'user' } : m);
-    const postData = JSON.stringify({ model: "mistral-small-latest", messages: msgs });
+    const postData = JSON.stringify({ model: "mistral-small-latest", messages: msgs, max_tokens: 3000 });
     const options = {
       hostname: 'api.mistral.ai',
       path: '/v1/chat/completions',
