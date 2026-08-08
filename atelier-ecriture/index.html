@@ -415,6 +415,7 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
 .imp-tip .old{color:#fca5a5;text-decoration:line-through}
 .imp-tip .new{color:#86efac;font-weight:700;display:block;margin-top:2px}
 .imp-change:hover .imp-tip{display:block}
+.imp-del{color:#9ca3af;text-decoration:line-through;font-size:.92em;cursor:help}
 
 /* Brouillon repensé */
 .brouillon-wrapper{border:2px solid #fbbf24;border-radius:14px;background:#fffbeb;overflow:hidden;
@@ -760,9 +761,8 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
       <div id="annotated-unmatched" style="display:none"></div>
     </div>
     <div class="annotated-panel" id="improved-panel">
-      <div class="annot-legend">Les passages en vert sont des suggestions d'amélioration · survole-les pour voir ta version et la proposition</div>
+      <div class="annot-legend">Vert = passage corrigé/amélioré (survole pour voir ta version, la correction et pourquoi) · barré gris = supprimé</div>
       <div class="improved-text" id="improved-text"></div>
-      <div id="improved-unmatched" style="display:none"></div>
     </div>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
@@ -1443,6 +1443,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
   "annotations": [
     {"texte_original":"<passage EXACT du texte, max 8 mots consécutifs>","type":"<orth|conj|gram|ponct|style|repet|fond>","explication":"<explication courte et bienveillante de l'erreur ou de la maladresse>"}
   ],
+  "texte_corrige": "<voir consignes ci-dessous>",
   "version_amelioree": [
     {"texte_original":"<passage EXACT du texte, max 10 mots>","proposition":"<reformulation améliorée de ce passage>","justification":"<en 1 phrase, pourquoi c'est mieux>"}
   ]
@@ -1452,8 +1453,14 @@ Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer,
 EXEMPLE DE "fond" : si l'élève écrit "mon petit frère Lucas, qui est fils unique", c'est une incohérence logique (on ne peut pas être à la fois frère de quelqu'un ET fils unique) : type "fond", PAS "style" ni "répétition". Le type "fond" sert à toute contradiction, incohérence temporelle, erreur factuelle ou rupture de logique dans l'histoire — distingue bien ça d'une simple maladresse de style.
 RÈGLE DE COHÉRENCE STRICTE : si tu mentionnes une faute ou une incohérence dans les commentaires des critères, les axes d'amélioration ou la pénalité orthographe, cette même remarque DOIT obligatoirement apparaître aussi dans le tableau "annotations", avec le "texte_original" exact et le bon "type". N'omets aucune remarque que tu as toi-même faite ailleurs dans ta réponse.
 RÈGLE ANTI FAUX-POSITIFS : ne signale JAMAIS comme une erreur (type "style" ou autre) une licence poétique, une image inventive, une tournure stylistique originale, une répétition volontaire à effet (anaphore, refrain) ou tout autre choix d'écriture volontaire et réussi, même s'il est inhabituel ou peu académique. Seule une maladresse involontaire (syntaxe bancale, mot impropre, registre incohérent avec le reste du texte) doit être signalée en "style".
-Pour "version_amelioree" : propose entre 5 et 12 reformulations concrètes qui rendent le texte plus riche, plus précis ou plus correct (pas seulement des corrections d'erreurs : aussi du vocabulaire plus juste, des tournures plus fluides). Chaque "texte_original" doit exister EXACTEMENT dans le texte de l'élève ci-dessous — ne propose JAMAIS une reformulation basée sur un texte que tu n'as pas sous les yeux. Ne propose JAMAIS de reformulation pour un passage qui relève d'un choix stylistique volontaire et réussi (licence poétique, image forte, tournure originale) : laisse-le tel quel.
-Si le texte est trop court ou trop fautif pour permettre 5 annotations ou 5 reformulations, donne-en le maximum possible sans jamais inventer un passage absent du texte. Il vaut mieux donner 2 annotations correctes que 10 dont certaines inventées.
+
+CONSIGNES POUR "texte_corrige" (le plus important — sois rigoureux) :
+Réécris l'INTÉGRALITÉ du texte de l'élève, du début à la fin, en corrigeant TOUTES les fautes que tu as toi-même repérées (orthographe, conjugaison, grammaire, ponctuation), sans EN OUBLIER AUCUNE — relis ta propre réécriture avant de répondre pour vérifier qu'il ne reste aucune faute que tu as pourtant signalée dans "annotations".
+Améliore aussi les tournures maladroites et les répétitions gênantes.
+Ne change RIEN d'autre : garde exactement les mêmes idées, les mêmes événements, les mêmes personnages, le même ordre, le même style et une longueur similaire. N'invente rien, ne raconte pas une autre histoire, n'ajoute aucun élément nouveau. Seule exception : si une phrase contient une incohérence logique évidente (type "fond"), corrige-la avec le minimum de mots nécessaires pour la rendre cohérente, sans changer le reste.
+Ne reproduis JAMAIS n'importe quel autre texte que celui fourni ci-dessous : "texte_corrige" doit être une réécriture fidèle de CE texte, et de rien d'autre.
+Le tableau "version_amelioree" sert seulement à fournir 3 à 8 explications complémentaires sur les changements les plus importants (pas besoin d'y lister toutes les corrections, "texte_corrige" s'en charge) ; les passages cités doivent exister dans le texte de l'élève.
+Si le texte est trop court ou trop fautif pour permettre 5 annotations, donne-en le maximum possible sans jamais inventer un passage absent du texte. Il vaut mieux donner 2 annotations correctes que 10 dont certaines inventées.
 RAPPEL FINAL : le texte à corriger est UNIQUEMENT celui qui suit "TEXTE DE L'ÉLÈVE" ci-dessous. N'utilise aucune autre source, aucun autre sujet, aucun souvenir d'un autre exercice.
 
 TEXTE DE L'ÉLÈVE :
@@ -1536,7 +1543,7 @@ function afficherResultat(note,texte){
   document.getElementById('annot-panel').classList.remove('open');
   document.getElementById('improved-panel').classList.remove('open');
   buildAnnotatedPanel(texte, note.annotations||[]);
-  buildImprovedPanel(texte, note.version_amelioree||[]);
+  buildImprovedPanel(texte, note.texte_corrige||'', note.version_amelioree||[]);
 
   // Sauvegarde rédaction dans Supabase
   const words=texte.split(/\s+/).filter(w=>w.length>0).length;
@@ -2208,21 +2215,97 @@ function renderAnnotatedText(texte, annotations){
   document.getElementById('annotated-text').innerHTML=out.replace(/\n/g,'<br>');
   renderUnmatchedList('annotated-unmatched', unmatched, 'annot');
 }
-function buildImprovedPanel(texte, changes){
-  const filtered=(changes||[]).filter(c=>c.texte_original);
-  const {kept, unmatched}=localiserPassages(texte, filtered);
-  let out=''; let cursor=0;
-  kept.forEach(({start,end,item})=>{
-    out+=escHtml(texte.slice(cursor,start));
-    out+=`<span class="imp-change">${escHtml(item.proposition||texte.slice(start,end))}<span class="imp-tip">`+
-      `<span class="old">${escHtml(texte.slice(start,end))}</span><span class="new">→ ${escHtml(item.proposition||'')}</span>${escHtml(item.justification||'')}</span></span>`;
-    cursor=end;
+// ── Version améliorée : calculée par DIFF entre le texte de l'élève et le texte
+// corrigé intégral renvoyé par l'IA (bien plus fiable qu'un collage de petits fragments,
+// qui produisait des phrases hybrides incohérentes).
+function tokenizeDiff(str){
+  return (str||'').match(/\s+|[A-Za-zÀ-ÖØ-öø-ÿ0-9'’]+|[^\sA-Za-zÀ-ÖØ-öø-ÿ0-9'’]/g) || [];
+}
+function diffTokens(a,b){
+  const n=a.length, m=b.length;
+  const dp=new Array(n+1);
+  for(let i=0;i<=n;i++) dp[i]=new Uint16Array(m+1);
+  for(let i=n-1;i>=0;i--){
+    for(let j=m-1;j>=0;j--){
+      dp[i][j] = a[i]===b[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+    }
+  }
+  const ops=[]; let i=0,j=0;
+  while(i<n && j<m){
+    if(a[i]===b[j]){ ops.push({t:'eq',v:a[i]}); i++; j++; }
+    else if(dp[i+1][j] >= dp[i][j+1]){ ops.push({t:'del',v:a[i]}); i++; }
+    else { ops.push({t:'ins',v:b[j]}); j++; }
+  }
+  while(i<n){ ops.push({t:'del',v:a[i]}); i++; }
+  while(j<m){ ops.push({t:'ins',v:b[j]}); j++; }
+  return ops;
+}
+function mergeDiffHunks(ops){
+  const hunks=[]; let buf=[];
+  const flush=()=>{
+    if(!buf.length) return;
+    const oldV=buf.filter(o=>o.t==='del').map(o=>o.v).join('');
+    const newV=buf.filter(o=>o.t==='ins').map(o=>o.v).join('');
+    hunks.push({type: oldV&&newV?'replace':(oldV?'delete':'insert'), oldText:oldV, newText:newV});
+    buf=[];
+  };
+  ops.forEach(o=>{
+    if(o.t==='eq'){ flush(); hunks.push({type:'equal', text:o.v}); }
+    else buf.push(o);
   });
-  out+=escHtml(texte.slice(cursor));
-  document.getElementById('improved-text').innerHTML=(kept.length||unmatched.length)
+  flush();
+  return hunks;
+}
+function genericJustification(oldText,newText){
+  const norm=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const a=norm(oldText), b=norm(newText);
+  if(!oldText) return "Ajout pour plus de clarté.";
+  if(!newText) return "Passage supprimé (répétition ou superflu).";
+  if(a===b) return "Correction d'accent, de majuscule ou de ponctuation.";
+  if(Math.abs(a.length-b.length)<=3 && a.length>2 && a.slice(0,2)===b.slice(0,2)) return "Faute d'orthographe ou de conjugaison corrigée.";
+  return "Tournure reformulée pour plus de clarté ou de correction.";
+}
+function trouverJustification(oldText,newText,explications){
+  if(explications && explications.length){
+    const oldNorm=(oldText||'').toLowerCase().trim();
+    const newNorm=(newText||'').toLowerCase().trim();
+    let best=null, bestScore=0;
+    explications.forEach(e=>{
+      const eo=(e.texte_original||'').toLowerCase();
+      const ep=(e.proposition||'').toLowerCase();
+      let score=0;
+      if(oldNorm && eo && (eo.includes(oldNorm)||oldNorm.includes(eo))) score+=2;
+      if(newNorm && ep && (ep.includes(newNorm)||newNorm.includes(ep))) score+=2;
+      if(score>bestScore){ bestScore=score; best=e; }
+    });
+    if(best && bestScore>=2 && best.justification) return best.justification;
+  }
+  return genericJustification(oldText,newText);
+}
+function buildImprovedPanel(texteOriginal, texteCorrige, explications){
+  const container=document.getElementById('improved-text');
+  if(!texteCorrige || !texteCorrige.trim()){
+    container.innerHTML='<span style="color:var(--s)">Aucune version corrigée disponible pour ce texte.</span>';
+    return;
+  }
+  const tokA=tokenizeDiff(texteOriginal);
+  const tokB=tokenizeDiff(texteCorrige);
+  const hunks=mergeDiffHunks(diffTokens(tokA,tokB));
+  let out=''; let changeCount=0;
+  hunks.forEach(h=>{
+    if(h.type==='equal'){ out+=escHtml(h.text); return; }
+    if(h.type==='delete'){
+      out+=`<span class="imp-del">${escHtml(h.oldText)}</span>`;
+      return;
+    }
+    changeCount++;
+    const justification=trouverJustification(h.oldText,h.newText,explications);
+    const oldLabel = h.type==='insert' ? '(ajout)' : escHtml(h.oldText);
+    out+=`<span class="imp-change">${escHtml(h.newText)}<span class="imp-tip"><span class="old">${oldLabel}</span><span class="new">→ ${escHtml(h.newText)}</span>${escHtml(justification)}</span></span>`;
+  });
+  container.innerHTML = changeCount>0
     ? out.replace(/\n/g,'<br>')
-    : '<span style="color:var(--s)">Aucune amélioration proposée pour ce texte.</span>';
-  renderUnmatchedList('improved-unmatched', unmatched, 'improved');
+    : '<span style="color:var(--s)">Ton texte était déjà correct sur ce plan, rien à améliorer !</span>';
 }
 function renderUnmatchedList(elId, list, kind){
   const el=document.getElementById(elId);
