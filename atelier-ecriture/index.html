@@ -303,8 +303,8 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
   font-family:'Nunito',sans-serif;font-size:1.05rem;line-height:1.85;
   background:#fafffe;white-space:pre-wrap;overflow-y:auto;cursor:text
 }
-.err-orth{border-bottom:2px wavy #ef4444;cursor:pointer;position:relative}
-.err-gram{border-bottom:2px wavy #f97316;cursor:pointer;position:relative}
+.err-orth{text-decoration:underline wavy #ef4444 2px;text-underline-offset:3px;cursor:pointer;position:relative}
+.err-gram{text-decoration:underline wavy #f97316 2px;text-underline-offset:3px;cursor:pointer;position:relative}
 .err-vocab{border-bottom:2px solid #8b5cf6;background:rgba(139,92,246,.08);cursor:pointer;position:relative}
 .err-fond{background:rgba(239,68,68,.08);border-bottom:2px dashed #ef4444;cursor:pointer;position:relative}
 .err-ponct{border-bottom:2px solid #3b82f6;cursor:pointer;position:relative}
@@ -387,15 +387,17 @@ textarea.brouillon-area:focus{border-color:#f59e0b}
 .annot-tab[data-type="ponct"].active{background:#3b82f6;border-color:#3b82f6}
 .annot-tab[data-type="style"].active{background:#ec4899;border-color:#ec4899}
 .annot-tab[data-type="repet"].active{background:#eab308;border-color:#eab308}
+.annot-tab[data-type="fond"].active{background:#06b6d4;border-color:#06b6d4}
 .annot-legend{font-size:.75rem;color:var(--s);margin-bottom:10px}
 .annotated-text{padding:20px;border:2px solid #e5e7eb;border-radius:14px;background:#fafffe;
   line-height:2.1;font-size:1rem;white-space:pre-wrap}
-.a-orth{border-bottom:2.5px wavy #ef4444;cursor:help;position:relative}
-.a-conj{border-bottom:2.5px wavy #8b5cf6;cursor:help;position:relative}
-.a-gram{border-bottom:2.5px wavy #f97316;cursor:help;position:relative}
+.a-orth{text-decoration:underline wavy #ef4444 2px;text-underline-offset:3px;cursor:help;position:relative}
+.a-conj{text-decoration:underline wavy #8b5cf6 2px;text-underline-offset:3px;cursor:help;position:relative}
+.a-gram{text-decoration:underline wavy #f97316 2px;text-underline-offset:3px;cursor:help;position:relative}
 .a-ponct{border-bottom:2.5px solid #3b82f6;cursor:help;position:relative}
 .a-style{background:rgba(236,72,153,.1);border-bottom:2px dashed #ec4899;cursor:help;position:relative}
 .a-repet{background:rgba(234,179,8,.22);border-bottom:2px solid #eab308;cursor:help;position:relative}
+.a-fond{background:rgba(6,182,212,.14);border-bottom:2px dashed #06b6d4;cursor:help;position:relative}
 .a-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:220px;max-width:320px;
   background:#1a2035;color:#fff;font-size:.78rem;line-height:1.5;padding:9px 12px;border-radius:10px;
   z-index:1000;pointer-events:none;white-space:normal;box-shadow:0 4px 16px rgba(0,0,0,.25)}
@@ -1385,11 +1387,12 @@ async function corrigerRedaction(texte){
   const mots={"6eme":"100 à 200 mots","5eme":"200 à 300 mots","4eme":"300 à 400 mots","3eme":"400 à 500 mots"};
   const words=texte.split(/\s+/).filter(w=>w.length>0).length;
 
-  const prompt=`Tu es un professeur de français de collège qui corrige une rédaction.
-ÉLÈVE : ${state.level} · Thème : ${levelThemes[state.level]} · Type : ${labelType(state.redacType)}
+  const prompt=`Tu es un professeur de français de collège qui corrige UNE SEULE rédaction, celle indiquée ci-dessous. Tu n'as aucune information sur d'autres élèves ou d'autres rédactions : ignore tout ce que tu pourrais "te rappeler" d'un autre sujet ou d'un autre texte, et ne travaille QUE sur le texte fourni à la toute fin de ce message.
+ÉLÈVE : ${state.level} · Thème général de la période : ${levelThemes[state.level]} · Type : ${labelType(state.redacType)}
 Profil DYS : ${state.dys?'OUI — ne pénalise PAS les fautes d\'orthographe':'NON'}
-Sujet donné : "${(state.currentSubject||{}).sujet||'sujet libre'}"
+Sujet donné pour CETTE rédaction (le seul qui existe, ignore tout autre sujet) : "${(state.currentSubject||{}).sujet||'aucun sujet imposé — écriture libre, ne juge pas le hors-sujet'}"
 Longueur attendue : ${mots[state.level]} (l'élève a écrit ${words} mots)
+${(!state.currentSubject||!state.currentSubject.sujet)?"Aucun sujet n'a été imposé (écriture libre) : ne pénalise JAMAIS pour \"hors sujet\", juge uniquement la cohérence interne du texte.":""}
 
 GRILLE D'ÉVALUATION (adapte les critères au type et au niveau) :
 - Cohérence & Organisation (structure, paragraphes, genre respecté) : /6
@@ -1420,18 +1423,20 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
   "conseil_final": "<1-2 phrases d'encouragement et de conseil>",
   "difficultes_detectees": ["<difficulté pour le prof>"],
   "annotations": [
-    {"texte_original":"<passage EXACT du texte, max 8 mots consécutifs>","type":"<orth|conj|gram|ponct|style|repet>","explication":"<explication courte et bienveillante de l'erreur ou de la maladresse>"}
+    {"texte_original":"<passage EXACT du texte, max 8 mots consécutifs>","type":"<orth|conj|gram|ponct|style|repet|fond>","explication":"<explication courte et bienveillante de l'erreur ou de la maladresse>"}
   ],
   "version_amelioree": [
     {"texte_original":"<passage EXACT du texte, max 10 mots>","proposition":"<reformulation améliorée de ce passage>","justification":"<en 1 phrase, pourquoi c'est mieux>"}
   ]
 }
 
-Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer, en couvrant si possible plusieurs types parmi : orth=orthographe, conj=conjugaison, gram=grammaire/syntaxe, ponct=ponctuation, style=maladresse ou registre inadapté, repet=répétition gênante. Choisis des passages qui existent EXACTEMENT dans le texte de l'élève (copie-les tels quels, sans reformuler).
-RÈGLE DE COHÉRENCE STRICTE : si tu mentionnes une faute d'orthographe, de conjugaison ou de ponctuation dans les commentaires des critères, les axes d'amélioration ou la pénalité orthographe, cette même faute DOIT obligatoirement apparaître aussi dans le tableau "annotations", avec le "texte_original" exact et le bon "type". N'omets aucune faute que tu as toi-même repérée ailleurs dans ta réponse.
+Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer, en couvrant si possible plusieurs types parmi : orth=orthographe, conj=conjugaison, gram=grammaire/syntaxe, ponct=ponctuation, style=maladresse ou registre inadapté, repet=répétition gênante, fond=incohérence logique ou contradiction dans le contenu (pas une faute de langue, mais une phrase qui ne "tient pas debout" par rapport au reste du texte). Choisis des passages qui existent EXACTEMENT dans le texte de l'élève (copie-les tels quels, sans reformuler).
+EXEMPLE DE "fond" : si l'élève écrit "mon petit frère Lucas, qui est fils unique", c'est une incohérence logique (on ne peut pas être à la fois frère de quelqu'un ET fils unique) : type "fond", PAS "style" ni "répétition". Le type "fond" sert à toute contradiction, incohérence temporelle, erreur factuelle ou rupture de logique dans l'histoire — distingue bien ça d'une simple maladresse de style.
+RÈGLE DE COHÉRENCE STRICTE : si tu mentionnes une faute ou une incohérence dans les commentaires des critères, les axes d'amélioration ou la pénalité orthographe, cette même remarque DOIT obligatoirement apparaître aussi dans le tableau "annotations", avec le "texte_original" exact et le bon "type". N'omets aucune remarque que tu as toi-même faite ailleurs dans ta réponse.
 RÈGLE ANTI FAUX-POSITIFS : ne signale JAMAIS comme une erreur (type "style" ou autre) une licence poétique, une image inventive, une tournure stylistique originale, une répétition volontaire à effet (anaphore, refrain) ou tout autre choix d'écriture volontaire et réussi, même s'il est inhabituel ou peu académique. Seule une maladresse involontaire (syntaxe bancale, mot impropre, registre incohérent avec le reste du texte) doit être signalée en "style".
-Pour "version_amelioree" : propose entre 5 et 12 reformulations concrètes qui rendent le texte plus riche, plus précis ou plus correct (pas seulement des corrections d'erreurs : aussi du vocabulaire plus juste, des tournures plus fluides). Chaque "texte_original" doit exister EXACTEMENT dans le texte de l'élève. Ne propose JAMAIS de reformulation pour un passage qui relève d'un choix stylistique volontaire et réussi (licence poétique, image forte, tournure originale) : laisse-le tel quel.
-Si le texte est trop court ou trop fautif pour permettre 5 annotations ou 5 reformulations, donne-en le maximum possible sans jamais inventer un passage absent du texte.
+Pour "version_amelioree" : propose entre 5 et 12 reformulations concrètes qui rendent le texte plus riche, plus précis ou plus correct (pas seulement des corrections d'erreurs : aussi du vocabulaire plus juste, des tournures plus fluides). Chaque "texte_original" doit exister EXACTEMENT dans le texte de l'élève ci-dessous — ne propose JAMAIS une reformulation basée sur un texte que tu n'as pas sous les yeux. Ne propose JAMAIS de reformulation pour un passage qui relève d'un choix stylistique volontaire et réussi (licence poétique, image forte, tournure originale) : laisse-le tel quel.
+Si le texte est trop court ou trop fautif pour permettre 5 annotations ou 5 reformulations, donne-en le maximum possible sans jamais inventer un passage absent du texte. Il vaut mieux donner 2 annotations correctes que 10 dont certaines inventées.
+RAPPEL FINAL : le texte à corriger est UNIQUEMENT celui qui suit "TEXTE DE L'ÉLÈVE" ci-dessous. N'utilise aucune autre source, aucun autre sujet, aucun souvenir d'un autre exercice.
 
 TEXTE DE L'ÉLÈVE :
 ${texte}`;
@@ -1538,6 +1543,8 @@ function afficherResultat(note,texte){
 
 function recommencerRedac(){
   state.redacType='';
+  state.currentSubject=null;
+  state.lastCorrection=null;
   document.getElementById('redac-options').style.display='none';
   showScreen('screen-mode');
 }
@@ -2082,7 +2089,8 @@ function submitRedacFromRelecture(){submitRedac();}
 const ANNOT_TYPES={
   orth:{label:'Orthographe',cls:'a-orth'}, conj:{label:'Conjugaison',cls:'a-conj'},
   gram:{label:'Grammaire',cls:'a-gram'}, ponct:{label:'Ponctuation',cls:'a-ponct'},
-  style:{label:'Style',cls:'a-style'}, repet:{label:'Répétition',cls:'a-repet'}
+  style:{label:'Style',cls:'a-style'}, repet:{label:'Répétition',cls:'a-repet'},
+  fond:{label:'Incohérence / sens',cls:'a-fond'}
 };
 let activeAnnotTypes=new Set(Object.keys(ANNOT_TYPES));
 
@@ -2104,6 +2112,7 @@ function normalizeAnnotType(raw){
   if(['gram','grammaire','syntaxe','syntax','grammar','construction'].includes(t)) return 'gram';
   if(['ponct','ponctuation','punctuation'].includes(t)) return 'ponct';
   if(['repet','repetition','repetitions'].includes(t)) return 'repet';
+  if(['fond','incoherence','incoherent','logique','contradiction','sens','contenu'].includes(t)) return 'fond';
   if(['style','maladresse','registre','vocab','vocabulaire','lexique'].includes(t)) return 'style';
   return 'style'; // repli : on n'écarte jamais une annotation, on la classe par défaut
 }
@@ -2126,17 +2135,37 @@ function toggleAnnotType(t, el){
 }
 // Cherche chaque annotation par POSITION dans le texte brut (une seule passe, pas de
 // remplacements successifs qui se marchaient dessus et faisaient disparaître des erreurs).
+// Estime la proportion de mots d'un passage réellement présents dans le texte de l'élève.
+// Sert à distinguer un "quasi-match" (formulation légèrement différente, à garder en repli)
+// d'un passage totalement étranger au texte (hallucination du modèle / mélange avec un autre
+// sujet) qu'il ne faut PAS afficher du tout.
+function ratioMotsCommuns(snippet, texteComplet){
+  const norm=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2);
+  const motsSnippet=norm(snippet);
+  if(!motsSnippet.length) return 0;
+  const texteNorm=' '+norm(texteComplet).join(' ')+' ';
+  let trouve=0;
+  motsSnippet.forEach(m=>{ if(texteNorm.includes(' '+m+' ')) trouve++; });
+  return trouve/motsSnippet.length;
+}
 function localiserPassages(texte, items){
   const found=[], unmatched=[];
   items.forEach(item=>{
     const orig=item.texte_original||'';
-    if(!orig){ unmatched.push(item); return; }
+    if(!orig) return; // rien à faire d'une annotation sans passage cité
     let idx=texte.indexOf(orig);
     if(idx===-1){
       const li=texte.toLowerCase().indexOf(orig.toLowerCase());
       if(li!==-1) idx=li;
     }
-    if(idx===-1){ unmatched.push(item); return; }
+    if(idx===-1){
+      // Pas de correspondance exacte : on vérifie que le passage a un vrai lien avec CE texte
+      // avant de l'afficher en repli. En dessous du seuil, on considère que c'est une
+      // hallucination (mélange avec un autre sujet/texte) et on l'ignore totalement.
+      if(ratioMotsCommuns(orig, texte) >= 0.5) unmatched.push(item);
+      return;
+    }
     found.push({start:idx, end:idx+orig.length, item});
   });
   // Trie par position, puis conserve en priorité les passages les plus longs en cas de chevauchement
@@ -2144,7 +2173,7 @@ function localiserPassages(texte, items){
   const kept=[]; let lastEnd=-1;
   found.forEach(f=>{
     if(f.start>=lastEnd){ kept.push(f); lastEnd=f.end; }
-    else unmatched.push(f.item);
+    else if(ratioMotsCommuns(f.item.texte_original,texte)>=0.5) unmatched.push(f.item);
   });
   return {kept, unmatched};
 }
