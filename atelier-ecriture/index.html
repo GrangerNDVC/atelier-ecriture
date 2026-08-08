@@ -505,7 +505,7 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
         <h3>Progression dialoguée</h3>
         <p>Je t'accompagne phrase par phrase, on travaille ensemble en échangeant.</p>
       </div>
-      <div class="mode-card" onclick="showRedacOptions()">
+      <div class="mode-card" onclick="openRedacOptions()">
         <div class="mc-icon">📝</div>
         <h3>Rédaction notée</h3>
         <p>Tu écris un texte complet sur un sujet, je le note et je t'explique.</p>
@@ -526,8 +526,24 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
         <p>Roman, nouvelle, conte, pièce de théâtre : construis ton projet étape par étape.</p>
       </div>
     </div>
-    <div id="redac-options" style="display:none">
-      <div class="divider"></div>
+    <div class="divider"></div>
+    <button class="btn btn-orange btn-full" id="btn-mon-espace" style="display:none;margin-bottom:10px"
+      onclick="showEspaceEleve()">🎓 Mon espace & mes progrès</button>
+    <button class="btn btn-ghost btn-full btn-sm" onclick="reset()">↩ Changer de session</button>
+  </div>
+</div>
+
+<!-- ══ OPTIONS DE RÉDACTION ══ -->
+<div id="screen-redac-options" class="screen">
+  <div class="card">
+    <div class="chat-header">
+      <div class="avatar">📝</div>
+      <div class="chat-info">
+        <strong>Rédaction notée</strong>
+        <small>Choisis les options de ta rédaction</small>
+      </div>
+    </div>
+    <div class="divider"></div>
       <div class="field-group">
         <label class="field-label">📋 Type de rédaction</label>
         <div class="pill-grid cols3" id="redac-type-grid"></div>
@@ -540,14 +556,12 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
           <div class="pill" data-value="libre" onclick="selectFormat(this)">🕊️ Écriture libre</div>
         </div>
         <div class="libre-fields" id="libre-fields">
-          <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:.86rem;cursor:pointer">
-            <input type="checkbox" id="libre-sujet-check" onchange="toggleLibreSujet()"> Je choisis mon propre sujet
+          <p style="font-size:.82rem;color:var(--s);margin-bottom:8px">Écriture libre : pas de sujet imposé, pas d'objectif de mots. Tu écris ce que tu veux, la correction porte uniquement sur ce que tu as écrit.</p>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.86rem;cursor:pointer">
+            <input type="checkbox" id="libre-sujet-check" onchange="toggleLibreSujet()"> Je préfère quand même me donner un sujet
           </label>
           <input type="text" id="libre-sujet-input" placeholder="Ton sujet..."
-            style="display:none;width:100%;padding:10px 12px;border:2px solid #e5e7eb;border-radius:10px;margin-bottom:10px;font-family:'Nunito',sans-serif">
-          <label style="display:flex;align-items:center;gap:8px;font-size:.86rem;cursor:pointer">
-            <input type="checkbox" id="libre-longueur-check"> Longueur libre (pas d'objectif de mots)
-          </label>
+            style="display:none;width:100%;padding:10px 12px;border:2px solid #e5e7eb;border-radius:10px;margin-top:8px;font-family:'Nunito',sans-serif">
         </div>
       </div>
       <div class="field-group">
@@ -578,12 +592,8 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
         </div>
       </div>
       <button class="btn btn-green btn-full" onclick="startRedac()">Commencer la rédaction ✍️</button>
-    </div>
-    <div class="divider"></div>
-    <button class="btn btn-orange btn-full" id="btn-mon-espace" style="display:none;margin-bottom:10px"
-      onclick="showEspaceEleve()">🎓 Mon espace & mes progrès</button>
-    <button class="btn btn-ghost btn-full btn-sm" onclick="reset()">↩ Changer de session</button>
   </div>
+  <button class="btn btn-ghost btn-full btn-sm" onclick="backToMode()">↩ Retour au menu</button>
 </div>
 
 <!-- ══ ATELIER DIALOGUE ══ -->
@@ -1162,8 +1172,9 @@ function buildRedacTypeGrid(){
   ).join('');
 }
 
-function showRedacOptions(){
-  document.getElementById('redac-options').style.display='block';
+function openRedacOptions(){
+  buildRedacTypeGrid();
+  showScreen('screen-redac-options');
 }
 function selectRedacType(el){
   document.querySelectorAll('#redac-type-grid .pill').forEach(p=>p.classList.remove('selected'));
@@ -1245,25 +1256,32 @@ async function startRedac(){
   if(saved) document.getElementById('brouillon-text').value=saved;
 
   const motsStandard={"6eme":[100,200],"5eme":[200,300],"4eme":[300,400],"3eme":[400,500]};
-  let [min,max]=motsStandard[state.level];
-  const longueurLibre = state.format==='libre' && document.getElementById('libre-longueur-check')?.checked;
-  if(state.format==='court'){ min=Math.round(min*0.4); max=Math.round(max*0.55); }
+  const [min,max]=motsStandard[state.level];
+  // "Écriture courte" et "Écriture libre" : pas d'objectif de mots imposé, on affiche juste le compteur
+  state.noWordTarget = (state.format==='court' || state.format==='libre');
   state.wordTarget=[min,max];
-  state.longueurLibre=!!longueurLibre;
-  document.getElementById('wc-target').textContent = longueurLibre ? '· longueur libre' : ('· objectif : '+min+' à '+max+' mots');
+  document.getElementById('wc-target').textContent = state.noWordTarget ? '' : ('· objectif : '+min+' à '+max+' mots');
   document.getElementById('redac-type-label').textContent=emojiType(state.redacType)+' '+labelType(state.redacType);
   document.getElementById('redac-subject-text').textContent='Génération du sujet...';
   document.getElementById('redac-consigne').textContent='';
   document.getElementById('redac-text').value='';
 
-  // Génère le sujet via l'IA, sauf si l'élève a choisi son propre sujet
   const sujetLibreCheck = state.format==='libre' && document.getElementById('libre-sujet-check')?.checked;
   const sujetPerso = document.getElementById('libre-sujet-input')?.value.trim();
   let sujet;
-  if(sujetLibreCheck && sujetPerso){
-    sujet = {sujet: sujetPerso, consigne: longueurLibre ? "Écris librement, en soignant la cohérence et la qualité de la langue." : `Vise ${min} à ${max} mots environ.`};
+  if(state.format==='libre'){
+    if(sujetLibreCheck && sujetPerso){
+      sujet = {sujet: sujetPerso, consigne: "Écris librement, sans contrainte de longueur : dis ce que tu as à dire.", sujetImpose:false};
+    } else {
+      sujet = {sujet: "Écriture libre — pas de sujet imposé, écris ce qui te plaît !", consigne: "Aucune consigne de fond ni de longueur : exprime-toi comme tu veux, tu seras corrigé(e) sur ce que tu as écrit.", sujetImpose:false};
+    }
+  } else if(state.format==='court'){
+    sujet = await genererSujet();
+    sujet.consigne = "Format court : quelques phrases suffisent, il n'y a pas d'objectif de mots précis à atteindre.";
+    sujet.sujetImpose = true;
   } else {
-    sujet = await genererSujet(min,max);
+    sujet = await genererSujet();
+    sujet.sujetImpose = true;
   }
   document.getElementById('redac-subject-text').textContent=sujet.sujet;
   document.getElementById('redac-consigne').textContent=sujet.consigne;
@@ -1361,7 +1379,7 @@ function updateWordCount(){
   const [min,max]=state.wordTarget||[100,200];
   document.getElementById('wc-num').textContent=words;
   const wcel=document.getElementById('wordcount');
-  wcel.classList.toggle('ok', state.longueurLibre ? words>=30 : (words>=min&&words<=max));
+  wcel.classList.toggle('ok', state.noWordTarget ? words>=10 : (words>=min&&words<=max));
 }
 
 function saveBrouillon(){
@@ -1390,9 +1408,9 @@ async function corrigerRedaction(texte){
   const prompt=`Tu es un professeur de français de collège qui corrige UNE SEULE rédaction, celle indiquée ci-dessous. Tu n'as aucune information sur d'autres élèves ou d'autres rédactions : ignore tout ce que tu pourrais "te rappeler" d'un autre sujet ou d'un autre texte, et ne travaille QUE sur le texte fourni à la toute fin de ce message.
 ÉLÈVE : ${state.level} · Thème général de la période : ${levelThemes[state.level]} · Type : ${labelType(state.redacType)}
 Profil DYS : ${state.dys?'OUI — ne pénalise PAS les fautes d\'orthographe':'NON'}
-Sujet donné pour CETTE rédaction (le seul qui existe, ignore tout autre sujet) : "${(state.currentSubject||{}).sujet||'aucun sujet imposé — écriture libre, ne juge pas le hors-sujet'}"
-Longueur attendue : ${mots[state.level]} (l'élève a écrit ${words} mots)
-${(!state.currentSubject||!state.currentSubject.sujet)?"Aucun sujet n'a été imposé (écriture libre) : ne pénalise JAMAIS pour \"hors sujet\", juge uniquement la cohérence interne du texte.":""}
+Sujet donné pour CETTE rédaction : ${(state.currentSubject&&state.currentSubject.sujetImpose)?`"${state.currentSubject.sujet}" (le seul sujet qui existe, ignore tout autre sujet)`:"aucun sujet imposé — l'élève a écrit en totale liberté"}
+${state.noWordTarget?`Longueur : libre, ne pénalise JAMAIS selon le nombre de mots (l'élève a écrit ${words} mots) — juge uniquement la qualité de ce qui est écrit.`:`Longueur attendue : ${mots[state.level]} (l'élève a écrit ${words} mots)`}
+${(!state.currentSubject||!state.currentSubject.sujetImpose)?"Aucun sujet n'a été imposé (écriture libre) : ne pénalise JAMAIS pour \"hors sujet\", juge uniquement la cohérence interne du texte.":""}
 
 GRILLE D'ÉVALUATION (adapte les critères au type et au niveau) :
 - Cohérence & Organisation (structure, paragraphes, genre respecté) : /6
@@ -1545,7 +1563,6 @@ function recommencerRedac(){
   state.redacType='';
   state.currentSubject=null;
   state.lastCorrection=null;
-  document.getElementById('redac-options').style.display='none';
   showScreen('screen-mode');
 }
 
@@ -2864,7 +2881,7 @@ function handleUrlModeAfterLogin(){
   state.urlMode = null;
   if(mode === 'comprehension-texte') startComprehension();
   else if(mode === 'comprehension-image') startAnalyseImage();
-  else if(mode === 'redaction') showRedacOptions();
+  else if(mode === 'redaction') openRedacOptions();
   else if(mode === 'dialogue') startMode('dialogue');
 }
 
