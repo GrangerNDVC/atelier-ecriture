@@ -1442,10 +1442,6 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
   "difficultes_detectees": ["<difficulté pour le prof>"],
   "annotations": [
     {"texte_original":"<passage EXACT du texte, max 8 mots consécutifs>","type":"<orth|conj|gram|ponct|style|repet|fond>","explication":"<explication courte et bienveillante de l'erreur ou de la maladresse>"}
-  ],
-  "texte_corrige": "<voir consignes ci-dessous>",
-  "version_amelioree": [
-    {"texte_original":"<passage EXACT du texte, max 10 mots>","proposition":"<reformulation améliorée de ce passage>","justification":"<en 1 phrase, pourquoi c'est mieux>"}
   ]
 }
 
@@ -1453,15 +1449,9 @@ Pour "annotations" : identifie entre 5 et 15 passages à corriger ou améliorer,
 EXEMPLE DE "fond" : si l'élève écrit "mon petit frère Lucas, qui est fils unique", c'est une incohérence logique (on ne peut pas être à la fois frère de quelqu'un ET fils unique) : type "fond", PAS "style" ni "répétition". Le type "fond" sert à toute contradiction, incohérence temporelle, erreur factuelle ou rupture de logique dans l'histoire — distingue bien ça d'une simple maladresse de style.
 RÈGLE DE COHÉRENCE STRICTE : si tu mentionnes une faute ou une incohérence dans les commentaires des critères, les axes d'amélioration ou la pénalité orthographe, cette même remarque DOIT obligatoirement apparaître aussi dans le tableau "annotations", avec le "texte_original" exact et le bon "type". N'omets aucune remarque que tu as toi-même faite ailleurs dans ta réponse.
 RÈGLE ANTI FAUX-POSITIFS : ne signale JAMAIS comme une erreur (type "style" ou autre) une licence poétique, une image inventive, une tournure stylistique originale, une répétition volontaire à effet (anaphore, refrain) ou tout autre choix d'écriture volontaire et réussi, même s'il est inhabituel ou peu académique. Seule une maladresse involontaire (syntaxe bancale, mot impropre, registre incohérent avec le reste du texte) doit être signalée en "style".
-
-CONSIGNES POUR "texte_corrige" (le plus important — sois rigoureux) :
-Réécris l'INTÉGRALITÉ du texte de l'élève, du début à la fin, en corrigeant TOUTES les fautes que tu as toi-même repérées (orthographe, conjugaison, grammaire, ponctuation), sans EN OUBLIER AUCUNE — relis ta propre réécriture avant de répondre pour vérifier qu'il ne reste aucune faute que tu as pourtant signalée dans "annotations".
-Améliore aussi les tournures maladroites et les répétitions gênantes.
-Ne change RIEN d'autre : garde exactement les mêmes idées, les mêmes événements, les mêmes personnages, le même ordre, le même style et une longueur similaire. N'invente rien, ne raconte pas une autre histoire, n'ajoute aucun élément nouveau. Seule exception : si une phrase contient une incohérence logique évidente (type "fond"), corrige-la avec le minimum de mots nécessaires pour la rendre cohérente, sans changer le reste.
-Ne reproduis JAMAIS n'importe quel autre texte que celui fourni ci-dessous : "texte_corrige" doit être une réécriture fidèle de CE texte, et de rien d'autre.
-Le tableau "version_amelioree" sert seulement à fournir 3 à 8 explications complémentaires sur les changements les plus importants (pas besoin d'y lister toutes les corrections, "texte_corrige" s'en charge) ; les passages cités doivent exister dans le texte de l'élève.
 Si le texte est trop court ou trop fautif pour permettre 5 annotations, donne-en le maximum possible sans jamais inventer un passage absent du texte. Il vaut mieux donner 2 annotations correctes que 10 dont certaines inventées.
 RAPPEL FINAL : le texte à corriger est UNIQUEMENT celui qui suit "TEXTE DE L'ÉLÈVE" ci-dessous. N'utilise aucune autre source, aucun autre sujet, aucun souvenir d'un autre exercice.
+Réponds de façon CONCISE : va à l'essentiel dans chaque commentaire (1 phrase courte), pour que la réponse reste rapide à générer.
 
 TEXTE DE L'ÉLÈVE :
 ${texte}`;
@@ -1538,12 +1528,15 @@ function afficherResultat(note,texte){
   `;
   document.getElementById('note-card').innerHTML=html;
 
-  // Construit les panneaux "texte annoté" et "version améliorée"
-  state.lastCorrection={note, texte};
+  // Construit le panneau "texte annoté" tout de suite (rapide).
+  // La "version améliorée" n'est demandée à l'IA qu'au clic, séparément (voir toggleAnnotPanel) :
+  // ça évite de générer un texte corrigé complet à chaque correction, ce qui rendait la réponse
+  // trop longue à générer et faisait planter la fonction Netlify (timeout).
+  state.lastCorrection={note, texte, improved:null};
   document.getElementById('annot-panel').classList.remove('open');
   document.getElementById('improved-panel').classList.remove('open');
+  document.getElementById('improved-text').innerHTML='';
   buildAnnotatedPanel(texte, note.annotations||[]);
-  buildImprovedPanel(texte, note.texte_corrige||'', note.version_amelioree||[]);
 
   // Sauvegarde rédaction dans Supabase
   const words=texte.split(/\s+/).filter(w=>w.length>0).length;
@@ -2120,10 +2113,48 @@ let activeAnnotTypes=new Set(Object.keys(ANNOT_TYPES));
 
 function toggleAnnotPanel(which){
   const ids={annot:'annot-panel',improved:'improved-panel'};
+  const panel=document.getElementById(ids[which]);
+  const willOpen = !panel.classList.contains('open');
   Object.entries(ids).forEach(([k,id])=>{
     if(k===which) document.getElementById(id).classList.toggle('open');
     else document.getElementById(id).classList.remove('open');
   });
+  if(which==='improved' && willOpen) chargerVersionAmelioree();
+}
+async function chargerVersionAmelioree(){
+  if(!state.lastCorrection) return;
+  // Déjà générée (ou en cours) : ne redemande pas à l'IA à chaque clic
+  if(state.lastCorrection.improved){
+    buildImprovedPanel(state.lastCorrection.texte, state.lastCorrection.improved.texte_corrige||'', state.lastCorrection.improved.explications||[]);
+    return;
+  }
+  const container=document.getElementById('improved-text');
+  container.innerHTML='<span class="loading-dots">Réécriture en cours</span>';
+  const texte=state.lastCorrection.texte;
+  const prompt=`Tu es un professeur de français qui réécrit la copie d'un élève de ${state.level} de façon intégrale et corrigée.
+Profil DYS : ${state.dys?'OUI — ne pénalise pas, mais corrige quand même l\'orthographe dans la réécriture':'NON'}
+
+CONSIGNES (essentielles) :
+Réécris l'INTÉGRALITÉ du texte ci-dessous, du début à la fin, en corrigeant toutes les fautes (orthographe, conjugaison, grammaire, ponctuation) et en améliorant les tournures maladroites ou répétitions gênantes.
+Garde exactement les mêmes idées, événements, personnages, ordre et longueur approximative. N'invente rien, ne raconte pas une autre histoire. Seule exception : corrige avec le minimum de mots nécessaires une incohérence logique évidente (ex : un personnage présenté à la fois comme "frère" et "fils unique").
+Le texte à réécrire est UNIQUEMENT celui fourni ci-dessous — aucune autre source, aucun autre sujet.
+Réponds UNIQUEMENT en JSON valide, sans markdown :
+{"texte_corrige":"<réécriture intégrale et corrigée>","explications":[{"texte_original":"<passage exact avant>","proposition":"<passage après>","justification":"<pourquoi, en 1 phrase>"}]}
+Le tableau "explications" est optionnel et sert seulement à commenter 3 à 8 changements notables ; ne le remplis pas au détriment de "texte_corrige".
+
+TEXTE DE L'ÉLÈVE :
+${texte}`;
+  try{
+    const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    const txt=(d.answer||'').replace(/```json|```/g,'').trim();
+    const data=JSON.parse(txt);
+    state.lastCorrection.improved=data;
+    buildImprovedPanel(texte, data.texte_corrige||'', data.explications||[]);
+  }catch(e){
+    container.innerHTML='<span style="color:var(--s)">La réécriture n\'a pas pu être générée pour l\'instant (serveur surchargé). Réessaie dans un instant en refermant puis rouvrant ce panneau.</span>';
+  }
 }
 
 function normalizeAnnotType(raw){
