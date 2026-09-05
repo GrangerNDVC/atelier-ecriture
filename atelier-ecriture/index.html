@@ -1058,6 +1058,35 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
 // ════════════════════════════
 // STATE
 // ════════════════════════════
+// ════════════════════════════
+// APPEL IA ASYNCHRONE (démarre + interroge)
+// ════════════════════════════
+// Netlify coupe une fonction après 10s (plan gratuit), ce qui est souvent trop court pour une
+// génération IA correcte via les modèles gratuits. On démarre donc le travail en tâche de fond
+// (gemini-start déclenche gemini-background, qui a jusqu'à 15 minutes) et on va chercher le
+// résultat par sondage régulier (gemini-status), au lieu d'attendre une réponse immédiate.
+async function callIA(messages, {pollMs=1500, maxWaitMs=90000}={}){
+  const startRes = await fetch('/.netlify/functions/gemini-start', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({_messages: messages})
+  });
+  if(!startRes.ok) throw new Error('Impossible de démarrer la demande IA (HTTP '+startRes.status+')');
+  const {jobId} = await startRes.json();
+  if(!jobId) throw new Error('Réponse de démarrage invalide (pas de jobId)');
+
+  const started = Date.now();
+  while(Date.now() - started < maxWaitMs){
+    await new Promise(r=>setTimeout(r, pollMs));
+    const statusRes = await fetch('/.netlify/functions/gemini-status?jobId='+encodeURIComponent(jobId));
+    if(!statusRes.ok) continue; // petite erreur réseau ponctuelle : on retente au prochain sondage
+    const s = await statusRes.json();
+    if(s.status === 'done') return {answer: s.result};
+    if(s.status === 'error') throw new Error(s.error || 'Erreur IA');
+    // sinon status === 'pending' : on continue à attendre
+  }
+  throw new Error("La réponse de l'IA met trop de temps à arriver, réessaie.");
+}
+
 const STORAGE_PREFIX = "atelier_";
 let state = {
   username:"", level:"6eme", dys:false,
@@ -1346,9 +1375,7 @@ Contraintes STRICTES du brevet :
 Réponds UNIQUEMENT en JSON valide, sans markdown :
 {"sujet":"[question principale en 1 phrase + contexte en 1-2 phrases]","consigne":"[rappel des attentes brevet : plan, arguments, exemples, 300-500 mots, soigné orthographiquement]"}`;
     try{
-      const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-        headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
-      const d=await res.json();
+      const d=await callIA([{role:"user",content:prompt}]);
       const txt=(d.answer||'').replace(/```json|```/g,'').trim();
       return JSON.parse(txt);
     }catch(e){
@@ -1362,9 +1389,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown, sans explication :
 {"sujet":"[énoncé du sujet, 2-3 phrases max, clair et motivant]","consigne":"[rappel des contraintes : longueur ${mots[state.level]} mots, temps à utiliser, éléments attendus]"}`;
 
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:"user",content:prompt}]);
     const txt=(d.answer||'').replace(/```json|```/g,'').trim();
     return JSON.parse(txt);
   }catch(e){
@@ -1457,9 +1482,7 @@ TEXTE DE L'ÉLÈVE :
 ${texte}`;
 
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:"user",content:prompt}]);
     const txt=(d.answer||'').replace(/```json|```/g,'').trim();
     return JSON.parse(txt);
   }catch(e){
@@ -1676,10 +1699,7 @@ R10: Si réponse courte ("j'aime bien","oui"): demander une phrase complète ava
 ${!state.dys?'R11: 1 faute d\'orthographe majeure max par message, brièvement.':''}`;
 
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({_messages:[{role:"system",content:systemPrompt},...state.history,{role:"user",content:input}]})});
-    const d=await res.json();
+    const d=await callIA([{role:"system",content:systemPrompt},...state.history,{role:"user",content:input}]);
     let reply=d.answer||"Désolé, j'ai un petit souci technique. Réessaie ! 🙏";
     if(!state.modeLivre&&reply.includes('NIVEAU_LIVRE_OK')){
       reply=reply.replace('NIVEAU_LIVRE_OK','').trim();
@@ -2054,9 +2074,7 @@ TEXTE DE L'ÉLÈVE :
 ${texte}`;
 
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:"user",content:prompt}]);
     const txt=(d.answer||'').replace(/```json|```/g,'').trim();
     const data=JSON.parse(txt);
     afficherRelecture(texte, data);
@@ -2145,9 +2163,7 @@ Le tableau "explications" est optionnel et sert seulement à commenter 3 à 8 ch
 TEXTE DE L'ÉLÈVE :
 ${texte}`;
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:'user',content:prompt}]);
     const txt=(d.answer||'').replace(/```json|```/g,'').trim();
     const data=JSON.parse(txt);
     state.lastCorrection.improved=data;
@@ -2376,9 +2392,7 @@ Notes libres : ${notes||'(vide)'}
 
 Dis en 3 à 5 lignes maximum si tu vois des incohérences, des oublis, ou si le brouillon te semble incomplet avant de commencer la rédaction. Sois concret et bienveillant. Ne rédige rien à sa place, ne propose pas de suite : donne seulement un avis critique constructif.`;
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:'user',content:prompt}]);
     box.innerHTML=(d.answer||'Pas de retour disponible.').replace(/\n/g,'<br>');
   }catch(e){ box.innerHTML='Erreur de connexion, réessaie plus tard.'; }
 }
@@ -2453,9 +2467,7 @@ Sois direct, précis, sans complaisance mais bienveillant. Ne propose aucune sui
 ${p.type==='poesie'?"IMPORTANT : ce projet est un texte poétique. Ne signale JAMAIS comme une erreur une liberté rythmique, une rime approximative, une inversion, une ellipse ou une image inventive : ce sont des choix d'écriture légitimes en poésie. Ne relève que les véritables incohérences de sens et les fautes de langue non voulues.":""}
 Plus généralement, ne confonds jamais une licence stylistique volontaire et réussie (même inhabituelle) avec une erreur : ne la signale pas.`;
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({_messages:[{role:'user',content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:'user',content:prompt}]);
     box.innerHTML=(d.answer||'Pas de retour disponible.').replace(/\n/g,'<br>');
   }catch(e){ box.innerHTML='Erreur de connexion, réessaie plus tard.'; }
 }
@@ -2554,9 +2566,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
 }`;
 
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:"user",content:prompt}]);
     const txt=(d.answer||'').replace(/```json|```/g,'').trim();
     compreData=JSON.parse(txt);
     afficherComprehension(compreData);
@@ -2634,9 +2644,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
 }`;
 
   try{
-    const res=await fetch('/.netlify/functions/gemini',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({_messages:[{role:"user",content:prompt}]})});
-    const d=await res.json();
+    const d=await callIA([{role:"user",content:prompt}]);
     const txt=(d.answer||'').replace(/```json|```/g,'').trim();
     const result=JSON.parse(txt);
     afficherResultatComprehension(result);
@@ -2921,11 +2929,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
 }`;
 
   try{
-    const res = await fetch('/.netlify/functions/gemini', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({_messages:[{role:'user', content:prompt}]})
-    });
-    const d = await res.json();
+    const d = await callIA([{role:'user', content:prompt}]);
     const txt = (d.answer||'').replace(/```json|```/g,'').trim();
     const result = JSON.parse(txt);
     afficherResultatImage(result);
