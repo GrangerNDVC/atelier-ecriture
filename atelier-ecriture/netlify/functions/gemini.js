@@ -1,13 +1,25 @@
 const https = require('https');
 
-// Priorité modèles : Mistral Small 3.1 (société française, excellent en français)
-// → Qwen 2.5 72B (très bon multilingue) → Llama 3.3 70B → DeepSeek → Mistral 7B
+// Modèles GRATUITS uniquement, mis à jour (sept. 2026) avec les mieux classés en qualité et en
+// popularité sur OpenRouter (les modèles gratuits les plus utilisés ont généralement plus de
+// capacité serveur allouée, donc moins de 429/timeouts). Les anciens modèles moins performants
+// ou vieillissants (Qwen 2.5, DeepSeek v3-0324, Mistral 7B) ont été retirés au profit de versions
+// plus récentes et mieux notées.
+// ⚠️ Rappel important : TOUS les modèles ":free" d'OpenRouter partagent le MÊME quota journalier
+// (50 requêtes/jour sans crédit déposé, 1000/jour si 10$ ont été déposés une fois — un dépôt
+// n'active pas d'abonnement, juste un palier). Ce quota est partagé entre tous les modèles gratuits
+// ET les tentatives échouées comptent dedans. Avec une classe entière, ce plafond peut être atteint
+// vite aux heures de cours ; ce nouveau classement réduit le nombre de tentatives ratées (modèles
+// mieux dotés en capacité) mais ne supprime pas la limite elle-même. Le catalogue gratuit
+// d'OpenRouter tourne régulièrement (certains modèles disparaissent sans préavis) : à vérifier de
+// temps en temps sur openrouter.ai/models (filtre "Free").
 const OPENROUTER_MODELS = [
-  "mistralai/mistral-small-3.1-24b-instruct:free",
-  "qwen/qwen-2.5-72b-instruct:free",
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "deepseek/deepseek-chat-v3-0324:free",
-  "mistralai/mistral-7b-instruct:free"
+  "z-ai/glm-5.2:free",                        // Meilleure qualité repérée parmi les modèles gratuits actuels
+  "minimax/minimax-m3:free",                  // Très utilisé, gros contexte, bon multilingue
+  "deepseek/deepseek-v4-flash:free",          // Bonne réputation générale, rapide, gros contexte
+  "nvidia/nemotron-3-ultra-550b-a55b:free",   // Gros modèle très utilisé, bon filet de sécurité
+  "meta-llama/llama-3.3-70b-instruct:free",   // Valeur sûre déjà en place
+  "mistralai/mistral-small-3.1-24b-instruct:free" // Mistral (français), gardé en dernier recours
 ];
 
 exports.handler = async (event) => {
