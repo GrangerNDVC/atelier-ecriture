@@ -28,19 +28,27 @@ exports.handler = async (event) => {
     const payload = JSON.parse(event.body);
     const messages = payload._messages || [{ role: 'user', content: payload.prompt }];
     const jobId = crypto.randomUUID();
+    console.log('[gemini-start] Nouveau job:', jobId);
 
     // 1. Crée la ligne "en attente"
-    await sbInsert(SUPABASE_URL, SUPABASE_KEY, 'ai_jobs', {
+    const insertResult = await sbInsert(SUPABASE_URL, SUPABASE_KEY, 'ai_jobs', {
       id: jobId, status: 'pending', created_at: new Date().toISOString()
     });
+    if (insertResult.status < 200 || insertResult.status >= 300) {
+      console.error('[gemini-start] ÉCHEC insertion ai_jobs. HTTP', insertResult.status, '—', insertResult.data);
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Écriture Supabase (ai_jobs) refusée : HTTP ' + insertResult.status + ' — ' + insertResult.data }) };
+    }
+    console.log('[gemini-start] Insertion ai_jobs OK (HTTP', insertResult.status, ')');
 
     // 2. Déclenche la fonction de fond (fire-and-forget : on n'attend pas qu'elle finisse,
     // juste l'accusé de réception quasi-instantané de Netlify pour les fonctions "-background")
     const base = process.env.URL || ('https://' + (event.headers.host || ''));
+    console.log('[gemini-start] Déclenchement background sur', base + '/.netlify/functions/gemini-background');
     await triggerBackground(base + '/.netlify/functions/gemini-background', { jobId, messages });
 
     return { statusCode: 200, headers, body: JSON.stringify({ jobId }) };
   } catch (err) {
+    console.error('[gemini-start] Exception:', err.message);
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };

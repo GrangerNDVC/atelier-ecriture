@@ -27,6 +27,7 @@ exports.handler = async (event) => {
     jobId = payload.jobId;
     const messages = payload.messages;
     if (!jobId || !messages) throw new Error('jobId ou messages manquant');
+    console.log('[gemini-background] Démarrage job', jobId);
 
     const openRouterKeys = [
       process.env.OPENROUTER_KEY_1, process.env.OPENROUTER_KEY_2, process.env.OPENROUTER_KEY_3,
@@ -34,6 +35,7 @@ exports.handler = async (event) => {
     const mistralKeys = [
       process.env.MISTRAL_KEY_1, process.env.MISTRAL_KEY_2, process.env.MISTRAL_KEY_3,
     ].filter(Boolean);
+    console.log('[gemini-background] Clés dispo — OpenRouter:', openRouterKeys.length, '/ Mistral:', mistralKeys.length);
     if (openRouterKeys.length === 0 && mistralKeys.length === 0) {
       throw new Error("Aucune clé API trouvée dans les variables Netlify.");
     }
@@ -42,6 +44,7 @@ exports.handler = async (event) => {
     for (const model of OPENROUTER_MODELS) {
       for (const key of openRouterKeys) {
         const result = await tryOpenRouter(key, model, messages, MODEL_TIMEOUT_MS);
+        console.log(`[gemini-background] ${model} / ...${key.slice(-4)} →`, result.success ? 'OK' : 'ÉCHEC: ' + result.error);
         if (result.success) { answer = result.answer; break; }
         lastError = `${model}: ${result.error}`;
       }
@@ -50,17 +53,21 @@ exports.handler = async (event) => {
     if (!answer) {
       for (const key of mistralKeys) {
         const result = await tryMistral(key, messages, MODEL_TIMEOUT_MS);
+        console.log('[gemini-background] mistral-direct →', result.success ? 'OK' : 'ÉCHEC: ' + result.error);
         if (result.success) { answer = result.answer; break; }
         lastError = `mistral-direct: ${result.error}`;
       }
     }
 
     if (answer) {
-      await sbUpdateJob(SUPABASE_URL, SUPABASE_KEY, jobId, { status: 'done', result: answer });
+      const r = await sbUpdateJob(SUPABASE_URL, SUPABASE_KEY, jobId, { status: 'done', result: answer });
+      console.log('[gemini-background] Update Supabase (done) → HTTP', r.status, r.data);
     } else {
-      await sbUpdateJob(SUPABASE_URL, SUPABASE_KEY, jobId, { status: 'error', error: lastError });
+      const r = await sbUpdateJob(SUPABASE_URL, SUPABASE_KEY, jobId, { status: 'error', error: lastError });
+      console.log('[gemini-background] Update Supabase (error) → HTTP', r.status, r.data, '| lastError:', lastError);
     }
   } catch (err) {
+    console.error('[gemini-background] Exception:', err.message);
     if (jobId && SUPABASE_URL && SUPABASE_KEY) {
       await sbUpdateJob(SUPABASE_URL, SUPABASE_KEY, jobId, { status: 'error', error: err.message }).catch(()=>{});
     }
