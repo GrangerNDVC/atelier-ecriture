@@ -1,0 +1,17 @@
+# Ping la base Supabase tous les 3 jours pour éviter la mise en pause automatique
+# après 7 jours d'inactivité (limite du plan gratuit Supabase).
+on:
+  schedule:
+    - cron: '0 6 */3 * *'   # tous les 3 jours à 6h00 UTC
+  workflow_dispatch:         # permet aussi de le lancer manuellement depuis l'onglet "Actions" de GitHub
+ 
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase (petite lecture sur la table sessions)
+        run: |
+          curl -sf "${{ secrets.SUPABASE_URL }}/rest/v1/sessions?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          && echo "Ping Supabase OK" || (echo "Échec du ping Supabase" && exit 1)
