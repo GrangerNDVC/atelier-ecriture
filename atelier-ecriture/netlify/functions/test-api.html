@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Clés API — Atelier d'Écriture</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#f0f4f8;padding:32px;max-width:720px;margin:0 auto;color:#1a2035;}
+h1{font-size:1.25rem;margin-bottom:6px;}
+.sub{font-size:.85rem;color:#64748b;margin-bottom:24px;line-height:1.5;}
+.card{background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 4px 20px rgba(59,80,180,.06);}
+.card h2{font-size:.95rem;font-weight:800;margin-bottom:4px;}
+.card .desc{font-size:.8rem;color:#64748b;margin-bottom:14px;}
+button{background:#5b4fcf;color:#fff;border:none;padding:10px 22px;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;margin-right:8px;}
+button:hover{opacity:.9;}
+button.sec{background:#64748b;}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:8px;background:#f8fafc;font-size:.85rem;}
+.dot{width:12px;height:12px;border-radius:50%;background:#d1d5db;flex-shrink:0;}
+.dot.ok{background:#10b981;} .dot.err{background:#ef4444;} .dot.absent{background:#f59e0b;} .dot.loading{background:#3b82f6;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.row .label{font-weight:800;min-width:150px;}
+.row .provider{color:#5b4fcf;font-weight:700;font-size:.78rem;min-width:80px;}
+.row .detail{color:#64748b;font-size:.8rem;flex:1;}
+.result{margin-top:10px;font-size:.8rem;font-family:monospace;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:10px;white-space:pre-wrap;color:#374151;}
+.result.ok{border-color:#a7f3d0;background:#f0fdf4;color:#065f46;}
+.result.err{border-color:#fecaca;background:#fff5f5;color:#991b1b;}
+.legend{font-size:.78rem;color:#64748b;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-top:20px;line-height:1.7;}
+</style>
+</head>
+<body>
+<h1>🔌 Test des clés API — Atelier d'Écriture</h1>
+<p class="sub">
+  Ouvrez cette page depuis l'URL de votre app Netlify (ex : <code>https://votre-site.netlify.app/test-api.html</code>).
+  Elle ne fonctionnera pas ouverte en local.
+</p>
+
+<div class="card">
+  <h2>1️⃣ Test individuel des clés</h2>
+  <div class="desc">Teste séparément chaque clé Mistral et OpenRouter configurée dans Netlify, sans passer par la logique de cascade.</div>
+  <button onclick="testerClesIndividuelles()">▶ Tester les 6 clés possibles</button>
+  <div id="rows"></div>
+</div>
+
+<div class="card">
+  <h2>2️⃣ Test de bout en bout</h2>
+  <div class="desc">Appelle la vraie fonction utilisée par l'application (<code>/.netlify/functions/gemini</code>) et affiche quel fournisseur/modèle a réellement répondu.</div>
+  <button onclick="testerBoutEnBout()">▶ Simuler une vraie requête</button>
+  <div class="result" id="res-e2e" style="display:none"></div>
+</div>
+
+<div class="legend">
+  <strong>Comment lire les résultats :</strong><br>
+  🟢 <strong>OK</strong> — la clé répond correctement.<br>
+  🟠 <strong>Absente</strong> — la variable n'existe pas (ou pas ce nom exact) dans Netlify → Site configuration → Environment variables.<br>
+  🔴 <strong>401 / Unauthorized</strong> — la clé est invalide, mal copiée (espace en trop, caractère manquant) ou révoquée.<br>
+  🔴 <strong>429</strong> — quota atteint pour cette clé.<br>
+  🔴 <strong>402</strong> — souci de compte/paiement côté fournisseur.<br>
+  🔴 <strong>Failed to fetch</strong> — cette page n'est pas ouverte depuis Netlify.
+</div>
+
+<script>
+async function testerClesIndividuelles() {
+  const container = document.getElementById('rows');
+  container.innerHTML = '';
+  const labels = ['MISTRAL_KEY_1','MISTRAL_KEY_2','MISTRAL_KEY_3','OPENROUTER_KEY_1','OPENROUTER_KEY_2','OPENROUTER_KEY_3'];
+  labels.forEach(l => {
+    const div = document.createElement('div');
+    div.className = 'row';
+    div.id = 'row-' + l;
+    div.innerHTML = `<div class="dot loading"></div><div class="label">${l}</div><div class="provider">…</div><div class="detail">Test en cours…</div>`;
+    container.appendChild(div);
+  });
+
+  try {
+    const r = await fetch('/.netlify/functions/test-keys');
+    const d = await r.json();
+    (d.results || []).forEach(res => {
+      const row = document.getElementById('row-' + res.label);
+      if (!row) return;
+      const cls = res.status === 'ok' ? 'ok' : res.status === 'absent' ? 'absent' : 'err';
+      row.innerHTML = `<div class="dot ${cls}"></div><div class="label">${res.label}</div><div class="provider">${res.provider}</div><div class="detail">${esc(res.detail||'')}</div>`;
+    });
+  } catch (e) {
+    container.innerHTML = `<div class="result err">❌ Impossible de joindre /.netlify/functions/test-keys : ${esc(e.message)}<br>Vérifiez que test-keys.js est bien déployé dans netlify/functions/.</div>`;
+  }
+}
+
+async function testerBoutEnBout() {
+  const el = document.getElementById('res-e2e');
+  el.style.display = 'block';
+  el.className = 'result';
+  el.textContent = '⏳ Appel en cours…';
+  try {
+    const t0 = Date.now();
+    const r = await fetch('/.netlify/functions/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ _messages: [{ role: 'user', content: 'Réponds uniquement : Clé opérationnelle.' }] })
+    });
+    const d = await r.json();
+    const ms = Date.now() - t0;
+    if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+    const dbg = d._debug || {};
+    el.className = 'result ok';
+    el.textContent = `✅ Réponse en ${ms}ms : "${d.answer}"\n\nFournisseur : ${dbg.provider||'?'}\nModèle : ${dbg.model||'?'}\nClé utilisée : #${dbg.keyIndex||'?'}`;
+  } catch (e) {
+    el.className = 'result err';
+    el.textContent = '❌ ' + e.message;
+  }
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
