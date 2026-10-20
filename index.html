@@ -1064,15 +1064,31 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
 // Une seule fonction d'appel pour tout le site. Renvoie {answer: "..."} comme avant.
 // (Version asynchrone gemini-start/gemini-status abandonnée : elle n'était pas fonctionnelle.)
 async function callIA(messages){
-  const res = await fetch('/.netlify/functions/gemini', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({_messages: messages})
-  });
-  let d = null;
-  try{ d = await res.json(); }catch(e){}
-  if(!res.ok) throw new Error((d && d.error) || ('Erreur IA (HTTP '+res.status+')'));
-  if(!d || !d.answer) throw new Error('Réponse IA vide');
-  return {answer: d.answer};
+  const t0 = Date.now();
+  try{
+    const res = await fetch('/.netlify/functions/gemini', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({_messages: messages})
+    });
+    let d = null;
+    try{ d = await res.json(); }catch(e){}
+    if(!res.ok) throw new Error((d && d.error) || ('Erreur IA (HTTP '+res.status+')'));
+    if(!d || !d.answer) throw new Error('Réponse IA vide');
+    if(teacherDebugMode && d._debug) showDebugToast('✅ '+d._debug.provider+' · '+d._debug.model+' · '+(Date.now()-t0)+' ms');
+    return {answer: d.answer};
+  }catch(e){
+    // En mode debug enseignant (icône 🛠️), l'erreur réelle s'affiche à l'écran : pas besoin de F12
+    if(teacherDebugMode) showDebugToast('❌ '+e.message+' ('+(Date.now()-t0)+' ms)', true);
+    throw e;
+  }
+}
+function showDebugToast(msg, isErr){
+  const d=document.createElement('div');
+  d.textContent='🛠️ '+msg;
+  d.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);max-width:92vw;z-index:99999;'+
+    'padding:10px 18px;border-radius:12px;font:700 .85rem Nunito,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.3);'+
+    'background:'+(isErr?'#991b1b':'#065f46');
+  document.body.appendChild(d); setTimeout(()=>d.remove(), isErr?15000:5000);
 }
 
 const STORAGE_PREFIX = "atelier_";
