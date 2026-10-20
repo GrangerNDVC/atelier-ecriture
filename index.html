@@ -1059,32 +1059,20 @@ body.teacher-debug{-webkit-user-select:text!important;-moz-user-select:text!impo
 // STATE
 // ════════════════════════════
 // ════════════════════════════
-// APPEL IA ASYNCHRONE (démarre + interroge)
+// APPEL IA (synchrone, via gemini.js : Mistral en priorité, OpenRouter en secours)
 // ════════════════════════════
-// Netlify coupe une fonction après 10s (plan gratuit), ce qui est souvent trop court pour une
-// génération IA correcte via les modèles gratuits. On démarre donc le travail en tâche de fond
-// (gemini-start déclenche gemini-background, qui a jusqu'à 15 minutes) et on va chercher le
-// résultat par sondage régulier (gemini-status), au lieu d'attendre une réponse immédiate.
-async function callIA(messages, {pollMs=1500, maxWaitMs=90000}={}){
-  const startRes = await fetch('/.netlify/functions/gemini-start', {
+// Une seule fonction d'appel pour tout le site. Renvoie {answer: "..."} comme avant.
+// (Version asynchrone gemini-start/gemini-status abandonnée : elle n'était pas fonctionnelle.)
+async function callIA(messages){
+  const res = await fetch('/.netlify/functions/gemini', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({_messages: messages})
   });
-  if(!startRes.ok) throw new Error('Impossible de démarrer la demande IA (HTTP '+startRes.status+')');
-  const {jobId} = await startRes.json();
-  if(!jobId) throw new Error('Réponse de démarrage invalide (pas de jobId)');
-
-  const started = Date.now();
-  while(Date.now() - started < maxWaitMs){
-    await new Promise(r=>setTimeout(r, pollMs));
-    const statusRes = await fetch('/.netlify/functions/gemini-status?jobId='+encodeURIComponent(jobId));
-    if(!statusRes.ok) continue; // petite erreur réseau ponctuelle : on retente au prochain sondage
-    const s = await statusRes.json();
-    if(s.status === 'done') return {answer: s.result};
-    if(s.status === 'error') throw new Error(s.error || 'Erreur IA');
-    // sinon status === 'pending' : on continue à attendre
-  }
-  throw new Error("La réponse de l'IA met trop de temps à arriver, réessaie.");
+  let d = null;
+  try{ d = await res.json(); }catch(e){}
+  if(!res.ok) throw new Error((d && d.error) || ('Erreur IA (HTTP '+res.status+')'));
+  if(!d || !d.answer) throw new Error('Réponse IA vide');
+  return {answer: d.answer};
 }
 
 const STORAGE_PREFIX = "atelier_";
