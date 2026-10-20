@@ -62,11 +62,19 @@ exports.handler = async (event) => {
       throw new Error("Aucune clé API trouvée dans les variables Netlify (MISTRAL_KEY_1 ou OPENROUTER_KEY_1 attendues).");
     }
 
+    // Budget global : Netlify (plan gratuit) coupe à 10s → on s'arrête à ~9s
+    const t0 = Date.now();
+    const remaining = () => Math.max(1500, 9000 - (Date.now() - t0));
+
     // 1. Essaie Mistral en priorité (modèle rapide, puis modèle robuste), toutes clés dispo
+    // Si une clé répond 429 (quota/limite de l'espace de travail, partagé entre les clés),
+    // inutile d'essayer les autres : on passe directement au secours.
+    let mistralBloque = false;
     for (const model of MISTRAL_MODELS) {
+      if (mistralBloque) break;
       for (let i = 0; i < mistralKeys.length; i++) {
         const key = mistralKeys[i];
-        const result = await tryMistral(key, model, messages);
+        const result = await tryMistral(key, model, messages, remaining());
         if (result.success) {
           console.log("Modèle utilisé:", model, "clé index", i + 1);
           return { statusCode: 200, headers, body: JSON.stringify({
@@ -75,6 +83,7 @@ exports.handler = async (event) => {
           }) };
         }
         console.warn(`Échec Mistral ${model} / clé ...${key.slice(-4)}: ${result.error}`);
+        if (result.status === 429) { mistralBloque = true; break; }
       }
     }
 
@@ -82,7 +91,7 @@ exports.handler = async (event) => {
     for (const model of OPENROUTER_MODELS) {
       for (let i = 0; i < openRouterKeys.length; i++) {
         const key = openRouterKeys[i];
-        const result = await tryOpenRouter(key, model, messages);
+        const result = await tryOpenRouter(key, model, messages, remaining());
         if (result.success) {
           console.log("Modèle de secours utilisé (OpenRouter):", model, "clé index", i + 1);
           return { statusCode: 200, headers, body: JSON.stringify({
@@ -91,7 +100,9 @@ exports.handler = async (event) => {
           }) };
         }
         console.warn(`Échec OpenRouter ${model} / clé ...${key.slice(-4)}: ${result.error}`);
+        if (Date.now() - t0 > 8500) break;
       }
+      if (Date.now() - t0 > 8500) break;
     }
 
     throw new Error("Tous les fournisseurs ont échoué (Mistral et OpenRouter).");
@@ -101,7 +112,7 @@ exports.handler = async (event) => {
   }
 };
 
-function tryMistral(key, model, messages) {
+function tryMistral(key, model, messages, timeoutMs = 8000) {
   return new Promise((resolve) => {
     const postData = JSON.stringify({ model, messages });
     const options = {
@@ -112,7 +123,7 @@ function tryMistral(key, model, messages) {
         'Authorization': `Bearer ${key}`,
         'Content-Type': 'application/json'
       },
-      timeout: 20000
+      timeout: timeoutMs
     };
     const req = https.request(options, (res) => {
       let data = '';
@@ -126,18 +137,18 @@ function tryMistral(key, model, messages) {
             else resolve({ success: false, error: "Contenu vide" });
           } catch (e) { resolve({ success: false, error: "Parse: " + e.message }); }
         } else {
-          resolve({ success: false, error: `HTTP ${res.statusCode}: ${data.slice(0,150)}` });
+          resolve({ success: false, status: res.statusCode, error: `HTTP ${res.statusCode}: ${data.slice(0,150)}` });
         }
       });
     });
     req.on('error', e => resolve({ success: false, error: e.message }));
-    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout 20s' }); });
+    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout' }); });
     req.write(postData);
     req.end();
   });
 }
 
-function tryOpenRouter(key, model, messages) {
+function tryOpenRouter(key, model, messages, timeoutMs = 8000) {
   return new Promise((resolve) => {
     const postData = JSON.stringify({ model, messages });
     const options = {
@@ -150,7 +161,7 @@ function tryOpenRouter(key, model, messages) {
         'HTTP-Referer': 'https://netlify.app',
         'X-Title': 'Atelier College'
       },
-      timeout: 20000
+      timeout: timeoutMs
     };
     const req = https.request(options, (res) => {
       let data = '';
@@ -164,12 +175,12 @@ function tryOpenRouter(key, model, messages) {
             else resolve({ success: false, error: "Contenu vide" });
           } catch (e) { resolve({ success: false, error: "Parse: " + e.message }); }
         } else {
-          resolve({ success: false, error: `HTTP ${res.statusCode}: ${data.slice(0,150)}` });
+          resolve({ success: false, status: res.statusCode, error: `HTTP ${res.statusCode}: ${data.slice(0,150)}` });
         }
       });
     });
     req.on('error', e => resolve({ success: false, error: e.message }));
-    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout 20s' }); });
+    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Timeout' }); });
     req.write(postData);
     req.end();
   });
